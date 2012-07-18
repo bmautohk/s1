@@ -1,0 +1,56 @@
+
+          <TD vAlign=top bgColor=#eefafc>
+           <table width="500" border="0" cellspacing="0" cellpadding="0">
+               <tr>
+                 <td><form name="form1" method="POST" action="<?= $_SERVER['PHP_SELF']; ?>?page=<?=$page?>&subpage=<?=$subpage?>" onsubmit="return validate()">
+             
+             <br>
+             <table width="647" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td width="100">Product No. </td>
+                    <td width="210"><input name="sprod_id" id="sprod_id" type="text" /></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  
+                  <tr>
+                    <td width="100">Make </td>
+                    <td width="210"><input name="make_name" id="make_name" type="text" /></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  
+                  <tr>
+                    <td width="100">Model No. </td>
+                    <td width="210"><input name="product_model_no" id="product_model_no" type="text" /></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+            </table>
+            <input name="isfind" type="submit" id="isfind" value="Find" />
+            
+			</form>     </td>
+               </tr>
+             </table>   
+            <br>
+        <? 
+	 //if ($sprod_id!='' and isset($_POST['isfind']))
+	 if (isset($isfind)) {
+	 	searchProduct($sprod_id, $make_name, $product_model_no);
+	 } 
+	 ?></TD>
+
+<script type="text/javascript">
+function validate() {
+	if ($.trim($('#sprod_id').val()) == '' && $.trim($('#make_name').val()) == '' && $.trim($('#product_model_no').val()) == '' ) {
+		alert('Please input search criteria!');
+		return false;
+	}
+
+	return true;
+		
+}
+</script>

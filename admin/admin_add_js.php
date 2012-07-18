@@ -1,0 +1,1 @@
+<meta http-equiv="refresh" content="5; url=index.php?page=admin&subpage=list">

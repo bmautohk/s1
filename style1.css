@@ -1,0 +1,50 @@
+P {
+	FONT-SIZE: 11px; FONT-FAMILY: Tahoma
+}
+TD {
+	FONT-SIZE: 11px; FONT-FAMILY: Tahoma
+}
+FONT {
+	FONT-SIZE: 11px; FONT-FAMILY: Tahoma
+}
+H1 {
+	FONT-SIZE: 18px; COLOR: black; FONT-FAMILY: Tahoma
+}
+A {
+	FONT-WEIGHT: bold; FONT-SIZE: 11px; COLOR: navy; FONT-FAMILY: Tahoma
+}
+.small {
+	FONT-SIZE: 8px
+}
+.faq {
+	FONT-SIZE: 13px
+}
+.big {
+	FONT-SIZE: 18px; TEXT-DECORATION: none
+}
+.cat {
+	FONT-SIZE: 16px
+}
+.standard {
+	FONT-WEIGHT: normal
+}
+.light {
+	COLOR: white
+}
+.lightsmall {
+	FONT-SIZE: 10px; COLOR: white
+}
+.lightstandard {
+	FONT-WEIGHT: normal; COLOR: white
+}
+.middle {
+	COLOR: #f0b5b5
+}
+.cart {
+	BORDER-RIGHT: 0px solid; BORDER-TOP: 0px solid; FONT-WEIGHT: bold; FONT-SIZE: 11px; MARGIN: 1px; BORDER-LEFT: 0px solid; COLOR: #f0b5b5; BORDER-BOTTOM: 0px solid; FONT-FAMILY: Tahoma; BACKGROUND-COLOR: transparent
+}
+
+.middle {
+	FONT-SIZE: 11px;
+	color: #000000;
+}
