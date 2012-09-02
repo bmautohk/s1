@@ -92,7 +92,7 @@
 			</div></td>
 			<td>
 				<div align="center">
-					<input name="sprod_unit_<? echo $j?>" type="text" id="sprod_unit_<? echo $j?>" size="4" maxlength="4">
+					<input name="sprod_unit_<? echo $j?>" type="text" id="sprod_unit_<? echo $j?>" size="3" maxlength="2">
 				</div>
 			</td>
 			<td>

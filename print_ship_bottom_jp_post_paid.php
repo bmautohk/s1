@@ -74,7 +74,7 @@ function Body($invoice_no,$addr_id)
  
    $this->SetTextColor(0,0,0);
  
-  $border=1;
+  $border=0;
   
 
 	

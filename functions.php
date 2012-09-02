@@ -117,6 +117,7 @@ $tool_bar_array["report"]="<TABLE width=\"\" cellPadding=10>
             <TBODY>
               <TR>
               	<TD><span class=\"cat cat\"><a href=\"index.php?page=report&subpage=list\" class=\"big\">Order Report</a> </span></TD>
+              	<TD><span class=\"cat cat\"><a href=\"index.php?page=report&subpage=group\" class=\"big\">Group Order Report</a> </span></TD>
               	<TD><span class=\"cat cat\"><a href=\"index.php?page=report&subpage=prod\" class=\"big\">Items Sold</a> </span></TD>
               </TR>
             </TBODY>
@@ -383,7 +384,6 @@ function getsale_prod($sale_ref)
 		
 	echo "<tr align=\"right\"> <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td  align=\"right\"><strong>Total :</strong></td><td width='120'>&yen;".$total."</td></tr>\n";
 	echo "</table>";}
-	
 	//----------------------------------------------------------------------------
 	
 function getsale_ref_next()
@@ -3785,6 +3785,56 @@ function genCustomerCodeOptions() {
 	mysql_close($db);
 	
 	return $options;
+}
+
+function getsale_prod_data2($sale_ref)
+{
+	$db=connectDatabase();
+	mysql_select_db(DB_NAME,$db);
+
+
+	$result = mysql_query("SELECT * FROM ben_sale_prod where sprod_ref = '".$sale_ref."' order by sprod_id DESC" ,$db) or die (mysql_error()."<br />Couldn't execute query: $query");
+
+	$sub_total=0;
+	$num_results=mysql_num_rows($result);
+	
+	$saleProducts = array();
+	for ($i=0;$i<$num_results;$i++)
+	{
+		$row=mysql_fetch_array($result);
+		$sprod_price=$row["sprod_price"];
+		$sprod_unit=$row["sprod_unit"];
+		$sprod_sub=$sprod_price*$sprod_unit;
+		
+		$product['sprod_id']=$row["sprod_id"];
+		$product['sprod_name']=$row["sprod_name"];
+		$product['sprod_price'] =$sprod_price;
+		$product['sprod_unit']=$sprod_unit;
+		$product['sprod_sub']=$sprod_sub;
+		$saleProducts[] = $product;
+	
+		$sub_total = number_format($sub_total + $sprod_sub,2,'.','');
+	}
+
+	$result = mysql_query("SELECT * FROM ben_sale where sale_ref = '".$sale_ref."'" ,$db) or die (mysql_error()."<br />Couldn't execute query: $query");
+
+	$row=mysql_fetch_array($result);
+	$sale_discount=$row["sale_discount"];
+	$sale_ship_fee=$row["sale_ship_fee"];
+	$sale_tax=$row["sale_tax"];
+
+	$total = number_format($sub_total-$sale_discount,2,'.','');
+	$total_tax =$total * $sale_tax / 100;
+	$total_tax = number_format(round($total_tax, 0),2,'.','');
+	$total = number_format($total + $sale_ship_fee + total_tax,2,'.','');
+	
+	$result = array();
+	$result['sale_prod'] = $saleProducts;
+	$result['order'] = $row;
+	$result['total_tax'] = $total_tax;
+	$result['total'] = $total;
+
+	return $result;
 }
 
 ?>

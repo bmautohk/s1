@@ -190,25 +190,27 @@
 
                  <? 
 
+				 $isGetOrderByDate = true;
 				 if (!isset($_GET['date_start']) and !isset($_GET['date_end']) ) {
-					$today = date("Y-m-d"); 
-					$today_10 = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-1,date("Y")));
-					
-					if (!isset($_SESSION['date_start'])) {
-						getOrderListByDate($today_10,$today,$group2, $user_name);
-					}
-					else{
-						getOrderListByDate($_SESSION['date_start'],$_SESSION['date_end'],$group2, $user_name);
-					}
-				}				   
+						$today = date("Y-m-d");
+						$today_10 = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-1,date("Y")));
+
+						if (!isset($_SESSION['date_start'])) {
+							$orders = getOrderListByDate($today_10,$today,$group2, $user_name);
+						}
+						else{
+							$orders = getOrderListByDate($_SESSION['date_start'],$_SESSION['date_end'],$group2, $user_name);
+						}
+				}
 				
 				if (isset($_GET['date_start']) and isset($_GET['date_end']) and !isset($_GET['issearch'])) {
 					$_SESSION['date_start'] = $_GET['date_start'];
 					$_SESSION['date_end'] = $_GET['date_end'];
-					getOrderListByDate($_SESSION['date_start'],$_SESSION['date_end'],$group2, $user_name);
+					$orders = getOrderListByDate($_SESSION['date_start'],$_SESSION['date_end'],$group2, $user_name);
 				 }
 				 
 				 if (isset($_GET['issearch'])) {
+				 	$isGetOrderByDate = false;
 				 	$today = date("Y-m-d"); 
 					$today_60 = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-150,date("Y")));
 					
@@ -217,7 +219,83 @@
 
 				 ?>
 
-                 
+                 <? if ($isGetOrderByDate) {?>
+                 	<table width="1400" border="1" cellspacing="0" cellpadding="0">
+                 		<tr align="right" valign="top">
+                 			<td>Order date</td>
+                 			<td>Auction ID</td>
+                 			<td>Client Yahoo Id.</td>
+                 			<td> Group</td>
+                 			<td width='120'>Client email</td>
+                 			<td width='100'>Client Name</td>
+                 			<td width='150'> Note</td>
+                 			<td width='120'> Client's Payment Name</td>
+                 			<td>Product No.</td>
+                 			<td width='60'>Price</td>
+                 			<td width='60'>Shipping </td>
+                 			<td width='60'>Total</td>
+                 			<td >Payment</td>
+                 			<td width='80'>Return</td>
+                 			<td width='80'>Shipping</td>
+                 			<td width='100'>Remark</td>
+                 			<td>Order Status</td>
+                 		</tr>
+                 		<? foreach ($orders as $order) {?>
+                 			<tr align="right" valign="top">
+                 				<td><?=$order['sale_date'] ?></td>
+                 				<td><a href="index.php?page=order&subpage=edit&sale_ref=<?=$order['sale_ref'] ?>"><?=$order['sale_ref'] ?> </a><br><?=$order['sale_yahoo_id'] ?>(<?=$order['sale_dat'] ?>)</td>
+                 				<td><?=$order['sale_yahoo_id'] ?>&nbsp;</td>
+                 				<td><?=$order['sale_group'] ?>&nbsp;</td>
+                 				<td width="100" style="word-wrap:break-word;"><?=$order['sale_email'] ?>&nbsp;</td>
+                 				<td><?=$order['sale_name'] ?>&nbsp;</td>
+                 				<td>
+                 					<? if ($order['debt_data'] != NULL) { ?>
+                 						<a href="index.php?page=order&subpage=debt&sale_ref=<?=$order['sale_ref'] ?>"><?=$order['debt_data']['debt_name_t'].$order['debt_data']['debt_pos_co'] ?></a><br><?=$order['debt_data']['debt_email_sent'] ?> 
+                 					<? } else {?>
+                 						<a href="index.php?page=order&subpage=debt&sale_ref=<?=$order['sale_ref'] ?>">Fill in</a>
+                 					<? }?>
+                 				</td>
+                 				<td><?=$order['debt_pay_name'] ?>&nbsp;</td>
+                 				<td><?=$order['sale_prod_id'] ?></td>
+                 				<td><?=$order['product_price'] ?></td>
+                 				<td><?=$order['sale_ship_fee'] ?></td>
+                 				<td><?=$order['cost_total'] ?></td>
+                 				<td>
+	                 				<? if ($order['bal_data'] != NULL) {?>
+	                 					<a href="index.php?page=order&subpage=balance&sale_ref=<?=$order['sale_ref'] ?>">&yen;<?=$order['bal_data']['bal_pay'] ?></a><br><?=$order['bal_data']['bal_pay_type'] ?> (<?=$order['bal_data']['bal_dat'] ?>)
+	                 				<? } else {?>
+	                 					<a href="index.php?page=order&subpage=balance&sale_ref=<?=$order['sale_ref'] ?>">Fill in</a>
+	                 				<? }?>
+                 				</td>
+                 				<td>
+                 					<? if ($order['return_data'] != NULL) {?>
+                 						<a href="index.php?page=order&subpage=balance&sale_ref=<?=$order['sale_ref'] ?>">&yen;<?=$order['return_data']['return_pay'] ?></a><br><?=$order['return_data']['return_sent'] ?>
+                 					<? } else { ?>
+                 						<a href="index.php?page=order&subpage=balance&sale_ref=<?=$order['sale_ref'] ?>">No Return</a>
+                 					<? }?>
+                 				</td>
+                 				<? if ($order['ship_data'] != NULL) {?>
+                 					<td bgcolor="#CCCCCC">
+                 						<a href="index.php?page=order&subpage=shipping&sale_ref=<?=$order['sale_ref'] ?>"><?=$order['ship_data']['check_shipping'].' '.$order['ship_data']['check_shipping_jp'] ?></a><br>
+                 						<?=$order['ship_print'] ?> Shipped<br>(<?=$order['ship_data']['check_date'] ?>)
+                 					</td>
+                 				<? } else {?>
+                 					<td>
+                 						<a href="index.php?page=order&subpage=shipping&sale_ref=<?=$order['sale_ref'] ?>">Fill in</a><br><?=$order['ship_print'] ?>
+                 					</td>
+                 				<? }?>
+                 				<td>
+                 					<? if ($order['remark'] != NULL) {?>
+                 						<a href="index.php?page=order&subpage=remark&sale_ref=<?=$order['sale_ref'] ?>"><?=$order['remark'] ?></a>
+                 					<? } else { ?>
+                 						<a href="index.php?page=order&subpage=remark&sale_ref=<?=$order['sale_ref'] ?>">Fill in</a>
+                 					<? }?>
+                 				</td>
+                 				<td><?=$order['sale_sts'] ?></td>
+                 			</tr>
+                 		<? }?>
+                 	</table>
+                 <? }?>
 
 				  <br></td>
 

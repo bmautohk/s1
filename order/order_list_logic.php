@@ -86,12 +86,9 @@ function getOrderListByDate($date_start,$date_end,$access,$user_name)
 		$num_rows=$row['rec_cnt'];
 	}
 	$searchKey=$searchKey."&num_rows=$num_rows";
-	$page_start = paging_table_header("order", "list", $num_rows, $zpage, $per_page, $searchKey);	
-
-	//table echo 
-	echo "<table width=1400 border=\"1\" cellspacing=\"0\" cellpadding=\"0\">\n";
-	echo "<tr align=\"right\" valign=\"top\"><td >Order date</td><td >Auction ID</td><td >Client Yahoo Id.</td><td > Group</td><td width=\'120\'>Client email</td><td width='100'>Client Name</td><td width='150'> Note</td><td width='120'> Client's Payment Name</td><td>Product No.</td><td width='60'>Price</td><td width='60'>Shipping </td><td width='60'>Total</td><td >Payment</td><td width='80'>Return</td><td width='80'>Shipping</td><td width='100'>Remark</td><td>Order Status</td></tr>\n";
+	$page_start = paging_table_header("order", "list", $num_rows, $zpage, $per_page, $searchKey);
 	
+	$orders = array();
 	if ($num_rows != 0) {
 		$sql = "SELECT * ".$sql."order by sale_date desc, sale_index DESC LIMIT $page_start, $per_page";
 
@@ -100,20 +97,30 @@ function getOrderListByDate($date_start,$date_end,$access,$user_name)
 		$num_results=mysql_num_rows($result);
 //		echo "heoo".$sql;
 		//loop
+		$prevSaleRef = "";
+		$hasReturn = false;
 		for ($i=0;$i<$num_results;$i++) {
 			$row=mysql_fetch_array($result);
-			$sale_ref=$row["sale_ref"];
-			$sale_date=$row["sale_date"];
-			$sale_dat=$row["sale_dat"];
+			$sale_ref = $row["sale_ref"];
 			$sale_name=$row["sale_name"];
-			$sale_email=$row["sale_email"];
-			$sale_group=$row["sale_group"];
-			$sale_yahoo_id=$row["sale_yahoo_id"];
 			$sale_ship_fee=$row["sale_ship_fee"];
 			$sale_tax=$row["sale_tax"];
-			$sale_sts=$row["sts"];
 			
-			$sale_prod_id=$row["sprod_id"];
+			$order = array();
+			$order['sale_ref'] = $sale_ref;
+			$order['sale_date'] = $row["sale_date"];
+			$order['sale_dat'] = $row["sale_dat"];
+			$order['sale_name'] = $sale_name;
+			$order['sale_email'] = $row["sale_email"];
+			$order['sale_group'] = $row["sale_group"];
+			$order['sale_yahoo_id'] = $row["sale_yahoo_id"];
+			$order['sale_ship_fee'] = $sale_ship_fee;
+			$order['sale_tax'] = $sale_tax;
+			$order['sale_sts'] = $row["sts"];
+			$order['sale_prod_id'] = $row["sprod_id"];
+			
+			// Price
+			$order['product_price'] = $row['sprod_price'] * $row['sprod_unit'];
 			
 			//payment of product
 			$cost_prod=getprod_cost($sale_ref);
@@ -122,16 +129,16 @@ function getOrderListByDate($date_start,$date_end,$access,$user_name)
 				$cost_prod=$cost_prod*(1+$sale_tax/100);
 				$cost_prod = number_format(round($cost_prod, 0),2,'.','');
 			}
-			$cost_total=number_format($cost_prod+$sale_ship_fee,2,'.','');	
+			$order['cost_total'] = number_format($cost_prod+$sale_ship_fee,2,'.','');	
 			
-			//  
+			// Note
 			$debt_pay_name="";
 			$debt_remark="";
-			if (getdebt_data($sale_ref)){	
-				$debt_row = getdebt_data($sale_ref);
-				$debt_remark=$debt_row['debt_remark'];
-				
-				$debt_pay_name=$debt_row['debt_pay_name'];
+			$order['debt_pay_name'] = "";
+			$debt_row = getdebt_data($sale_ref);
+			if ($debt_row){
+				$order['remark']=$debt_row['debt_remark'];
+				$order['debt_pay_name'] = $debt_row['debt_pay_name'];
 				
 				if ($debt_row['debt_email_sent'] == '1')
 					$debt_email_sent = "Email Sent (" .$debt_row['debt_dat'].")";
@@ -147,96 +154,105 @@ function getOrderListByDate($date_start,$date_end,$access,$user_name)
 				} else {
 					$debt_name_t=$sale_name;
 				}
-				$debt_data = "<a href=\"index.php?page=order&subpage=debt&sale_ref=".$sale_ref." \">". $debt_name_t ." $debt_pos_co </a><br> $debt_email_sent ";
+				
+				$order['debt_data']['debt_name_t'] = $debt_name_t;
+				$order['debt_data']['debt_pos_co'] = $debt_pos_co;
+				$order['debt_data']['debt_email_sent'] = $debt_email_sent;
 			}
 			else {
-				$debt_data ="<a href=\"index.php?page=order&subpage=debt&sale_ref=".$sale_ref." \">Fill in</a>";
+				$order['remark'] = NULL;
+				$order['debt_data'] = NULL;
 			}
 			
-			//bal
-			if (getbal_data($sale_ref)){		
+			if ($prevSaleRef != $sale_ref) {
+				$prevSaleRef = $sale_ref;
+				
+				// Payment
 				$bal_row = getbal_data($sale_ref);
+				if ($bal_row){
+					$order['bal_data']['bal_pay'] = $bal_row['bal_pay'];
+					$order['bal_data']['bal_pay_type'] = $bal_row['bal_pay_type'];
+					$order['bal_data']['bal_dat'] = $bal_row['bal_dat'];
+				}
+				else {
+					$order['bal_data'] = NULL;
+				}
 				
-				$bal_pay_type = $bal_row['bal_pay_type'];
-				
-				$bal_data = "<a href=\"index.php?page=order&subpage=balance&sale_ref=".$sale_ref." \">&yen;". $bal_row['bal_pay'] ."</a><br>$bal_pay_type (".$bal_row['bal_dat'].") ";
+				//return
+				$hasReturn = false;
+				$order['return_data'] = NULL;
+				$return_row = getreturn_data($sale_ref);
+				if ($return_row){
+					if ($return_row['return_date'] != NULL  or $return_row['return_pay'] != 0){
+						if ($return_row['return_date'] != NULL){
+							$order['return_data']['return_sent'] = "Re-Sent (". $return_row['return_date'] .")";
+						}
+						else {
+							$order['return_data']['return_sent'] = "";
+						}
+						
+						$hasReturn = true;
+						$order['return_data']['return_pay'] = $return_row['return_pay'];
+					}
+				}
 			}
 			else {
-				$bal_data ="<a href=\"index.php?page=order&subpage=balance&sale_ref=".$sale_ref." \">Fill in</a>";
+				// Order same as previous record => don't display "Shipping", "Total", "Payment" and "Return"
+				$order['sale_ship_fee'] = 0;
+				$order['cost_total'] = 0;
+				
+				if ($bal_row){
+					$order['bal_data']['bal_pay'] = 0;
+					$order['bal_data']['bal_pay_type'] = $bal_row['bal_pay_type'];
+					$order['bal_data']['bal_dat'] = $bal_row['bal_dat'];
+				}
+				else {
+					$order['bal_data'] = NULL;
+				}
+				
+				if ($hasReturn){
+					// This order has return
+					$order['return_data']['return_pay'] = 0;
+				}
+				else {
+					$order['return_data'] = NULL;
+				}
 			}
 			
-			
-			// shipping 
-			if (getship_data($sale_ref)){		
-				$ship_row = getship_data($sale_ref);
-				if ($ship_row['check_print']==1)
+			// shipping
+			$order['ship_print'] = '';
+			$order['ship_data'] = NULL;
+			$ship_row = getship_data($sale_ref);
+			if ($ship_row){
+				if ($ship_row['check_print']==1) {
 					$ship_print = 'Printed';
+					$order['ship_print'] = 'Printed';
+				}
 				
 				if ($ship_row['check_date']!='' and $ship_row['check_date']!='0000-00-00'){
-					$ship_date = "(".$ship_row['check_date'].")";
-					$ship_ship = 'Shipped';
-					$ship_bg = "bgcolor=\"#CCCCCC\"";
-					
-					$ship_data = "<a href=\"index.php?page=order&subpage=shipping&sale_ref=".$sale_ref." \">".$ship_row['check_shipping']." ".$ship_row['check_shipping_jp']."</a><br>$ship_print $ship_ship <br>$ship_date";
-				} else { 
-					$ship_ship ='1';
-					$ship_date = '';
-					$ship_bg='';
-					$ship_data ="<a href=\"index.php?page=order&subpage=shipping&sale_ref=".$sale_ref." \">Fill in</a><br>$ship_print";
-				}
-				
-			}
-			else {
-				$ship_bg='';
-				$ship_data ="<a href=\"index.php?page=order&subpage=shipping&sale_ref=".$sale_ref." \">Fill in</a><br>$ship_print";
-			}
-			
-			//return 
-			if (getreturn_data($sale_ref)){		
-				$return_row = getreturn_data($sale_ref);
-				if ($return_row['return_date'] != NULL  or $return_row['return_pay'] != 0){
-					if ($return_row['return_date'] != NULL){
-						$return_sent = "Re-Sent (". $return_row['return_date'] .")";}
-					else {
-						$return_sent = "";
-					}
-					$return_data = "<a href=\"index.php?page=order&subpage=balance&sale_ref=".$sale_ref." \">&yen;". $return_row['return_pay'] ."</a><br>$return_sent";
-				}
-				else
-				{
-					$return_data ="<a href=\"index.php?page=order&subpage=balance&sale_ref=".$sale_ref." \">No Return</a>";
-				}
-			}
-			else {
-				$return_data ="<a href=\"index.php?page=order&subpage=balance&sale_ref=".$sale_ref." \">No Return</a>";
+					$order['ship_data']['check_shipping'] = $ship_row['check_shipping'];
+					$order['ship_data']['check_shipping_jp'] = $ship_row['check_shipping_jp'];
+					$order['ship_data']['check_date'] = $ship_row['check_date'];
+				}	
 			}
 			
 			//----------------
-			$sale_edit = "<a href=\"index.php?page=order&subpage=edit&sale_ref=".$sale_ref." \">$sale_ref </a>";
-			//remark
-			
-			if ($debt_remark) {
-				$remark = $debt_remark;
-				$remark ="<a href=\"index.php?page=order&subpage=remark&sale_ref=".$sale_ref." \">$remark</a>";
-			}	
-			else {
-				$remark ="<a href=\"index.php?page=order&subpage=remark&sale_ref=".$sale_ref." \">Fill in</a>";
-			}
-			
-			echo "<tr align=\"right\" valign=\"top\"> <td>".$sale_date."</td><td>".$sale_edit."<br> $sale_yahoo_id (".$sale_dat .")</td><td >".$sale_yahoo_id."&nbsp;</td><td >".$sale_group."&nbsp;</td><td width=\"100\" style=\"word-wrap:break-word;\">".$sale_email."&nbsp;</td><td >".$sale_name."&nbsp;</td><td>".$debt_data."&nbsp;</td><td>".$debt_pay_name."&nbsp;</td><td>".$sale_prod_id."</td><td >".$cost_prod."</td><td >".$sale_ship_fee."</td><td >".$cost_total."</td><td>".$bal_data."</td><td>".$return_data."</td><td $ship_bg >".$ship_data."</td><td >".$remark."&nbsp;</td><td>".$sale_sts."</td></tr>\n";
+
+			$orders[] = $order;
 		}
 		//end loop
 		
 		// Free resultset
 		mysql_free_result($result);
 	}
-	echo "</table>";
 
 	// Closing connection
 	mysql_close($db);
+	
+	return $orders;
 }
 
-function genCSVByDate($date_start,$date_end,$status,$access,$user_name)
+function genCSVByDate($date_start,$date_end,$status,$access,$user_name,$isRetrieveProductId)
 {
 //	ob_flush();
 //	flush();
@@ -245,18 +261,37 @@ function genCSVByDate($date_start,$date_end,$status,$access,$user_name)
 	mysql_select_db(DB_NAME,$db);
 	$searchKey = "&date_start=".$date_start."&date_end=".$date_end;
 
-	if ($access==Admin_name) {
-		$sql = "FROM ben_sale where sale_date between '$date_start' and '$date_end' ";
+	if (!$isRetrieveProductId) {
+		if ($access==Admin_name) {
+			$sql = "FROM ben_sale where sale_date between '$date_start' and '$date_end' ";
+		}
+		else {
+			$sql = "FROM ben_sale where sale_group='$user_name' and sale_date between '$date_start' and '$date_end' ";
+		}
 	}
 	else {
-		$sql = "FROM ben_sale where sale_group='$user_name' and sale_date between '$date_start' and '$date_end' ";
+		// For Topnov only
+		// Back order -> Retrieve Product ID
+		if ($access==Admin_name) {
+			$sql = "FROM ben_sale left outer join ben_sale_prod on sale_ref = sprod_ref where sale_date between '$date_start' and '$date_end' ";
+		}
+		else {
+			$sql = "FROM ben_sale left outer join ben_sale_prod on sale_ref = sprod_ref where sale_group='$user_name' and sale_date between '$date_start' and '$date_end' ";
+		}
 	}
+	
 	
 	if (isset($status)) {
 		$sql = $sql." and sts = '$status' ";
 	}
 
-	$sql = "SELECT * ".$sql."order by sale_date desc, sale_index DESC";
+	if (!$isRetrieveProductId) {
+		$sql = "SELECT * ".$sql."order by sale_date desc, sale_index DESC";
+	}
+	else {
+		// Back order -> Order by Product ID
+		$sql = "SELECT * ".$sql."order by sprod_id, sale_date desc, sale_index DESC";
+	}
 
 	$result = mysql_query($sql, $db);
 
@@ -276,15 +311,17 @@ function genCSVByDate($date_start,$date_end,$status,$access,$user_name)
 		$sale_ship_fee=$row["sale_ship_fee"];
 		$sale_tax=$row["sale_tax"];
 		
-		$orders[$i]['sale_ref']=$sale_ref;
-		$orders[$i]['sale_date']=$sale_date;
-		$orders[$i]['sale_dat']=$sale_dat;
-		$orders[$i]['sale_name']=$sale_name;
-		$orders[$i]['sale_email']=$sale_email;
-		$orders[$i]['sale_group']=$sale_group;
-		$orders[$i]['sale_yahoo_id']=$sale_yahoo_id;
-		$orders[$i]['sale_ship_fee']=$sale_ship_fee;
-		$orders[$i]['sale_tax']=$sale_tax;
+		$order['sale_ref']=$sale_ref;
+		$order['sale_date']=$sale_date;
+		$order['sale_dat']=$sale_dat;
+		$order['sale_name']=$sale_name;
+		$order['sale_email']=$sale_email;
+		$order['sale_group']=$sale_group;
+		$order['sale_yahoo_id']=$sale_yahoo_id;
+		$order['sale_ship_fee']=$sale_ship_fee;
+		$order['sale_tax']=$sale_tax;
+		$order['sprod_id'] = $row['sprod_id']; 
+		
 		//payment of product
 		$cost_prod=getprod_cost($sale_ref);
 			
@@ -293,8 +330,8 @@ function genCSVByDate($date_start,$date_end,$status,$access,$user_name)
 			$cost_prod = number_format(round($cost_prod, 0),2,'.','');
 		}
 		$cost_total=number_format($cost_prod+$sale_ship_fee,2,'.','');
-		$orders[$i]['cost_prod'] = $cost_prod;
-		$orders[$i]['cost_total'] = $cost_total;
+		$order['cost_prod'] = $cost_prod;
+		$order['cost_total'] = $cost_total;
 			
 		//
 		$debt_pay_name="";
@@ -319,16 +356,16 @@ function genCSVByDate($date_start,$date_end,$status,$access,$user_name)
 			} else {
 				$debt_name_t=$sale_name;
 			}
-			$orders[$i]['debt_data'] =  $debt_name_t.' '.$debt_pos_co.chr(13).chr(10).$debt_email_sent;
+			$order['debt_data'] =  $debt_name_t.' '.$debt_pos_co.chr(13).chr(10).$debt_email_sent;
 		}
-		$orders[$i]['debt_pay_name'] = $debt_pay_name;
+		$order['debt_pay_name'] = $debt_pay_name;
 		
 		//bal
 		if (getbal_data($sale_ref)){
 			$bal_row = getbal_data($sale_ref);
 
 			$bal_pay_type = $bal_row['bal_pay_type'];
-			$orders[$i]['bal_data'] = $bal_row['bal_pay'].chr(13).chr(10).$bal_pay_type."(".$bal_row['bal_dat'].") ";
+			$order['bal_data'] = $bal_row['bal_pay'].chr(13).chr(10).$bal_pay_type."(".$bal_row['bal_dat'].") ";
 		}
 			
 			
@@ -344,18 +381,18 @@ function genCSVByDate($date_start,$date_end,$status,$access,$user_name)
 				$ship_ship = 'Shipped';
 				$ship_bg = "bgcolor=\"#CCCCCC\"";
 				$check_shipping = trim($ship_row['check_shipping'].' '.$ship_row['check_shipping_jp']);
-				$orders[$i]['ship_data'] = $check_shipping.chr(13).chr(10).$ship_print.' '.$ship_ship.chr(13).chr(10).$ship_date;
+				$order['ship_data'] = $check_shipping.chr(13).chr(10).$ship_print.' '.$ship_ship.chr(13).chr(10).$ship_date;
 			} else {
 					$ship_ship ='1';
 					$ship_date = '';
 					$ship_bg='';
-					$orders[$i]['ship_data'] = $ship_print;
+					$order['ship_data'] = $ship_print;
 			}
 
 		}
 		else {
 			$ship_bg='';
-			$orders[$i]['ship_data'] = $ship_print;
+			$order['ship_data'] = $ship_print;
 		}
 				
 		//return
@@ -368,25 +405,27 @@ function genCSVByDate($date_start,$date_end,$status,$access,$user_name)
 				else {
 					$return_sent = "";
 				}
-				$orders[$i]['return_data'] = '&yen;'.$return_row['return_pay']."<br>$return_sent";
+				$order['return_data'] = $return_row['return_pay'].chr(13).chr(10).$return_sent;
 			}
 			else
 			{
-				$orders[$i]['return_data'] = 'No Return';
+				$order['return_data'] = 'No Return';
 			}
 		}
 		else {
-			$orders[$i]['return_data'] = 'No Return';
+			$order['return_data'] = 'No Return';
 		}
 		
 		//----------------
-		$orders[$i]['sale_edit'] = $sale_ref;
+		$order['sale_edit'] = $sale_ref;
 		//remark
 		
 		if ($debt_remark) {
 			$remark = $debt_remark;
-			$orders[$i]['remark'] = $remark;
-		}	
+			$order['remark'] = $remark;
+		}
+		
+		$orders[] = $order;
 	}
 	//end loop
 

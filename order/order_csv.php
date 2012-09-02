@@ -13,7 +13,13 @@
 	$date_start = $_GET['date_start'];
 	$date_end = $_GET['date_end'];
 	$status = $_GET['status'];
-	$result = genCSVByDate($date_start,$date_end,$status,$group2,$user_name);
+	
+	$isDisplayProductId = false;
+	if ($companyDomain == DOMAIN_TOPNOV && $status == 'B') {
+		$isDisplayProductId = true;
+	}
+	
+	$result = genCSVByDate($date_start,$date_end,$status,$group2,$user_name,$isDisplayProductId);
 	
 	// Create new PHPExcel object
 	$objPHPExcel = new PHPExcel();
@@ -29,9 +35,29 @@
 
 
 	$sheet = $objPHPExcel->setActiveSheetIndex(0);
-	
+
 	// Header
-	$sheet->setCellValue('A1', 'Order date')
+	$i = 0;
+	$sheet->setCellValueByColumnAndRow($i++, 1, 'Order date')
+			->setCellValueByColumnAndRow($i++, 1, 'Auction ID')
+			->setCellValueByColumnAndRow($i++, 1, 'Client Yahoo Id.')
+			->setCellValueByColumnAndRow($i++, 1, 'Group')
+			->setCellValueByColumnAndRow($i++, 1, 'Client email')
+			->setCellValueByColumnAndRow($i++, 1, 'Client Name')
+			->setCellValueByColumnAndRow($i++, 1, 'Note')
+			->setCellValueByColumnAndRow($i++, 1, 'Client\'s Payment Name');
+	if ($isDisplayProductId) {
+		$sheet->setCellValueByColumnAndRow($i++, 1, 'Product No.');
+	}
+	$sheet->setCellValueByColumnAndRow($i++, 1, 'Price')
+			->setCellValueByColumnAndRow($i++, 1, 'Shipping')
+			->setCellValueByColumnAndRow($i++, 1, 'Total')
+			->setCellValueByColumnAndRow($i++, 1, 'Payment')
+			->setCellValueByColumnAndRow($i++, 1, 'Return')
+			->setCellValueByColumnAndRow($i++, 1, 'Shipping')
+			->setCellValueByColumnAndRow($i++, 1, 'Remark');
+	
+	/* $sheet->setCellValue('A1', 'Order date')
 			->setCellValue('B1', 'Auction ID')
 			->setCellValue('C1', 'Client Yahoo Id.')
 			->setCellValue('D1', 'Group')
@@ -39,22 +65,24 @@
 			->setCellValue('F1', 'Client Name')
 			->setCellValue('G1', 'Note')
 			->setCellValue('H1', 'Client\'s Payment Name')
-			->setCellValue('I1', 'Price')
-			->setCellValue('J1', 'Shipping')
-			->setCellValue('K1', 'Total')
-			->setCellValue('L1', 'Payment')
-			->setCellValue('M1', 'Return')
-			->setCellValue('N1', 'Shipping')
-			->setCellValue('O1', 'Remark');
+			->setCellValue('I1', 'Product No.')
+			->setCellValue('J1', 'Price')
+			->setCellValue('K1', 'Shipping')
+			->setCellValue('L1', 'Total')
+			->setCellValue('M1', 'Payment')
+			->setCellValue('N1', 'Return')
+			->setCellValue('O1', 'Shipping')
+			->setCellValue('P1', 'Remark'); */
 	
 	if (!empty($result)) {
-		foreach ($result as $key=>$order) {
-			$rowNo = $key + 2;
+		$idx = 2;
+		foreach ($result as $order) {
+			$rowNo = $idx++;
 			
-			$sheet->getStyle('B'.$rowNo)->getAlignment()->setWrapText(true);
+			/* $sheet->getStyle('B'.$rowNo)->getAlignment()->setWrapText(true);
 			$sheet->getStyle('G'.$rowNo)->getAlignment()->setWrapText(true);
 			$sheet->getStyle('L'.$rowNo)->getAlignment()->setWrapText(true);
-			$sheet->getStyle('N'.$rowNo)->getAlignment()->setWrapText(true);
+			$sheet->getStyle('N'.$rowNo)->getAlignment()->setWrapText(true); 
 			
 			$sheet->setCellValue('A'.$rowNo, conv($order['sale_date']))
 				->setCellValue('B'.$rowNo, conv($order['sale_edit'].chr(13).chr(10).$order['sale_yahoo_id'].'('.$order['sale_dat'].')'))
@@ -64,13 +92,47 @@
 				->setCellValue('F'.$rowNo, conv(($order['sale_name'])))
 				->setCellValue('G'.$rowNo, conv(($order['debt_data'])))
 				->setCellValue('H'.$rowNo, conv($order['debt_pay_name']))
-				->setCellValue('I'.$rowNo, conv($order['cost_prod']))
-				->setCellValue('J'.$rowNo, conv($order['sale_ship_fee']))
-				->setCellValue('K'.$rowNo, conv($order['cost_total']))
-				->setCellValue('L'.$rowNo, conv($order['bal_data']))
-				->setCellValue('M'.$rowNo, conv($order['return_data']))
-				->setCellValue('N'.$rowNo, conv($order['ship_data']))
-				->setCellValue('O'.$rowNo, conv($order['remark']));
+				->setCellValue('I'.$rowNo, conv($order['sprod_id']))
+				->setCellValue('J'.$rowNo, conv($order['cost_prod']))
+				->setCellValue('K'.$rowNo, conv($order['sale_ship_fee']))
+				->setCellValue('L'.$rowNo, conv($order['cost_total']))
+				->setCellValue('M'.$rowNo, conv($order['bal_data']))
+				->setCellValue('N'.$rowNo, conv($order['return_data']))
+				->setCellValue('O'.$rowNo, conv($order['ship_data']))
+				->setCellValue('P'.$rowNo, conv($order['remark']));*/
+			
+			$sheet->getStyleByColumnAndRow(1, $rowNo)->getAlignment()->setWrapText(true); // Auction ID
+			$sheet->getStyle(6, $rowNo)->getAlignment()->setWrapText(true); // Note
+			if (!$isDisplayProductId) {
+				$sheet->getStyle(11, $rowNo)->getAlignment()->setWrapText(true); // Shipping
+				$sheet->getStyle(13, $rowNo)->getAlignment()->setWrapText(true); // Payment
+			}
+			else {
+				$sheet->getStyle(12, $rowNo)->getAlignment()->setWrapText(true); // Shipping
+				$sheet->getStyle(14, $rowNo)->getAlignment()->setWrapText(true); // Payment
+			}
+			
+			$i = 0;
+			$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($order['sale_date']))
+				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['sale_edit'].chr(13).chr(10).$order['sale_yahoo_id'].'('.$order['sale_dat'].')'))
+				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['sale_yahoo_id']))
+				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['sale_group']))
+				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['sale_email']))
+				->setCellValueByColumnAndRow($i++, $rowNo, conv(($order['sale_name'])))
+				->setCellValueByColumnAndRow($i++, $rowNo, conv(($order['debt_data'])))
+				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['debt_pay_name']));
+			
+			if ($isDisplayProductId) {
+				$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($order['sprod_id']));
+			}
+			
+			$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($order['cost_prod']))
+				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['sale_ship_fee']))
+				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['cost_total']))
+				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['bal_data']))
+				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['return_data']))
+				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['ship_data']))
+				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['remark']));
 		}
 	}
 	

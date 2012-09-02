@@ -126,7 +126,11 @@ echo $row_debt['debt_remark'];
                             <option value='parcel'>Air Parcel</option>
                             <option value='jp'>JP</option>
                             <option value='jp2'>JP with cash</option>
-							<option value='jp_post_cod'>JP Post COD</option>
+                            <? if ($companyDomain == DOMAIN_KAITONIC) {?>
+								<option value='jp_post_cod'>JP Post COD</option>
+							<? } else {?>
+								<option value='jp_post_cod_topnov'>JP Post COD</option>
+							<? }?>
 							<option value='jp_post_paid'>JP Post Paid</option>
 							<option value='jp_sagawa_cod'>JP sagawa COD</option>
 							<option value='jp_sagawa'>JP sagawa</option>

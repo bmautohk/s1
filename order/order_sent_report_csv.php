@@ -31,15 +31,18 @@
 	$sheet->setCellValue('A1', 'Order No.')
 			->setCellValue('B1', 'Sale Group')
 			->setCellValue('C1', 'Prod ID')
-			->setCellValue('D1', 'Total Price')
-			->setCellValue('E1', 'Shipping Fee')
-			->setCellValue('F1', 'Total')
+			->setCellValue('D1', 'Unit Price')
+			->setCellValue('E1', 'Price')
+			->setCellValue('F1', 'Unit Cost')
 			->setCellValue('G1', 'Total Cost (RMB)')
-			->setCellValue('H1', 'Shipping Date')
-			->setCellValue('I1', 'Tracking No.')
-			->setCellValue('J1', 'ord_prod_price_total')
-			->setCellValue('K1', 'ord_prod_cost_total')
-			->setCellValue('L1', 'Status');
+			->setCellValue('H1', 'Qty')
+			->setCellValue('I1', 'ShipFee')
+			->setCellValue('J1', 'Shipping Date')
+			->setCellValue('K1', 'Tracking No.')
+			->setCellValue('L1', 'Sum Of Prod Price')
+			->setCellValue('M1', 'Sum Of Order Cost')
+			->setCellValue('N1', 'Order total')
+			->setCellValue('O1', 'ShippingStatus');
 
 	if (!empty($result)) {
 		foreach ($result as $key=>$order) {
@@ -48,15 +51,18 @@
 			$sheet->setCellValue('A'.$rowNo, $order['check_ref'])
 				->setCellValue('B'.$rowNo, convToUTF8($order['sale_group']))
 				->setCellValue('C'.$rowNo, $order['sprod_id'])
-				->setCellValue('D'.$rowNo, $order['product_price_total'])
-				->setCellValue('E'.$rowNo, $order['sale_ship_fee'])
-				->setCellValue('F'.$rowNo, $order['total'])
+				->setCellValue('D'.$rowNo, $order['product_price'])
+				->setCellValue('E'.$rowNo, $order['product_price_total'])
+				->setCellValue('F'.$rowNo, $order['product_cost'])
 				->setCellValue('G'.$rowNo, $order['product_cost_total'])
-				->setCellValue('H'.$rowNo, $order['check_date'])
-				->setCellValue('I'.$rowNo, $order['check_shipping'])
-				->setCellValue('J'.$rowNo, $order['ord_prod_price_total'])
-				->setCellValue('K'.$rowNo, $order['ord_prod_cost_total'])
-				->setCellValue('L'.$rowNo, $order['shipped_status']);
+				->setCellValue('H'.$rowNo, $order['qty'])
+				->setCellValue('I'.$rowNo, $order['sale_ship_fee'])
+				->setCellValue('J'.$rowNo, $order['check_date'])
+				->setCellValue('K'.$rowNo, $order['check_shipping'])
+				->setCellValue('L'.$rowNo, $order['ord_prod_price_total'])
+				->setCellValue('M'.$rowNo, $order['ord_prod_cost_total'])
+				->setCellValue('N'.$rowNo, $order['total'])
+				->setCellValue('O'.$rowNo, $order['shipped_status']);
 		}
 	}
 	/* $sheet->setCellValue('A1', 'Order No.')
