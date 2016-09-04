@@ -1,5 +1,12 @@
-<?php include_once('security_check.php');?>
-<? 
+<?php 
+	$page = $_GET['page'];
+	//$subpage = $_GET['subpage'];
+	//if ($page == 'order' && $subpage == 'list') {
+	if ($page == 'order') {
+		$groupCheckList = array("Administrators", "Users", "Wholesale");
+	}
+	include_once('security_check.php');
+
 	if ($page!="" && $subpage!=""){
 		include_once($page.'/'.$page.'_'.$subpage.'_logic.php');
 	}

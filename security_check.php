@@ -9,9 +9,24 @@ session_start();
 require_once('config.php');  
 require_once('functions.php');
 
-if (allow_access(@Administrators) != "yes"){ 
-	include_once('no_access.html'); 
-exit;
+if (!isset($groupCheckList)) {
+	if (allow_access(@Administrators) != "yes"){ 
+		include_once('no_access.html'); 
+		exit;
+	}
+} else {
+	$isAccess = false;
+	foreach ($groupCheckList as $group) {
+		if (allow_access($group) == "yes") {
+			$isAccess = true;
+			break;
+		}
+	}
+	
+	if (!$isAccess) {
+		include_once('no_access.html');
+		exit;
+	}
 }
 
 if ($_GET['uname']!='') {$_SESSION[user_name]=$_GET['uname'];}

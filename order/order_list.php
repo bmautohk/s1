@@ -184,7 +184,8 @@
 
   <input name="Submit" type="submit" value="Check / Edit Record">
   <input name="genCSV" type="button" id="genCSV" value="Generate CSV" onclick="createCSV()">
-  <input name="genBackOrderCSV" type="button" id="genBackOrderCSV" value="Generate CSV (Status = B)" onclick="createBackOrderCSV()">			
+  <input name="genBackOrderCSV" type="button" id="genBackOrderCSV" value="Generate CSV (Status = B)" onclick="createBackOrderCSV()">
+			
 
              </FORM>   </p>
 
@@ -206,6 +207,7 @@
 				if (isset($_GET['date_start']) and isset($_GET['date_end']) and !isset($_GET['issearch'])) {
 					$_SESSION['date_start'] = $_GET['date_start'];
 					$_SESSION['date_end'] = $_GET['date_end'];
+					//$_SESSION['zpage'] = $_GET['zpage'];
 					$orders = getOrderListByDate($_SESSION['date_start'],$_SESSION['date_end'],$group2, $user_name);
 				 }
 				 
@@ -214,7 +216,12 @@
 				 	$today = date("Y-m-d"); 
 					$today_60 = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-150,date("Y")));
 					
-					getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$today_60,$today,$min_m,$max_m,$debt_cust_address1,$debt_cust_address2,$debt_post_co,$total_m, $total_price,$group2, $user_name,$prod_cd,$client_tel,$sts);
+					$input_sale_ref = $sale_ref;
+					if (isset($hide_sale_ref)) {
+						$input_sale_ref = $hide_sale_ref;
+					}
+					
+					getOrderListByFilter($input_sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$today_60,$today,$min_m,$max_m,$debt_cust_address1,$debt_cust_address2,$debt_post_co,$total_m, $total_price,$group2, $user_name,$prod_cd,$client_tel,$sts);
 				 }
 
 				 ?>
@@ -232,6 +239,7 @@
                  			<td width='120'> Client's Payment Name</td>
                  			<td>Product No.</td>
                  			<td width='60'>Price</td>
+							<td width='60'>Qty</td>
                  			<td width='60'>Shipping </td>
                  			<td width='60'>Total</td>
                  			<td >Payment</td>
@@ -258,11 +266,29 @@
                  				<td><?=$order['debt_pay_name'] ?>&nbsp;</td>
                  				<td><?=$order['sale_prod_id'] ?></td>
                  				<td><?=$order['product_price'] ?></td>
+								<td><?=$order['sprod_unit']?></td>
                  				<td><?=$order['sale_ship_fee'] ?></td>
                  				<td><?=$order['cost_total'] ?></td>
                  				<td>
 	                 				<? if ($order['bal_data'] != NULL) {?>
-	                 					<a href="index.php?page=order&subpage=balance&sale_ref=<?=$order['sale_ref'] ?>">&yen;<?=$order['bal_data']['bal_pay'] ?></a><br><?=$order['bal_data']['bal_pay_type'] ?> (<?=$order['bal_data']['bal_dat'] ?>)
+	                 					<a href="index.php?page=order&subpage=balance&sale_ref=<?=$order['sale_ref'] ?>">&yen;<?=$order['bal_data']['bal_pay'] ?></a><br>
+	                 					<? 	switch($order['bal_data']['bal_pay_type']) {
+	                 							case "Store":
+	                 								echo mb_convert_encoding('コンビニ決済', "EUC-JP","UTF-8");
+	                 								break;
+                 								case "Credit Card":
+                 									echo mb_convert_encoding('クレカ決済', "EUC-JP","UTF-8");
+                 									break;
+                 								case "Card":
+                 									echo mb_convert_encoding('カード決済', "EUC-JP","UTF-8");
+                 									break;
+                 								case "Rakuten":
+                 									echo mb_convert_encoding('楽天Edy決済', "EUC-JP","UTF-8");
+                 									break;
+                 								default:
+                 									echo $order['bal_data']['bal_pay_type'];
+	                 						} 
+	                 					?> (<?=$order['bal_data']['bal_dat'] ?>)
 	                 				<? } else {?>
 	                 					<a href="index.php?page=order&subpage=balance&sale_ref=<?=$order['sale_ref'] ?>">Fill in</a>
 	                 				<? }?>

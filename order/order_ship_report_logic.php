@@ -18,7 +18,7 @@ else {$sale_name='';
 
 }
 
-function getShipReport($access,$user_name,$group3)
+/* function getShipReport($access,$user_name,$group3)
 {
 	ob_flush();
 	flush();
@@ -57,6 +57,65 @@ function getShipReport($access,$user_name,$group3)
 	}
 	//end loop
 	echo "</table>";
+} */
+
+function getShipReportData($access,$user_name,$group3) {
+	$db=connectDatabase();
+	mysql_select_db(DB_NAME,$db);
+	
+	if ($access==Admin_name) {
+		$query =
+		"SELECT * 
+		FROM ben_sale
+		join authorize on sale_group=username
+		join ben_bal on sale_ref=bal_ref
+		left outer join ben_sale_prod on sprod_ref = sale_ref 
+		left outer join ben_debt on debt_ref = sale_ref 
+		where group3='$group3' 
+		and bal_ref not in (select check_ref from ben_check)
+		order by bal_dat asc";
+	}else {
+		$query = 
+		"SELECT * 
+		FROM ben_sale
+		join authorize on sale_group=username
+		join ben_bal on sale_ref=bal_ref
+		left outer join ben_sale_prod on sprod_ref = sale_ref 
+		left outer join ben_debt on debt_ref = sale_ref
+		where group3='$group3' 
+		and sale_group='$user_name' 
+		and bal_ref not in (select check_ref from ben_check) 
+		order by bal_dat asc";
+	}
+	
+	$result = mysql_query($query, $db) or die (mysql_error()."<br />Couldn't execute query: $query");
+	$num_results=mysql_num_rows($result);
+	
+	$data_list = array();
+	for ($i=0;$i<$num_results;$i++)
+	{
+		$row=mysql_fetch_array($result);
+		
+		$data = array();
+		
+		$data['sprod_no'] = $row['sprod_no'];
+		$data['bal_ref'] = $row["bal_ref"];
+		$data['sale_group'] = $row["sale_group"];
+		$data['sale_name'] = $row["sale_name"];
+		$data['bal_ship_type'] = $row["bal_ship_type"];
+		$data['sprod_id'] = $row["sprod_id"];
+		$data['debt_remark'] = $row["debt_remark"];
+		
+		$data_list[] = $data;
+	}
+	
+	// Free resultset
+	mysql_free_result($result);
+	
+	// Closing connection
+	mysql_close($db);
+	
+	return $data_list;
 }
 
 function getShipReport2($date_start,$date_end,$access,$user_name)

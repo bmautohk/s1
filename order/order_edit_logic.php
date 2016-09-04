@@ -31,7 +31,10 @@ if (isset($_POST['isupdate']))
 
 if (isset($_GET['sale_ref']) or isset($_POST['isfind'])) 
 {
-	if (isset($_GET['sale_ref'])) {$sale_ref = trim($_GET['sale_ref']);}
+	if (isset($_GET['sale_ref'])) {
+		$sale_ref = trim($_GET['sale_ref']);
+	}
+	
 	//if (isset($_POST['isfind'])) {$sale_ref = $_POST['sale_ref'];}
 	$sale_row = getsale_data($sale_ref);
 	$sale_group = $sale_row['sale_group'];
@@ -46,11 +49,42 @@ if (isset($_GET['sale_ref']) or isset($_POST['isfind']))
 	$sts=$sale_row['sts'];
 	
 }
-if (isset($_POST['isadd'])){
+if (isset($_POST['isadd'])) {
+	
+	$sprod_material = '';
+	if (isset($_POST['sprod_material_option_1'])) {
+		foreach ($_POST['sprod_material_option_1'] as $material) {
+			if ($sprod_material == '') {
+				$sprod_material = $material;
+			} else {
+				$sprod_material .= ', '.$material;
+			}
+		}
+	}
+	
+	$other = trim($_POST['sprod_material_1']);
+	if (!empty($other)) {
+		if ($sprod_material == '') {
+			$sprod_material = $other;
+		} else {
+			$sprod_material .= ', '.$other	;
+		}
+	}
+	
+	if (empty($_POST['sprod_colour_option_1'])) {	
+		// Other
+		$sprod_color = trim($_POST['sprod_colour_1']);
+	} else {
+		// Dropdown
+		$sprod_color = $_POST['sprod_colour_option_1'];
+	}
+	
 	$sqla = "INSERT INTO ben_sale_prod SET
 		sprod_ref = '$sale_ref',
 		sprod_id = '".trim($_POST['sprod_id_1'])."',
 		sprod_name = '".trim($_POST['sprod_name_1'])."',
+		sprod_material = '".$sprod_material."',
+		sprod_colour = '".$sprod_color."',
 		sprod_price = '".trim($_POST['sprod_price_1'])."', 
 		sprod_unit = '".trim($_POST['sprod_unit_1'])."'"; 
 	
@@ -62,6 +96,8 @@ if (isset($_POST['isfindadd']))
 	$sprod_opt = $_POST['sprod_opt'];
 	$sprod_id_t = "sprod_id_".$sprod_opt;
 	$sprod_name_t = "sprod_name_".$sprod_opt;
+	$sprod_material_t = "sprod_material_".$sprod_opt;
+	$sprod_colour_t = "sprod_colour_".$sprod_opt;
 	$sprod_price_t = "sprod_price_".$sprod_opt;
 	$sprod_unit_t = "sprod_unit_".$sprod_opt;
 	
@@ -69,6 +105,8 @@ if (isset($_POST['isfindadd']))
 		sprod_ref = '$sale_ref',
 		sprod_id = '".trim($_POST[$sprod_id_t])."',
 		sprod_name = '".trim($_POST[$sprod_name_t])."',
+		sprod_material = '".trim($_POST[$sprod_material_t])."',
+		sprod_colour = '".trim($_POST[$sprod_colour_t])."',
 		sprod_price = ".trim($_POST[$sprod_price_t]).", 
 		sprod_unit = ".trim($_POST[$sprod_unit_t]); 
 	
@@ -97,11 +135,13 @@ function get_edit_list($sale_ref)
 	$db=connectDatabase();
 	mysql_select_db(DB_NAME,$db);
 	$result = mysql_query("SELECT * FROM ben_sale_prod where sprod_ref = '$sale_ref'" ,$db) or die (mysql_error()."<br />Couldn't execute query: $query");
-	echo "<table width=\"654\" border=\"1\" cellpadding=\"0\" cellspacing=\"0\">";
+	echo "<table width=\"904\" border=\"1\" cellpadding=\"0\" cellspacing=\"0\">";
 	$num_results=mysql_num_rows($result);
 	echo "<tr align=\"center\" valign=\"middle\">
 	<td width=\"200\">Product ID</td>
 	<td width=\"180\">Product Name</td>
+	<td>&#x6750;&#x8CEA;</td>
+    <td>&#x984F;&#x8272;</td>
 	<td width=\"80\">Unit</td>
 	<td width=\"120\">Price</td>
 	<td >Delete Record</td>
@@ -112,6 +152,8 @@ function get_edit_list($sale_ref)
 		
 		$sprod_id=$row["sprod_id"];
 		$sprod_name=$row["sprod_name"];
+		$sprod_material=$row["sprod_material"];
+		$sprod_colour=$row["sprod_colour"];
 		$sprod_price=$row["sprod_price"];
 		$sprod_unit=$row["sprod_unit"];
 		$sprod_no=$row["sprod_no"];
@@ -120,6 +162,8 @@ function get_edit_list($sale_ref)
 		
 		<td width=\"200\">$sprod_id</td>
 		<td width=\"180\">$sprod_name</td>
+		<td>$sprod_material</td>
+		<td>$sprod_colour</td>
 		<td width=\"80\">$sprod_unit</td>
 		<td width=\"120\"> &yen;$sprod_price</td>
 		<td ><a href=\"index.php?page=order&subpage=delete&sprod_no=$sprod_no&sale_ref=$sale_ref\">Delete</a></td>

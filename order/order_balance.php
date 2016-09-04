@@ -55,9 +55,10 @@
 
                           <input name="bal_pay" type="text" class="standard" id="bal_pay" value="<? echo $bal_pay;?>"></td>
 
-                        <td width="87"><div align="left">Payment Type:</div></td>
+                        <td width="87" style="vertical-align:top"><div align="left">Payment Type:</div></td>
 
-                        <td width="262"><div align="left">JNB
+                        <td width="282">
+                        	<div align="left">JNB
 
                               <input name="bal_pay_type" type="radio" value="JNB" <? if ($bal_pay_type=='JNB') {echo "checked";} ?>>
 
@@ -69,11 +70,26 @@
 
                             <input name="bal_pay_type" type="radio" value="Yahoo" <? if ($bal_pay_type=='Yahoo') {echo "checked";} ?>>
 
-                            Post Office                          
-
+                            Post Office
                             <input name="bal_pay_type" type="radio" value="Post Office" <? if ($bal_pay_type=='Post Office') {echo "checked";} ?>>
+                            <br />
+                            
+                            <? echo mb_convert_encoding('????決?', "EUC-JP","UTF-8"); ?>
+                            <input name="bal_pay_type" type="radio" value="Store" <? if ($bal_pay_type=='Store') {echo "checked";} ?>>
+                            
+                            <? echo mb_convert_encoding('???決?', "EUC-JP","UTF-8"); ?>
+                            <input name="bal_pay_type" type="radio" value="Credit Card" <? if ($bal_pay_type=='Credit Card') {echo "checked";} ?>>
+                            
+							<? echo mb_convert_encoding('???決?', "EUC-JP","UTF-8"); ?>
+                            <input name="bal_pay_type" type="radio" value="Card" <? if ($bal_pay_type=='Card') {echo "checked";} ?>>
+                            
+                            <br />
+                            
+							<? echo mb_convert_encoding('?天Edy決?', "EUC-JP","UTF-8"); ?>
+                            <input name="bal_pay_type" type="radio" value="Rakuten" <? if ($bal_pay_type=='Rakuten') {echo "checked";} ?>>
 
-                        </div></td>
+                        	</div>
+                        </td>
 
                       </tr>
 
@@ -141,8 +157,37 @@
 
                           <input name="bal_ship_type" type="radio" value="" <? if ($bal_ship_type=='') {echo "checked";} ?> >
 
-</td>
+						</td>
 
+                      </tr>
+                      
+                       <tr>
+
+                        <td valign="top">&nbsp;</td>
+
+                        <td colspan="3">&nbsp;</td>
+
+                      </tr>
+                      
+                      <tr>
+                        <td valign="top">&#37197;&#36948;&#26085; : </td> <!-- 配達日 -->
+
+                        <td colspan="3">
+                        	<input name="bal_delivery_date" type="text" value="<? echo $bal_delivery_date; ?>" size=20 />
+                        	<small><a href="javascript:showCal('Calendar2')">Select Date</a></small>
+                        </td>
+                      </tr>
+                      
+                      <tr>
+                        <td valign="top">&#37197;&#36948;&#26178;&#38291; : </td> <!-- 配達時間 -->
+
+                        <td colspan="3">
+                        	<select name="bal_delivery_time_option_id" id="bal_delivery_time_option_id">
+                        		<option value="">&#12381;&#12398;&#20182;</option>
+                        		<? echo getdelivery_time($bal_delivery_time_option_id); ?>
+                        	</select>
+                        	<input name="bal_delivery_time" id="bal_delivery_time" type="text" value="<? echo $bal_delivery_time; ?>" <?=$bal_delivery_time_option_id == '' ? '' : 'disabled' ?> />
+                        </td>
                       </tr>
 
                       <tr>
@@ -217,10 +262,12 @@
 
                         <td colspan="3">&yen;
 
-                          <input name="return_pay" type="text" class="standard" value="<? echo $return_pay;?>"></td>
+                          <input name="return_pay" type="text" class="standard" value="<? echo $return_pay;?>">
+                          
+                        </td>
 
                       </tr>
-
+                      
                     </table>
 
                       <br>
@@ -236,6 +283,21 @@
               </table>
 
             </form>
+            
+<script type="text/javascript">
+$(function() {
+	
+	$('#bal_delivery_time_option_id').change(function() {
+		var select_id = $('option:selected', this).val();
+		
+		if (select_id == '') {
+			$('#bal_delivery_time').removeAttr('disabled');
+		} else {
+			$('#bal_delivery_time').attr('disabled', true);
+		}
+	});
+});
+</script>
             
 <script language="javascript" src="cal2.js"></script>
 

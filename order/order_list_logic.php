@@ -61,6 +61,7 @@ else {
 
 function getOrderListByDate($date_start,$date_end,$access,$user_name) 
 {
+
 	ob_flush();
 	flush();
 //echo "getOrderListByDate";
@@ -118,6 +119,7 @@ function getOrderListByDate($date_start,$date_end,$access,$user_name)
 			$order['sale_tax'] = $sale_tax;
 			$order['sale_sts'] = $row["sts"];
 			$order['sale_prod_id'] = $row["sprod_id"];
+			$order['sprod_unit']=$row["sprod_unit"];
 			
 			// Price
 			$order['product_price'] = $row['sprod_price'] * $row['sprod_unit'];
@@ -321,6 +323,7 @@ function genCSVByDate($date_start,$date_end,$status,$access,$user_name,$isRetrie
 		$order['sale_ship_fee']=$sale_ship_fee;
 		$order['sale_tax']=$sale_tax;
 		$order['sprod_id'] = $row['sprod_id']; 
+		$order['sprod_unit'] = $row['sprod_unit'];
 		
 		//payment of product
 		$cost_prod=getprod_cost($sale_ref);
@@ -652,7 +655,7 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 				$remark ="<a href=\"index.php?page=order&subpage=remark&sale_ref=".$sale_ref." \">$remark</a>";
 			}	
 			else {
-				$remark ="<a href=\"index.php?page=order&subpage=remark?&ale_ref=".$sale_ref." \">Fill in</a>";
+				$remark ="<a href=\"index.php?page=order&subpage=remark&ale_ref=".$sale_ref." \">Fill in</a>";
 			}
 
 			echo "<tr align=\"right\" valign=\"top\"> <td>".$sale_date."</td><td>".$sale_edit."<br> $sale_yahoo_id (".$sale_dat .")</td><td >".$sale_yahoo_id."&nbsp;</td><td >".$sale_group."&nbsp;</td><td width=\"100\" style=\"word-wrap:break-word;\">".$sale_email."&nbsp;</td><td >".$sale_name."&nbsp;</td><td>".$debt_data."&nbsp;</td><td>".$debt_pay_name."&nbsp;</td><td>$sale_prod_id</td><td >$cost_prod</td><td >$sale_ship_fee</td><td >$cost_total</td><td>".$bal_data."</td><td>".$return_data."</td><td $ship_bg >".$ship_data."</td><td >".$remark."&nbsp;</td><td>".$sts."&nbsp;</td></tr>\n";

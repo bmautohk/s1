@@ -89,7 +89,7 @@ echo $row_debt['debt_remark'];
 						}*/
 ?>
 						<input name="isupdate" type="submit" value="Shipped">
-						
+						<input name="isupdate2" type="submit" value="Shipped & Go to Order">
 						&nbsp; </td>
                       </tr>
                     </table>
@@ -126,14 +126,11 @@ echo $row_debt['debt_remark'];
                             <option value='parcel'>Air Parcel</option>
                             <option value='jp'>JP</option>
                             <option value='jp2'>JP with cash</option>
-                            <? if ($companyDomain == DOMAIN_KAITONIC) {?>
-								<option value='jp_post_cod'>JP Post COD</option>
-							<? } else {?>
-								<option value='jp_post_cod_topnov'>JP Post COD</option>
-							<? }?>
-							<option value='jp_post_paid'>JP Post Paid</option>
-							<option value='jp_sagawa_cod'>JP sagawa COD</option>
-							<option value='jp_sagawa'>JP sagawa</option>
+				<option value='jp_post_cod'>JP Post COD</option>
+				<option value='jp_post_cod2016'>JP Post COD 2016</option>
+				<option value='jp_post_paid'>JP Post Paid</option>
+				<option value='jp_sagawa_cod'>JP sagawa COD</option>
+				<option value='jp_sagawa'>JP sagawa</option>
                             <option value='1'>1</option>
                         </select>
                         

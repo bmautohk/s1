@@ -54,39 +54,61 @@ exit;
 
 <!--
 
-.style2 {	font-size: 12px;
-
-	font-weight: bold;
-
-}
-
-.small2 {
-
-	FONT-SIZE: 9px
-
-}
-
-.style4 {font-size: 12; font-weight: bold; }
-
-.style5 {font-size: 12px}
-
-.style6 {font-size: 12px; font-weight: bold; }
-
-.style9 {font-size: 12; font-weight: bold; }
-
-.style11 {font-family: NW-7; font-size: 20px;}
-
-body {
-
-	margin-left: 0px;
-
-	margin-top: 0px;
-
-	margin-right: 0px;
-
-	margin-bottom: 0px;
-
-}
+	.style2 {	font-size: 12px;
+	
+		font-weight: bold;
+	
+	}
+	
+	.small2 {
+	
+		FONT-SIZE: 9px
+	
+	}
+	
+	.style4 {font-size: 12; font-weight: bold; }
+	
+	.style5 {font-size: 12px}
+	
+	.style6 {font-size: 12px; font-weight: normal; }
+	
+	.style9 {font-size: 12; font-weight: bold; }
+	
+	.style11 {font-family: NW-7; font-size: 22px; font-weight: normal; }
+	.style111 {font-family: NW-7; font-size: 22px; font-weight: normal; }
+	
+	body {
+	
+		margin-left: 0px;
+	
+		margin-top: 0px;
+	
+		margin-right: 0px;
+	
+		margin-bottom: 0px;
+	
+	}
+	
+	.container-top {
+		height: 415px;
+		overflow:hidden;
+	}
+	
+	.container-bottom {
+		height: 300px;
+		overflow:hidden;
+	}
+	
+	.delivery {
+		FONT-SIZE: 11px;
+		FONT-FAMILY: Tahoma;
+		display:block;
+	}
+	
+	.shipping_jp {
+		FONT-SIZE: 12px;
+		FONT-FAMILY: Tahoma;
+	}
 
 -->
 
@@ -108,587 +130,642 @@ body {
 
 	$ship_row=getship_data($sale_ref);
 	
+	$bal = getbalance_data($sale_ref);
+	
+	$prod_rows = getsprod_data_all($sale_ref);
 	$office_addr=getOfficeAddress($addr_id);
 
 	?>
 
     <br>
 
-    <br>	
+    <br>
+
+<div style="width:905px">
+
+<!-- Top left -->
+    <div class="container-top" style="width:290px; float:left;">
+    	<div style="height:310px; overflow:hidden; ">
+			<table width="286" border="0" cellspacing="0" cellpadding="0">
+				<tr valign="top">
+
+					<td width="286" class="style2">
+						<div align="right">
+							<span class="style6"> </span>
+						</div>
+						<div align="left">
+							<span class="style4"><span class="style6">¢©<? echo "". $debt_row['debt_post_co'];?>
+							</span> </span>
+						</div>
+					</td>
+
+				</tr>
+
+				<tr>
+
+					<td class="style2"><span class="style2"></span> &nbsp;<? echo "". $debt_row['debt_cust_address1'];?>
+					</td>
+
+				</tr>
+
+				<tr>
+
+					<td class="style2 style4"><? echo "". $debt_row['debt_cust_address2'];?>
+					</td>
+
+				</tr>
+
+				<tr>
+
+					<td class="style2"><? echo "". $debt_row['debt_cust_address3'];?>
+					</td>
+
+				</tr>
+
+				<tr>
+
+					<td class="style2"><? echo "". $order_row['sale_name'];?> ÕÕ</td>
+
+				</tr>
+
+				<tr>
+
+					<td align="left" class="style2">
+						<span class="style6">
+							<span class="style4">
+								<? if ($debt_row['debt_tel']!='' or $debt_row['debt_mobile']!='') {
+									echo "Tel:". $debt_row['debt_tel']." ". $debt_row['debt_mobile']; 
+								}?>
+							</span>
+						</span>
+					</td>
 
-<table width="900" border="0">
+				</tr>
 
-      <tr>
+				<tr style="vertical-align: top; height: 230px">
 
-        <td width="286" valign="top"><table width="286" border="0" cellspacing="0" cellpadding="0">
+					<td class="style2">
+						<span class="style6"><br></span>
+						<span class="small2"><strong><?=$office_addr['address1']?><br> <?=$office_addr['address2']?><br>
 
-          <tr valign="top">
+								<?=$office_addr['address3']?> </strong> </span><span
+						class="style5"><br> </span>
+						
+						<span class="style6"><br>
+						
+							<span class="small2">æ¶… ID: <? echo getsprod_ship_data($sale_ref); ?></span>
+							<span class="small2">Group: <?=$order_row['sale_group']; ?>
+	
+									<br>
+	
+							</span>
+							
+							<span class="small2">
+								&#21830;&#21697;&#21517;:
+								<? foreach ($prod_rows as $prod_row) { ?>
+									<?=$prod_row['sprod_name']; ?>
+									<br />
+									<?=$prod_row['sprod_material'] ?> <?=$prod_row['sprod_colour'] ?>
+									<br />
+									<br />
+								<? } ?>
+							</span>
+							
+						</span>
+					</td>
 
-            <td width="286" class="style2"> <div align="right"><span class="style6"> </span></div>              <div align="left"><span class="style4"><span class="style6">¢©<? echo "". $debt_row['debt_post_co'];?></span></span></div></td>
+				</tr>
 
-          </tr>
+			</table>
+		</div>
+		
+		<div class="style6" style="height:40px; padding-left:2px; overflow:hidden;">
+    		<span class="delivery" style="width:75px; float:left"><?=$bal['bal_delivery_date'] ?>&nbsp;</span>
+			<span class="delivery"><?=$bal['bal_delivery_time'] ?>&nbsp;</span>
+    	</div>
 
-          <tr>
+	</div>
 
-            <td class="style2">            <span class="style2"></span>        &nbsp;<? echo "". $debt_row['debt_cust_address1'];?></td>
+<!-- Top middle -->
+	<div class="container-top" style="width: 302px; float:left">
+    	<div style="height:260px; overflow:hidden;">
+    		<table border="0" cellspacing="0" cellpadding="0">
+				<tr>
 
-          </tr>
+					<td class="style2">&nbsp;</td>
 
-          <tr>
+					<td colspan="4" class="style2"><table width="100%" border="0">
+							<tr>
+								<td><font size="16" class="style9"><strong>Œ¡∂‚∏Â«º</strong> </font>
+								</td>
+								<td><span class="style6">&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+										&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;a<? echo "". $ship_row['check_shipping_jp'];?>a
+								</span>&nbsp; &nbsp; &nbsp;</td>
+							</tr>
+						</table>
+					</td>
 
-            <td class="style2 style4"><? echo "". $debt_row['debt_cust_address2'];?></td>
+				</tr>
+				<tr>
+					<td height="30"></td>
+				</tr>
+				<tr>
 
-          </tr>
+					<td width="11" class="style2">
 
-          <tr>
+						<div align="left"></div>
+					</td>
 
-            <td class="style2"><? echo "". $debt_row['debt_cust_address3'];?></td>
+					<td colspan="4" class="style2"><span class="style4"><span
+							class="style6">¢©<? echo "". $debt_row['debt_post_co'];?>
+						</span> </span></td>
 
-          </tr>
+				</tr>
 
-          <tr>
+				<tr>
 
-            <td class="style2"><? echo "". $order_row['sale_name'];?> ÕÕ</td>
+					<td class="style2">&nbsp;</td>
 
-          </tr>
+					<td height="18" colspan="4" valign="top" class="style2"><span
+						class="style4"><? echo "". $debt_row['debt_cust_address1'];?> </span>
+					</td>
 
-          <tr>
+				</tr>
 
-            <td align="left" class="style2"><span class="style6"><span class="style4">
+				<tr>
 
-              <? if ($debt_row['debt_tel']!='' or $debt_row['debt_mobile']!='') {echo "Tel:". $debt_row['debt_tel']." ". $debt_row['debt_mobile'];}?>
+					<td class="style2 style5">&nbsp;</td>
 
-            </span></span></td>
+					<td colspan="4" class="style2"><span class="style4"><? echo "". $debt_row['debt_cust_address2'];?>
+					</span></td>
 
-          </tr>
+				</tr>
 
-          <tr>
+				<tr>
 
-            <td class="style2"><span class="style6"><br>
+					<td class="style2">&nbsp;</td>
 
-            </span><span class="small2"><strong><?=$office_addr['address1']?><br>
+					<td colspan="4" class="style2 style4"><span class="style4"><? echo "". $debt_row['debt_cust_address3'];?>
+					</span></td>
 
-<?=$office_addr['address2']?><br>
+				</tr>
 
-<?=$office_addr['address3']?></strong></span><span class="style5"><br>
+				<tr>
 
-            </span><span class="style6"><br>
+					<td align="right" class="style2">&nbsp;</td>
 
-            <span class="small2">æ¶… ID: <? echo getsprod_ship_data($sale_ref); ?></span> <span class="small2">Group:
+					<td colspan="4" class="style2"><span class="style4"><? echo "". $order_row['sale_name'];?>
+							ÕÕ</span></td>
 
-            <?=$order_row['sale_group']; ?>
+				</tr>
 
-            <br>
+				<tr>
 
+					<td width="11" class="style2">&nbsp;</td>
 
+					<td colspan="4" class="style2"><span class="style6"><span
+							class="style4"> <? if ($debt_row['debt_tel']!='' or $debt_row['debt_mobile']!='') {echo "Tel:". $debt_row['debt_tel']." ". $debt_row['debt_mobile'];}?>
 
-            </span> </span></td>
+						</span> </span></td>
 
-          </tr>
+				</tr>
 
-          <tr>
+				<tr>
 
-            <td class="style2"><span class="style5">
+					<td colspan="5" class="style2">&nbsp;</td>
 
-              </span>
+				</tr>
 
-              <table width="250" border="0">
+				<tr>
 
-                <tr>
+					<td class="style4"><em> <br> <br>
 
-                  <td><span class="style5">
+					</em></td>
 
-                  </span></td>
+					<td height="101" colspan="4" valign="top" class="style6"><span
+						class="small2"><?=$office_addr['address1']?><br> <?=$office_addr['address2']?><br>
 
-                  <td><span class="style5">
+							<?=$office_addr['address3']?><br> °°</span><br> <span
+						class="small2">æ¶… ID: <? echo getsprod_ship_data($sale_ref); ?>
+					</span> <span class="small2">Group: <?=$order_row['sale_group']; ?>
+							<!--<br>--->
+					</span> <br />
+					<span class="small2"> &#21830;&#21697;&#21517;:
+						<? foreach ($prod_rows as $prod_row) { ?>
+							<?=$prod_row['sprod_name']; ?><br />
+						<? } ?>
+					</span>
+					</td>
 
-                  </span></td>
+				</tr>
 
-                  <td><span class="style5"></span></td>
+				<tr>
 
-                </tr>
+					<td colspan="5" class="style2"></td>
 
-              </table></td>
+				</tr>
 
-          </tr>
+			</table>
+    	
+    	</div>
+    	
+    	<div>
+    		<table>
+    			<tr>
+					<td colspan="2">&nbsp;</td>
 
-          <tr>
+					<td width="178">
+						<div align="right">
+							<span class="style6"><? echo "". $ship_row['check_shipping_jp'];?>
+							</span>&nbsp;
+						</div>
+					</td>
 
-            <td class="style2"><span class="style5">
+					<td colspan="2">&nbsp;</td>
 
-            </span></td>
+				</tr>
 
-          </tr>
+				<tr>
 
-        </table></td>
+					<td><em></font> </em></td>
 
-        <td colspan="3" valign="top">
+					<td colspan="3" align="center" valign="middle"><span
+						class="style111">a<? echo "". $ship_row['check_shipping_jp'];?>a
+					</span><br> <span class="style6">a<? echo "". $ship_row['check_shipping_jp'];?>a
+					</span> <br>
+					</td>
 
-          <table width="300" border="0" cellspacing="0" cellpadding="0">
+					<td width="83">&nbsp;</td>
 
-          <tr>
+				</tr>
+    		</table>
+    	</div>
+	</div>
+	
+<!-- Top right -->
+    <div class="container-top" style="width:300px;">
+    	<div class="delivery" style="height:245px; margin:50px 0px 0px 20px; overflow:hidden;">
+    		<? foreach ($prod_rows as $prod_row) { ?>
+    			<?=$prod_row['sprod_colour'] ?><br />
+    		<? } ?>
+    	
+    		<br />
+    		<?=$bal['bal_delivery_date'] ?>
+    		<?=$bal['bal_delivery_time'] ?>
+    	</div>
+    </div>
+	
+<!-- Bottom left -->
+	<div class="container-bottom" style="width:290px; float:left;">
+    	<div style="height:235px; overflow:hidden;">
+    	
+    		<table width="286" border="0" cellspacing="0" cellpadding="0">
+				<tr>
 
-            <td class="style2">&nbsp;</td>
+					<td colspan="2" class="style6">
 
-            <td colspan="4" class="style2"><div align="center"><span class="style6">&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;a<? echo "". $ship_row['check_shipping_jp'];?>a</span>&nbsp; &nbsp; &nbsp;</div></td>
+						<div align="left"></div>
+						<span class="style9">¢©<? echo "". $debt_row['debt_post_co'];?></span>
+					</td>
 
-          </tr>
+				</tr>
 
-          <tr>
+				<tr>
 
-            <td width="11" class="style2">
+					<td height="18" colspan="2" class="style6">
+						<span class="style9"><? echo "". $debt_row['debt_cust_address1'];?></span>
+					</td>
 
-              <div align="left"></div></td>
+				</tr>
 
-            <td colspan="4" class="style2"><span class="style4"><span class="style6">¢©<? echo "". $debt_row['debt_post_co'];?></span></span></td>
+				<tr>
 
-          </tr>
+					<td colspan="2" class="style2 style5"><span class="style9"><? echo "". $debt_row['debt_cust_address2'];?>
+					</span></td>
 
-          <tr>
+				</tr>
 
-            <td class="style2">&nbsp; </td>
+				<tr>
 
-            <td height="18" colspan="4" valign="top" class="style2"><span class="style4"><? echo "". $debt_row['debt_cust_address1'];?></span></td>
+					<td colspan="2" class="style6"><span class="style9"><? echo "". $debt_row['debt_cust_address3'];?>
+					</span></td>
 
-          </tr>
+				</tr>
 
-          <tr>
+				<tr>
 
-            <td class="style2 style5">&nbsp;</td>
+					<td colspan="2" align="right" class="style6">
+						<div align="left">
+							<span class="style9"><? echo "". $order_row['sale_name'];?> ÕÕ</span>
+						</div>
+					</td>
 
-            <td colspan="4" class="style2"><span class="style4"><? echo "". $debt_row['debt_cust_address2'];?></span></td>
+				</tr>
 
-          </tr>
+				<tr>
 
-          <tr>
+					<td colspan="2" class="style6"><span class="style9"> <? if ($debt_row['debt_tel']!='' or $debt_row['debt_mobile']!='') {echo "Tel:". $debt_row['debt_tel']." ". $debt_row['debt_mobile'];}?>
 
-            <td class="style2">&nbsp;</td>
+					</span></td>
 
-            <td colspan="4" class="style2 style4"><span class="style4"><? echo "". $debt_row['debt_cust_address3'];?></span></td>
+				</tr>
 
-          </tr>
+				<tr>
 
-          <tr>
+					<td colspan="2" class="style6">&nbsp;</td>
 
-            <td align="right" class="style2">&nbsp;  </td>
+				</tr>
 
-            <td colspan="4" class="style2"><span class="style4"><? echo "". $order_row['sale_name'];?> ÕÕ</span></td>
+				<tr align="left" valign="top">
 
-          </tr>
+					<td height="150" colspan="2" class="style9"><em> </em><span
+						class="small2"><?=$office_addr['address1']?><br> <?=$office_addr['address2']?><br>
 
-          <tr>
+							<?=$office_addr['address3']?> </span><br> <br> <span
+						class="small2">æ¶… ID: <? echo getsprod_ship_data($sale_ref); ?>
+					</span> <span class="small2">Group: <?=$order_row['sale_group']; ?>
+					</span> <br />
+					<span class="small2"> &#21830;&#21697;&#21517;:
+						<? foreach ($prod_rows as $prod_row) { ?>
+							<?=$prod_row['sprod_name']; ?><br />
+						<? } ?>
+					</span>
+					</td>
 
-            <td width="11" class="style2">&nbsp;</td>
+				</tr>
 
-            <td colspan="4" class="style2"><span class="style6"><span class="style4">
+			</table>
+    	</div>
+   	
+   		<div style="height:40px; overflow:hidden;">
+   			<table>
+   				<tr>
+   					<td width="204" height="15">
+						<div align="center">
+							<span class="style11">a<? echo "". $ship_row['check_shipping_jp'];?>a</span>
+							<span class="style6">a<? echo "". $ship_row['check_shipping_jp'];?>a</span>
+						</div>
+					</td>
+   				</tr>
+   			</table>
+   		</div>
+   		
+    </div>
+    
+<!-- Bottom middle -->
+    <div class="container-bottom" style="width:305px; margin-right:5px; float:left;">
+    	<div style="height:235px; overflow:hidden;">
+    		<table width="300" border="0" cellspacing="0" cellpadding="0">
 
-              <? if ($debt_row['debt_tel']!='' or $debt_row['debt_mobile']!='') {echo "Tel:". $debt_row['debt_tel']." ". $debt_row['debt_mobile'];}?>
+				<tr>
 
-            </span></span></td>
+					<td width="10" class="style6">
 
-          </tr>
+						<div align="left"></div>
+					</td>
 
-          <tr>
+					<td colspan="3" class="style6"><span class="style9">¢©<? echo "". $debt_row['debt_post_co'];?>
+					</span></td>
 
-            <td colspan="5" class="style2">&nbsp;</td>
+				</tr>
 
-          </tr>
+				<tr>
 
-          <tr>
+					<td class="style6">&nbsp;</td>
 
-            <td class="style4"><em> <br>
+					<td height="18" colspan="3" valign="top" class="style6"><span
+						class="style9"><? echo "". $debt_row['debt_cust_address1'];?> </span>
+					</td>
 
-            <br>
+				</tr>
 
-            </em></td>
+				<tr>
 
-            <td height="108" colspan="4" valign="top" class="style6"><span class="small2"><?=$office_addr['address1']?><br>
+					<td class="style2 style5">&nbsp;</td>
 
-<?=$office_addr['address2']?><br>
+					<td colspan="3" class="style6"><span class="style9"><? echo "". $debt_row['debt_cust_address2'];?>
+					</span></td>
 
-<?=$office_addr['address3']?><br>
+				</tr>
 
-°°</span><br>
+				<tr>
 
+					<td class="style6">&nbsp;</td>
 
+					<td colspan="3" class="style2 style4"><span class="style9"><? echo "". $debt_row['debt_cust_address3'];?>
+					</span></td>
 
-<span class="small2">æ¶… ID: <? echo getsprod_ship_data($sale_ref); ?></span><span class="small2">Group: <?=$order_row['sale_group']; ?><br>
+				</tr>
 
+				<tr>
 
+					<td align="right" class="style6">&nbsp;</td>
 
-</span></td>
+					<td colspan="3" class="style6"><span class="style9"><? echo "". $order_row['sale_name'];?>
+							ÕÕ</span></td>
 
-          </tr>
+				</tr>
 
-          <tr>
+				<tr>
 
-            <td colspan="5" class="style2">             </td>
+					<td width="10" class="style6">&nbsp;</td>
 
-          </tr>
+					<td colspan="3" class="style6"><span class="style9"> <? if ($debt_row['debt_tel']!='' or $debt_row['debt_mobile']!='') {echo "Tel:". $debt_row['debt_tel']." ". $debt_row['debt_mobile'];}?>
 
-          <tr>
+					</span></td>
 
-            <td colspan="2">&nbsp;</td>
+				</tr>
 
-            <td width="178"><div align="right"><span class="style6"><? echo "". $ship_row['check_shipping_jp'];?></span>&nbsp;</div></td>
+				<tr>
 
-            <td colspan="2">&nbsp;</td>
+					<td colspan="4" class="style6">&nbsp;</td>
 
-          </tr>
+				</tr>
 
-          <tr>
+				<tr>
 
-            <td>  <em></font></em></td>
+					<td width="10" class="style9"><em> <br> <br>
 
-            <td colspan="3" align="center" valign="middle"><span class="style11">a<? echo "". $ship_row['check_shipping_jp'];?>a</span><br>
+					</em></td>
 
-              <span class="style6">a<? echo "". $ship_row['check_shipping_jp'];?>a</span>            <br>
+					<td height="140" colspan="3" valign="top" class="style6"><span
+						class="small2"><?=$office_addr['address1']?><br> <?=$office_addr['address2']?><br>
 
-            </td>
+							<?=$office_addr['address3']?> </span><br> <br> <span
+						class="small2">æ¶… ID: <? echo getsprod_ship_data($sale_ref); ?>
+					</span> <span class="small2">Group: <?=$order_row['sale_group']; ?>
+					</span> <br />
+					
+					<span class="small2"> &#21830;&#21697;&#21517;:
+						<? foreach ($prod_rows as $prod_row) { ?>
+							<?=$prod_row['sprod_name']; ?><br />
+						<? } ?>
+					</span>
+					</td>
 
-            <td width="83">&nbsp;</td>
+				</tr>
 
-          </tr>
+				<tr>
+					<td colspan="4">
+						<table>
+							<tr style="vertical-align: top">
+								
+							</tr>
+						</table>
+					</td>
+				</tr>
 
-        </table></td>
+				<tr>
 
-        <td width="300" valign="top">&nbsp;</td>
+					<td colspan="4" class="style6"></td>
 
-      </tr>
+				</tr>
 
-      <tr>
+			</table>
+    	</div>
+    	
+    	<div class="style6" style="height:20px; overflow:hidden;">
+			<span class="delivery" >
+				<?
+				$isFirst = true;
+				foreach ($prod_rows as $prod_row) {
+					if ($isFirst) {
+						$isFirst = false;
+						echo $prod_row['sprod_material'];
+					} else {
+						echo ", ".$prod_row['sprod_material'];
+					}
+				} ?>
+			</span>
+    	</div>
+    	
+    	<div style="height:40px; overflow:hidden;">
+    		<span class="style9 shipping_jp">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<? echo "". $ship_row['check_shipping_jp'];?>
+							</span>
+    		</table>
+    	</div>
+    	
+    </div>
+    
+<!-- Bottom right -->
+    <div class="container-bottom" style="width:300px;">
+    	<div style="height:235px; overflow:hidden;">
+    		<table width="300" border="0" cellspacing="0"
+				cellpadding="0">
 
-        <td height="80" valign="top"><br>  </td>
+				<tr>
 
-        <td height="50" colspan="3" valign="top"><br>  </td>
+					<td width="10" class="style6">
 
-        <td valign="top">&nbsp;</td>
+						<div align="left"></div>
+					</td>
 
-  </tr>
+					<td colspan="3" class="style6"><span class="style9">¢©<? echo "". $debt_row['debt_post_co'];?>
+					</span></td>
 
-      <tr>
+				</tr>
 
-        <td valign="top"><table width="286" border="0" cellspacing="0" cellpadding="0">
+				<tr>
 
-          <tr>
+					<td class="style6">&nbsp;</td>
 
-            <td colspan="2" class="style6">
+					<td height="18" colspan="3" valign="top" class="style6"><span
+						class="style9"><? echo "". $debt_row['debt_cust_address1'];?> </span>
+					</td>
 
-              <div align="left"></div>              <span class="style9">¢©<? echo "". $debt_row['debt_post_co'];?></span></td>
+				</tr>
 
-          </tr>
+				<tr>
 
-          <tr>
+					<td class="style2 style5">&nbsp;</td>
 
-            <td height="18" colspan="2" class="style6"> <span class="style9"><? echo "". $debt_row['debt_cust_address1'];?></span></td>
+					<td colspan="3" class="style6"><span class="style9"><? echo "". $debt_row['debt_cust_address2'];?>
+					</span></td>
 
-          </tr>
+				</tr>
 
-          <tr>
+				<tr>
 
-            <td colspan="2" class="style2 style5"><span class="style9"><? echo "". $debt_row['debt_cust_address2'];?></span></td>
+					<td class="style6">&nbsp;</td>
 
-          </tr>
+					<td colspan="3" class="style2 style4"><span class="style9"><? echo "". $debt_row['debt_cust_address3'];?>
+					</span></td>
 
-          <tr>
+				</tr>
 
-            <td colspan="2" class="style6"><span class="style9"><? echo "". $debt_row['debt_cust_address3'];?></span></td>
+				<tr>
 
-          </tr>
+					<td align="right" class="style6">&nbsp;</td>
 
-          <tr>
+					<td colspan="3" class="style6"><span class="style9"><? echo "". $order_row['sale_name'];?>
+							ÕÕ</span></td>
 
-            <td colspan="2" align="right" class="style6"> <div align="left"><span class="style9"><? echo "". $order_row['sale_name'];?> ÕÕ</span></div></td>
+				</tr>
 
-          </tr>
+				<tr>
 
-          <tr>
+					<td width="10" class="style6">&nbsp;</td>
 
-            <td colspan="2" class="style6"><span class="style9">
+					<td colspan="3" class="style6"><span class="style9"> <? if ($debt_row['debt_tel']!='' or $debt_row['debt_mobile']!='') {echo "Tel:". $debt_row['debt_tel']." ". $debt_row['debt_mobile'];}?>
 
-              <? if ($debt_row['debt_tel']!='' or $debt_row['debt_mobile']!='') {echo "Tel:". $debt_row['debt_tel']." ". $debt_row['debt_mobile'];}?>
+					</span></td>
 
-            </span></td>
+				</tr>
 
-          </tr>
+				<tr>
 
-          <tr>
+					<td colspan="4" class="style6">&nbsp;</td>
 
-            <td colspan="2" class="style6">&nbsp;</td>
+				</tr>
 
-          </tr>
+				<tr>
 
-          <tr align="left" valign="top">
+					<td width="10" class="style9"><em> <br> <br>
 
-            <td height="150" colspan="2" class="style9"><em> 
+					</em></td>
 
-            </em><span class="small2"><?=$office_addr['address1']?><br>
+					<td height="140" colspan="3" valign="top" class="style6"><span
+						class="small2"><?=$office_addr['address1']?><br> <?=$office_addr['address2']?><br>
 
-      <?=$office_addr['address2']?><br>
+							<?=$office_addr['address3']?> </span><br> <br> <span
+						class="small2">æ¶… ID: <? echo getsprod_ship_data($sale_ref); ?>
+					</span> <span class="small2">Group: <?=$order_row['sale_group']; ?>
+					</span> <br />
+					<span class="small2"> &#21830;&#21697;&#21517;:
+						<? foreach ($prod_rows as $prod_row) { ?>
+							<?=$prod_row['sprod_name']; ?><br />
+						<? } ?>
+					</span>
+					</td>
 
-      <?=$office_addr['address3']?></span><br>
+				</tr>
 
-      <br>
-
-      <span class="small2">æ¶… ID: <? echo getsprod_ship_data($sale_ref); ?></span> <span class="small2">Group:
-
-      <?=$order_row['sale_group']; ?>
-
-      <br>
-
-
-
-      </span></td>
-
-          </tr>
-
-          <tr>
-
-            <td colspan="2" class="style6"> </td>
-
-          </tr>
-
-          <tr>
-
-            <td width="204" height="10"><div align="center"><span class="style11">a<? echo "". $ship_row['check_shipping_jp'];?>a</span> <br>
-
-                 <span class="style6">a<? echo "". $ship_row['check_shipping_jp'];?>a</span><br>
-
-            </div></td>
-
-            <td width="82">&nbsp;</td>
-
-          </tr>
-
-        </table></td>
-
-        <td colspan="3" valign="top"><table width="300" border="0" cellspacing="0" cellpadding="0">
-
-          <tr>
-
-            <td width="10" class="style6">
-
-              <div align="left"></div></td>
-
-            <td colspan="3" class="style6"><span class="style9">¢©<? echo "". $debt_row['debt_post_co'];?></span></td>
-
-          </tr>
-
-          <tr>
-
-            <td class="style6">&nbsp; </td>
-
-            <td height="18" colspan="3" valign="top" class="style6"><span class="style9"><? echo "". $debt_row['debt_cust_address1'];?></span></td>
-
-          </tr>
-
-          <tr>
-
-            <td class="style2 style5">&nbsp;</td>
-
-            <td colspan="3" class="style6"><span class="style9"><? echo "". $debt_row['debt_cust_address2'];?></span></td>
-
-          </tr>
-
-          <tr>
-
-            <td class="style6">&nbsp;</td>
-
-            <td colspan="3" class="style2 style4"><span class="style9"><? echo "". $debt_row['debt_cust_address3'];?></span></td>
-
-          </tr>
-
-          <tr>
-
-            <td align="right" class="style6">&nbsp; </td>
-
-            <td colspan="3" class="style6"><span class="style9"><? echo "". $order_row['sale_name'];?> ÕÕ</span></td>
-
-          </tr>
-
-          <tr>
-
-            <td width="10" class="style6">&nbsp;</td>
-
-            <td colspan="3" class="style6"><span class="style9">
-
-              <? if ($debt_row['debt_tel']!='' or $debt_row['debt_mobile']!='') {echo "Tel:". $debt_row['debt_tel']." ". $debt_row['debt_mobile'];}?>
-
-            </span></td>
-
-          </tr>
-
-          <tr>
-
-            <td colspan="4" class="style6">&nbsp;</td>
-
-          </tr>
-
-          <tr>
-
-            <td width="10" class="style9"><em> <br>
-
-                  <br>
-
-            </em></td>
-
-            <td height="140" colspan="3" valign="top" class="style6"><span class="small2"><?=$office_addr['address1']?><br>
-
-      <?=$office_addr['address2']?><br>
-
-      <?=$office_addr['address3']?></span><br>
-
-      <br>
-
-      <span class="small2">æ¶… ID: <? echo getsprod_ship_data($sale_ref); ?></span> <span class="small2">Group:
-
-      <?=$order_row['sale_group']; ?>
-
-      <br>
-
-
-
-      </span></td>
-
-          </tr>
-
-          <tr>
-
-            <td colspan="4" class="style6"> </td>
-
-          </tr>
-
-          <tr>
-
-            <td colspan="2">&nbsp;</td>
-
-            <td width="132" colspan="2"><div align="left"><span class="style9">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <? echo "". $ship_row['check_shipping_jp'];?></span></div></td>
-
-          </tr>
-
-          <tr>
-
-            <td colspan="4"> <em></em></td>
-
-          </tr>
-
-        </table></td>
-
-        <td valign="top"><table width="300" border="0" cellspacing="0" cellpadding="0">
-
-          <tr>
-
-            <td width="10" class="style6">
-
-              <div align="left"></div></td>
-
-            <td colspan="3" class="style6"><span class="style9">¢©<? echo "". $debt_row['debt_post_co'];?></span></td>
-
-          </tr>
-
-          <tr>
-
-            <td class="style6">&nbsp; </td>
-
-            <td height="18" colspan="3" valign="top" class="style6"><span class="style9"><? echo "". $debt_row['debt_cust_address1'];?></span></td>
-
-          </tr>
-
-          <tr>
-
-            <td class="style2 style5">&nbsp;</td>
-
-            <td colspan="3" class="style6"><span class="style9"><? echo "". $debt_row['debt_cust_address2'];?></span></td>
-
-          </tr>
-
-          <tr>
-
-            <td class="style6">&nbsp;</td>
-
-            <td colspan="3" class="style2 style4"><span class="style9"><? echo "". $debt_row['debt_cust_address3'];?></span></td>
-
-          </tr>
-
-          <tr>
-
-            <td align="right" class="style6">&nbsp; </td>
-
-            <td colspan="3" class="style6"><span class="style9"><? echo "". $order_row['sale_name'];?> ÕÕ</span></td>
-
-          </tr>
-
-          <tr>
-
-            <td width="10" class="style6">&nbsp;</td>
-
-            <td colspan="3" class="style6"><span class="style9">
-
-              <? if ($debt_row['debt_tel']!='' or $debt_row['debt_mobile']!='') {echo "Tel:". $debt_row['debt_tel']." ". $debt_row['debt_mobile'];}?>
-
-            </span></td>
-
-          </tr>
-
-          <tr>
-
-            <td colspan="4" class="style6">&nbsp;</td>
-
-          </tr>
-
-          <tr>
-
-            <td width="10" class="style9"><em> <br>
-
-                  <br>
-
-            </em></td>
-
-            <td height="140" colspan="3" valign="top" class="style6"><span class="small2"><?=$office_addr['address1']?><br>
-
-      <?=$office_addr['address2']?><br>
-
-      <?=$office_addr['address3']?></span><br>
-
-      <br>
-
-      <span class="small2">æ¶… ID: <? echo getsprod_ship_data($sale_ref); ?></span> <span class="small2">Group:
-
-      <?=$order_row['sale_group']; ?>
-
-      <br>
-
-     
-
-    </span></td>
-
-          </tr>
-
-          <tr>
-
-            <td colspan="4" class="style6"> </td>
-
-          </tr>
-
-          <tr>
-
-            <td colspan="2">&nbsp;</td>
-
-            <td width="132" colspan="2"><div align="left"><span class="style9">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <? echo "". $ship_row['check_shipping_jp'];?></span></div></td>
-
-          </tr>
-
-          <tr>
-
-            <td colspan="4"> <em></em></td>
-
-          </tr>
-
-        </table></td>
-
-      </tr>
-
-</table>
+			</table>
+    	</div>
+    	
+    	<div class="style6" style="height:20px; overflow:hidden;">
+			<span class="delivery" >
+				<?
+				$isFirst = true;
+				foreach ($prod_rows as $prod_row) {
+					if ($isFirst) {
+						$isFirst = false;
+						echo $prod_row['sprod_material'];
+					} else {
+						echo ", ".$prod_row['sprod_material'];
+					}
+				} ?>
+			</span>
+    	</div>
+    	
+    	<div class="style6" style="height:40px; overflow:hidden;">
+    		<span class="style9 shipping_jp">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <? echo "". $ship_row['check_shipping_jp'];?></span>
+    	</div>
+    	
+    </div>
+    
+</div>
 
 </body>
 

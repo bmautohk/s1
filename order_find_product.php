@@ -12,10 +12,10 @@ require('config.php');  //this should the the absolute path to the config.php fi
                                     //the location in relationship to the page being protected - ie ../login/config.php )
 require('functions.php'); //this should the the absolute path to the functions.php file - see the instrcutions for config.php above
 
-if (allow_access(@Administrators) != "yes"){ //this is group name or username of the group or person that you wish to allow access to{                                                            // - please be advise that the Administrators Groups has access to all pages.
+/*if (allow_access(@Administrators) != "yes"){ //this is group name or username of the group or person that you wish to allow access to{                                                            // - please be advise that the Administrators Groups has access to all pages.
 include ('no_access.html'); //this should the the absolute path to the no_access.html file - see above
 exit;
-}
+}*/
 ?>
 <?
 if (isset($_GET['prod_id']))
@@ -39,11 +39,14 @@ if (isset($_GET['cust_cd']))
 function updateARPORT(prod_id,prod_name,product_price)
 {
 	opener.document.form1.sprod_id_<?= $prod_sel;?>.value=prod_id;
-	opener.document.form1.sprod_name_<?= $prod_sel;?>.value=prod_name;
-	opener.document.form1.sprod_price_<?= $prod_sel;?>.value=product_price;
+	//opener.document.form1.sprod_name_<?= $prod_sel;?>.value=prod_name;
+	//opener.document.form1.sprod_price_<?= $prod_sel;?>.value=product_price;
+
+	// Get material & colour from PM
+	opener.findPMProduct('<?=PM_URL ?>', <?= $prod_sel?>);
 
 	// Calculate product's stock (for Order Add only)
-	opener.getProductStock(<?= $prod_sel?>, prod_id);
+	//opener.getProductStock(<?= $prod_sel?>, prod_id);
 	
 	window.close();
 }

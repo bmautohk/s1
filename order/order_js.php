@@ -91,6 +91,44 @@ function openProdWin(idx) {
 	window.open('order_find_product.php?prod_sel=' + idx + '&cust_cd=' + custCd,'popuppage','width=500,height=400,top=100,left=100 scrollbars=1');
 }
 
+function openProdWinByCustCd(idx, custCd) {
+	window.open('order_find_product.php?prod_sel=' + idx + '&cust_cd=' + custCd,'popuppage','width=500,height=400,top=100,left=100 scrollbars=1');
+}
+
+function findPMProduct(url, idx) {
+	var product_id = $('#sprod_id_' + idx).val();
+
+	if (product_id == '') {
+		return;
+	}
+	
+	$.getJSON(url + '/api/product?no_jp=' + product_id, function(data) {
+		if (data != '') {
+			// Exist in PM
+			$('#sprod_name_' + idx).val(data.product_desc_jp);
+			$('#sprod_colour_' + idx).val(data.colour);
+
+			if (data.material == '') {
+				$('#sprod_material_' + idx).val('');
+				$('#sprod_material_option_' + idx).removeAttr('disabled');
+			} else {
+				$('#sprod_material_' + idx).val(data.material);
+				$('#sprod_material_option_' + idx).attr('disabled', true);
+			}
+		} else {
+			// Not exist
+			$('#sprod_name_' + idx).val('');
+			$('#sprod_colour_' + idx).val('');
+			
+			$('#sprod_material_' + idx).val('');
+			$('#sprod_material_option_' + idx).removeAttr('disabled');
+			
+		}
+
+		$('#sprod_colour_option_' + idx + ' option[value=""]').attr('selected','selected');
+	});
+}
+
 function findProduct(idx) {
 	var product_id = $('#sprod_id_' + idx).val();
 

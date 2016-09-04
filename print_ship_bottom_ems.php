@@ -49,18 +49,18 @@ exit;
 	?>
     <table width="711" border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
-        <td width="155" height="29">&nbsp;<span class="style2">Superior</span></td>
+        <td width="155" height="29">&nbsp;<span class="style2"></span></td>
         <td width="188">
         <div align="right"></div></td>
-        <td width="94"><span class="style2"><? echo "".$sale_ref;?></span></td>
+        <td width="94"><span class="style2"></span></td>
         <td colspan="3">&nbsp;</td>
       </tr>
       <tr>
-        <td height="60" colspan="2" ><span class="style2" ><?=$office_addr['address1']?> <?=$office_addr['address2']?> <?=$office_addr['address3']?></span>
-          <br>Tel: (852)98348574
+        <td height="60" colspan="2" ><span class="style2" ></span>
+          <br>
 
 </td>
-        <td colspan="4" valign="top"><? getsprod_ship_data($sale_ref); ?>&nbsp;</td>
+        <td colspan="4" valign="top">&nbsp;</td>
       </tr>
       <tr>
         <td colspan="2">&nbsp;</td>
@@ -71,18 +71,18 @@ exit;
         <td colspan="4">&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2" class="style2"><? echo "".$order_row['sale_name'];?> ÍÍ</td>
-        <td colspan="4">&nbsp;</td>
+        <td colspan="2" class="style2"></td>
+        <td colspan="4" class="style2"><? echo "".$order_row['sale_name'];?> ÍÍ</td>
       </tr>
       <tr>
-        <td height="26" colspan="2" class="style2"><? echo "". $debt_row['debt_cust_address1'];?> <? echo "". $debt_row['debt_cust_address2'];?> <? echo "". $debt_row['debt_cust_address3'];?> Japan</td>
-        <td>&nbsp;</td>
-        <td width="38">&nbsp;</td>
-      <td width="76">&nbsp;</td>
-      <td width="160">&nbsp;</td>
+        <td height="26" colspan="2" class="style2"></td>
+        <td class="style2" colspan="4"><? echo "". $debt_row['debt_cust_address1']."<br>";?> <? echo "". $debt_row['debt_cust_address2']."<br>";?> <? echo "". $debt_row['debt_cust_address3']."<br>";?> </td>
+      
       </tr>
       <tr>
-        <td class="style2">        ¢©<? echo "". $debt_row['debt_post_co'];?></td>
+        <td class="style2">        </td>
+        <td class="style2"></td>
+		<td class="style2">        ¢©<? echo "". $debt_row['debt_post_co'];?></td>
         <td class="style2"><? if ($debt_row['debt_tel']!='' or $debt_row['debt_mobile']!='') {echo "Tel:". $debt_row['debt_tel']." ". $debt_row['debt_mobile'];}?></td>
         <td rowspan="4">&nbsp;</td>
         <td colspan="3" rowspan="4">&nbsp;</td>
@@ -94,7 +94,16 @@ exit;
         <td colspan="2">&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2" class="style2">Auto Parts</td>
+        <td height="150px" colspan="2" class="style2"></td>
+      </tr>
+	   <tr>
+        <td colspan="2" class="style2"></td>
+      </tr>
+	   <tr>
+        <td colspan="2" class="style2"></td>
+      </tr>
+	   <tr>
+        <td colspan="2" class="style2"></td>
       </tr>
     </table>
 <p>&nbsp; </p>

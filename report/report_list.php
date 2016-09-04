@@ -1,4 +1,3 @@
-
 <TD vAlign=top bgColor=#eefafc>
             ---------------------------------------------------------------------------------------------------------------------------------------------------<br>
               
@@ -11,6 +10,9 @@
 				<br>
 				Product Name: 
 				<input name="prod_name" type="text" id="prod_name" value="<? echo $prod_name;?>">
+				<br>
+				Product ID:
+				<input name="prod_id" type="text" id="prod_id" value="<? echo $prod_id;?>">
 				
 				 <input name="search_sale" type="submit" id="search_sale" value="search">
 				 <br>
@@ -34,6 +36,15 @@ Top
   <option value="30">30</option>
   <option value="40">40</option>
   <option value="50">50</option>
+  <option value="100">100</option>
+  <option value="150">150</option>
+  <option value="200">200</option>
+  <option value="250">250</option>
+  <option value="300">300</option>
+  <option value="350">350</option>
+  <option value="400">400</option>
+  <option value="450">450</option>
+  <option value="500">500</option>
 </select>
 <br>
 <br>
@@ -73,11 +84,11 @@ Group:
 				  
 				 }
 				 
+				 $reportData = NULL;
 				 if (!isset($_POST['date_start']) and !isset($_POST['date_end']) and !isset($_POST['search_sale']) and !isset($_POST['sale_top']))
 				 {
-				 getOrderReport($today_20,$today, 'sale_date','desc','date','','');
+				 $reportData = getOrderReport($today_20,$today, 'sale_date','desc','date','','','');
 				 $print_link = "<a href=\"print_report.php?date_start=$today_20&date_end=$today&mod=date&sale_or=sale_date&sale_as=desc\" onClick=\"NewWindow(this.href,'mywin','800','500','no','center');return false\" onFocus=\"this.blur()\">Preview Report</a>";
-				  
 				 }
 				  
 				 if (isset($_POST['date_start']) and isset($_POST['date_end']) and !isset($_POST['search_sale']) and !isset($_POST['sale_top']))
@@ -87,19 +98,23 @@ Group:
 				 $sale_or = $_POST['sale_or'];
 				 $sale_as = $_POST['sale_as'];
 				 $mod = "date";
-				 getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod,$get_username,'');
+				 $reportData = getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod,$get_username,'','');
 				 $print_link = "<a href=\"print_report.php?date_start=$date_start&date_end=$date_end&mod=$mod&sale_or=$sale_or&sale_as=$sale_as\" onClick=\"NewWindow(this.href,'mywin','800','500','no','center');return false\" onFocus=\"this.blur()\">Preview Report</a>";
-				  
 				 }
 				 if (isset($_POST['search_sale']))
 				 {
 				 $mod = $_POST['sale_ref'];
 				 $mod2 = $_POST['prod_name'];
-				 getOrderReport('','',$sale_or,$sale_as,$mod,$get_username,$mod2);
+				 $mod3 = $_POST['prod_id'];
+				 $reportData = getOrderReport('','',$sale_or,$sale_as,$mod,$get_username,$mod2,$mod3);
 				 $print_link = "<a href=\"print_report.php?date_start=&date_end=&mod=$mod&mod2=$mod2&sale_or=$sale_or&sale_as=$sale_as\" onClick=\"NewWindow(this.href,'mywin','800','500','no','center');return false\" onFocus=\"this.blur()\">Preview Report</a>";
 				 }
 				 
 				 ?>
+				 
+				 <? if ($reportData != NULL) {
+				 	include 'report_list_data.php';
+				 } ?>
 				 
                  <table width="525" border="0">
                         <tr>
@@ -111,5 +126,4 @@ Group:
 					  </td>
               </tr>
           
-            <p>&nbsp;</p>
             </TD>

@@ -25,7 +25,7 @@
 				 
 				 if (!isset($_GET['date_start']) and !isset($_GET['date_end']) and !isset($_GET['search_sale']) and !isset($_GET['sale_top']))
 				 {
-				 getOrderReport($today_20,$today, 'sale_date','desc','date','','');
+				 $reportData = getOrderReport($today_20,$today, 'sale_date','desc','date','','','');
 				 $print_link = "<a href=\"print_report.php?date_start=$today_20&date_end=$today&mod=date&sale_or=sale_date&sale_as=desc\" onClick=\"NewWindow(this.href,'mywin','800','500','no','center');return false\" onFocus=\"this.blur()\">Preview Report</a>";
 				  
 				 }
@@ -37,7 +37,7 @@
 				 $sale_or = $_GET['sale_or'];
 				 $sale_as = $_GET['sale_as'];
 				 $mod = "date";
-				 getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod,$get_username,'');
+				 $reportData = getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod,$get_username,'','');
 				 $print_link = "<a href=\"print_report.php?date_start=$date_start&date_end=$date_end&mod=$mod&sale_or=$sale_or&sale_as=$sale_as\" onClick=\"NewWindow(this.href,'mywin','800','500','no','center');return false\" onFocus=\"this.blur()\">Preview Report</a>";
 				  
 				 }
@@ -45,9 +45,13 @@
 				 {
 				 $mod = $_GET['sale_ref'];
 				 $mod2 = $_GET['prod_name'];
-				 getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod,$get_username,$mod2);
+				 $mod3 = $_POST['prod_id'];
+				 $reportData = getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod,$get_username,$mod2,$mod3);
 				 $print_link = "<a href=\"print_report.php?date_start=&date_end=&mod=$mod&mod2=$mod2&sale_or=$sale_or&sale_as=$sale_as\" onClick=\"NewWindow(this.href,'mywin','800','500','no','center');return false\" onFocus=\"this.blur()\">Preview Report</a>";
 				 }
 				 
+				 if ($reportData != NULL) {
+				 	include 'report_list_data.php';
+				 }
 				 ?>
 </body></html>

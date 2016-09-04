@@ -43,15 +43,17 @@ include('report/report_list_logic.php');
 				 $mod2 = $_GET['mod2'];
 				 if ($_GET['date_start']!='')
 				 {
-				 getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod,$mod2,"");
+				 $reportData = getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod,$mod2,"");
 				  
 				 }else
 				 {
-				 getOrderReport('','',$sale_or,$sale_as,$mod,$mod2,"");
+				 $reportData = getOrderReport('','',$sale_or,$sale_as,$mod,$mod2,"");
 				
 				 }
 
-
+				 if ($reportData != NULL) {
+				 	include 'report/report_list_data.php';
+				 }
 ?></td>
    </tr>
  </table>

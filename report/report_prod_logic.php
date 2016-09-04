@@ -68,7 +68,7 @@ else if (isset($_POST['date_start']) and isset($_POST['search_date'])) {
 		$sale_dat[$i]=$row["sale_dat"];
 		$sprod_cost_rmb[$i]=$row["product_cost_rmb"];
 		  
-		$total_price += $sprod_price[$i];
+		$total_price += $sprod_price[$i] * $sprod_unit[$i];
 		$total_unit += $sprod_unit[$i];
 	}
 }

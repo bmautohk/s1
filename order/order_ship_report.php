@@ -57,13 +57,90 @@
 
           <tr valign="top">
 
-            <td width="500">No tracking no. JP<br>              
+            <td width="500">
+            	<form id="frm_jp" method="POST" action="<?=$page ?>/order_ship_report_csv.php">
+            	No tracking no. JP
+            	<input name="genCSV" type="submit" value="Generate CSV" />
+            	<input type="hidden" name="gen_type" value="JP" />
+            	<br>
 
-              <? getShipReport($group2, $user_name,'JP');; ?></td>
+              <? $rows = getShipReportData($group2, $user_name,'JP'); ?>
+              
+              <table width="500" border="1" cellspacing="0" cellpadding="0">
+              	<tr align="right" valign="top">
+              		<td><input type="checkbox" name="cb_select_all" /></td>
+	              	<td>Prod ID</td>
+	              	<td >Sale Group</td>
+	              	<td >Client name</td>
+	              	<td >Shipping Type</td>
+	              	<td>Payment Date</td>
+	              	<td>Auction ID</td>
+	              	<td>Remark</td>
+              	</tr>
+              
+              <? foreach ($rows as $row) { ?>
+              	<tr align="right" valign="top">
+              		<td>
+              			<? if (!empty($row['sprod_no'])) { ?>
+              				<input type="checkbox" name="cb_sprod_no[]" value="<?=$row['sprod_no'] ?>" />
+              			<? } ?>
+              		</td>
+              		<td><a href='index.php?page=order&subpage=edit&sale_ref=<?=$row['bal_ref'] ?>'><?=$row['sprod_id'] ?></a></td>
+              		<td><?=$row['sale_group'] ?>&nbsp;</td>
+              		<td><?=$row['sale_name'] ?>&nbsp;</td>
+              		<td><?=$row['bal_ship_type'] ?>&nbsp;</td>
+              		<td><?=$row['bal_dat'] ?></td>
+              		<td><a href='index.php?page=order&subpage=shipping&sale_ref=<?=$row['bal_ref'] ?>'><?=$row['bal_ref'] ?></a></td>
+              		<td><?=$row['debt_remark'] ?>&nbsp;</td>
+              	</tr>
+              <? } ?>
+              </table>
+              
+              </form>
+            </td>
+            
+            <td width="500">
+            	<form id="frm_hk" method="POST" action="<?=$page ?>/order_ship_report_csv.php">
+            	No tracking no. HK
+            	<input name="genCSV" type="submit" value="Generate CSV" />
+            	<input type="hidden" name="gen_type" value="HK" />
+            	<br>
 
-            <td width="500">No tracking no. HK <br>
-
-              <? getShipReport($group2, $user_name,'HK');; ?></td>
+              <? //getShipReport($group2, $user_name,'HK'); ?>
+              
+              <? $rows = getShipReportData($group2, $user_name,'HK'); ?>
+              
+              <table width="500" border="1" cellspacing="0" cellpadding="0">
+              	<tr align="right" valign="top">
+              		<td><input type="checkbox" name="cb_select_all" /></td>
+	              	<td>Prod ID</td>
+	              	<td >Sale Group</td>
+	              	<td >Client name</td>
+	              	<td >Shipping Type</td>
+	              	<td>Payment Date</td>
+	              	<td>Auction ID</td>
+	              	<td>Remark</td>
+              	</tr>
+              
+              <? foreach ($rows as $row) { ?>
+              	<tr align="right" valign="top">
+              		<td>
+              			<? if (!empty($row['sprod_no'])) { ?>
+              				<input type="checkbox" name="cb_sprod_no[]" value="<?=$row['sprod_no'] ?>" />
+              			<? } ?>
+              		</td>
+              		<td><a href='index.php?page=order&subpage=edit&sale_ref=<?=$row['bal_ref'] ?>'><?=$row['sprod_id'] ?></a></td>
+              		<td><?=$row['sale_group'] ?>&nbsp;</td>
+              		<td><?=$row['sale_name'] ?>&nbsp;</td>
+              		<td><?=$row['bal_ship_type'] ?>&nbsp;</td>
+              		<td><?=$row['bal_dat'] ?></td>
+              		<td><a href='index.php?page=order&subpage=shipping&sale_ref=<?=$row['bal_ref'] ?>'><?=$row['bal_ref'] ?></a></td>
+              		<td><?=$row['debt_remark'] ?>&nbsp;</td>
+              	</tr>
+              <? } ?>
+              </table>
+              
+           	</td>
 
             <td width="608">With tracking no. <br>            
 
@@ -100,3 +177,24 @@ else
       <br>
 
       <br></TD>
+
+<script type="text/javascript">
+	$(function() {
+		// Select all checkbox
+		$('input[type="checkbox"][name="cb_select_all"]').click(function() {
+			var isSelect = $(this).attr('checked');
+			var f = $(this).closest('form');
+			$('input[type="checkbox"][name^="cb_sprod_no"]', f).attr('checked', isSelect);
+		});
+
+		$('input[type="checkbox"][name^="cb_sprod_no"]').click(function() {
+			var f = $(this).closest('form');
+			if ($('input[type="checkbox"][name^="cb_sprod_no"]', f).not(':checked').length > 0) {
+				$('input[type="checkbox"][name="cb_select_all"]', f).attr('checked', false);
+			} else {
+				$('input[type="checkbox"][name="cb_select_all"]', f).attr('checked', true);
+			}
+		});
+	});
+
+</script>

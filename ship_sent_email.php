@@ -7,7 +7,7 @@ header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
 header("Cache-Control: post-check=0, pre-check=0",false);
 session_cache_limiter();
 session_start();
- 
+
 require('config.php');  //this should the the absolute path to the config.php file 
                                     //(ie /home/website/yourdomain/login/config.php or 
                                     //the location in relationship to the page being protected - ie ../login/config.php )
@@ -139,7 +139,6 @@ $email_text = $email_text ."<br><br>". $sale_row["sale_group"];
 	
 	if (isset($_POST['issubmit']))
 	{
-	echo "OO";
 	///////////////////////mailer start
 require("phpmailer/class.phpmailer.php");
 
@@ -154,10 +153,8 @@ $mail->Password = "invoice2010"; // SMTP password
 $mail->CharSet ="shift_jis";
 //$mail->From     = $group_row['email'];//
 $mail->From = "shipping@bmautohk.com";
-//$mail->From = $_SESSION[email];
 $mail->FromName = "shipping";
 //$mail->FromName = $sale_group;
-
 $mail->AddAddress($debt_email);
 if ($debt_email2!='')
 {
@@ -165,14 +162,13 @@ $mail->AddAddress($debt_email2);
 }
 
 
-$mail->AddBCC ("ricky.kei@gmail.com");
+$mail->AddBCC ("shipping@bmautohk.com");
 //$mail->AddBCC ($group_row['email']);
 
 //$mail->AddAddress("car_ins88jp@yahoo.co.jp"); 
 //$mail->AddAddress("amen_htm@hotmail.com"); 
            // optional name
-		   
-$mail->AddReplyTo('rickykei@hotmail.com',$email_name);
+$mail->AddReplyTo($email_email,$email_name);
 
 
 $mail->WordWrap = 50;                              // set word wrap
@@ -191,7 +187,7 @@ if ($mail->Send())
 
 
  
-echo "Sent successfully";
+
 //echo $sqlb;
 sqlinsert($sqla);
 sqlinsert($sqlb);

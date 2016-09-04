@@ -257,7 +257,7 @@ function sqlinsert($sql)
 				username = '$username',
 				page = '$page',
 				sql_stmt = '$sql2'";
-	$result = mysql_query($log_sql,$db) or die (mysql_error()."<br />Fail to insert sql log: $log_sql");
+	//$result = mysql_query($log_sql,$db) or die (mysql_error()."<br />Fail to insert sql log: $log_sql");
 	
 	//$result = mysql_query($sql,$db);
 	$result = mysql_query($sql,$db) or die (mysql_error()."<br />Couldn't execute query: $sql");
@@ -554,6 +554,21 @@ function getsprod_data($sale_ref)
 	$row=mysql_fetch_array($result);
 	return $row;
 	}
+	
+function getsprod_data_all($sale_ref)
+	{
+	$db=connectDatabase();
+	mysql_select_db(DB_NAME,$db);
+	$result = mysql_query("SELECT * FROM ben_sale_prod where sprod_ref = '".$sale_ref."'", $db) or die (mysql_error()."<br />Couldn't execute query: $query");
+	$num_results=mysql_num_rows($result);
+	
+	$output = array();
+	for ($i=0;$i<$num_results;$i++) {
+		$output[] = mysql_fetch_array($result);
+	}
+	
+	return $output;
+}
 	
 
 //--------------------------------------------------------------------------------------
@@ -3835,6 +3850,53 @@ function getsale_prod_data2($sale_ref)
 	$result['total'] = $total;
 
 	return $result;
+}
+
+function getdelivery_time($sel_delivery_time_id)
+{
+	$db=connectDatabase();
+	mysql_select_db(DB_NAME,$db);
+	
+	$query = "SELECT * FROM delivery_time_option ORDER BY id";
+	$result = mysql_query($query, $db) or die (mysql_error()."<br />Couldn't execute query: $query");
+
+	$num_results=mysql_num_rows($result);
+	for ($i=0;$i<$num_results;$i++) {
+		$row = mysql_fetch_array($result);
+		$id = $row["id"];
+		$option = $row["delivery_time"];
+		if ($sel_delivery_time_id == $id) {
+			echo "<option selected value=\"$id\">$option</option>\n";
+		} else {
+			echo "<option value=\"$id\">$option</option>\n";
+		}
+	}
+	
+	// Free resultset
+	mysql_free_result($result);
+	
+	// Closing connection
+	mysql_close($db);	
+}
+
+function getbalance_data($sale_ref) {
+	$db=connectDatabase();
+	mysql_select_db(DB_NAME,$db);
+	
+	$query = "SELECT * FROM ben_bal where bal_ref = '".$sale_ref."'";
+	$result = mysql_query($query, $db) or die (mysql_error()."<br />Couldn't execute query: $query");
+	$row=mysql_fetch_array($result);
+	return $row;
+}
+
+function getDeliveryTimeOption($option_id) {
+	$db=connectDatabase();
+	mysql_select_db(DB_NAME,$db);
+	
+	$query = "SELECT * FROM delivery_time_option where id = '".$option_id."'";
+	$result = mysql_query($query, $db) or die (mysql_error()."<br />Couldn't execute query: $query");
+	$row=mysql_fetch_array($result);
+	return $row;
 }
 
 ?>

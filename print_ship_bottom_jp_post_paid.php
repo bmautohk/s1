@@ -78,7 +78,7 @@ function Body($invoice_no,$addr_id)
   
 
 	
-	$this->SetFont(KOZMIN, '', 14);
+	$this->SetFont(KOZMIN, '', 12);
 	    
 
 
@@ -87,17 +87,17 @@ function Body($invoice_no,$addr_id)
  	$this->Cell(40,8,"",$border,1,'L',0);
 
    
- $this->SetFont(KOZMIN, '',8);
+ $this->SetFont(KOZMIN, '',12);
    $this->Cell(45,8,'',$border,0,'R',0);
    	$this->Cell(80,8,$debt_row['debt_cust_address1'],$border,0,'L',0);
 	$this->Cell(20,8,"",$border,1,'L',0);
 
-	 $this->SetFont(KOZMIN, '',8);
+	 $this->SetFont(KOZMIN, '',12);
    $this->Cell(45,8,'',$border,0,'R',0);
    	$this->Cell(80,8,$debt_row['debt_cust_address2'],$border,0,'L',0);
 	$this->Cell(20,8,"",$border,1,'L',0);
 	
-	 $this->SetFont(KOZMIN, '',8);
+	 $this->SetFont(KOZMIN, '',12);
    $this->Cell(45,8,'',$border,0,'R',0);
    	$this->Cell(80,8,$debt_row['debt_cust_address3'],$border,0,'L',0);
 	$this->Cell(20,8,"",$border,1,'L',0);
@@ -142,10 +142,10 @@ function Body($invoice_no,$addr_id)
 	// Product ID, Product Name, Sales Group
 	$this->SetFont(KOZMIN, '',7);
 	$this->SetXY(110, 55);
-	$this->MultiCell(55,4,"Prod. ID:".$sprod_id."\n"
+	/*$this->MultiCell(55,4,"Prod. ID:".$sprod_id."\n"
 									.$prod_row['sprod_name']."\n".
 									"Group:".$order_row['sale_group']
-						,$border,1,'L',0);
+						,$border,1,'L',0);*/
  	
 }
 function Header()

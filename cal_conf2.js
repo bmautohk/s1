@@ -4,6 +4,7 @@
 //addCalendar("Calendar2", "Select Date", "secondinput", "sampleform");
 addCalendar("Calendar", "Select Date", "return_date", "form1");
 addCalendar("Calendar1", "Select Date", "check_date", "form1");
+addCalendar("Calendar2", "Select Date", "bal_delivery_date", "form1");
 
 // default settings for English
 // Uncomment desired lines and modify its values
