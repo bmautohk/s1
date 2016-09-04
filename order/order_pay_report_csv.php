@@ -83,8 +83,6 @@
 	$objWriter->save('php://output');
 	exit;
 	
-	function conv($str) {
-		return iconv('euc-jp', "UTF-8", $str);
-	}
+	
 	
 ?>
