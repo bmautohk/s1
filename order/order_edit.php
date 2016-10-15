@@ -1,11 +1,24 @@
 <form name="form1" method="POST" action="<?= $_SERVER['PHP_SELF']; ?>?page=<?=$page?>&subpage=<?=$subpage?>&sale_ref=<?= $sale_ref;?>" onSubmit="return checkFields();">
 
 	<input type="hidden" name="event"  />
-              <table width="680" border="0" cellspacing="0" cellpadding="10">
-                <tr>
-                  <td valign="top">
-                    <br>
-                    <table width="380" height="224" border="1" cellpadding="0" cellspacing="0">
+
+
+
+
+  <table width="680" border="0" cellspacing="0" cellpadding="10">
+    <tr>
+      <td valign="top">
+        <br>
+
+        <?
+        if (isset($_GET['is_delete'])) {
+          if ($_GET['is_delete'] == 'Y') { ?><font size=3 color=red >Delete Product Success !</font>
+        <? } else { ?>
+          <span style="color:red">Delete Product Fail !<?=$_GET['error_message'] ?></span>
+        <? }
+        } ?>
+
+        <table width="380" height="224" border="1" cellpadding="0" cellspacing="0">
         <tr align="right">
           <td width="140" align="left">Sales Date: </td>
           <td colspan="2"><script>DateInput('orderdate', true, 'YYYY-MM-DD', '<? echo $sale_date;?>')</script></td>

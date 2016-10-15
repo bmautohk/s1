@@ -130,10 +130,21 @@ for ($i=0;$i<$num_results;$i++){
 mysql_free_result($result);
 mysql_close($db);
 
-function get_edit_list($sale_ref)
-	{
+
+function get_edit_list($sale_ref) {
 	$db=connectDatabase();
 	mysql_select_db(DB_NAME,$db);
+
+	// Check whether paymnet eixst
+	$query = "SELECT * FROM ben_bal where bal_ref = '$sale_ref'";
+	$result = mysql_query($query ,$db) or die (mysql_error()."<br />Couldn't execute query: $query");
+	$num_results=mysql_num_rows($result);
+
+	$isPaymentExist = $num_results > 0 ? true : false;
+
+	mysql_free_result($result);
+	
+	// Get product lines
 	$result = mysql_query("SELECT * FROM ben_sale_prod where sprod_ref = '$sale_ref'" ,$db) or die (mysql_error()."<br />Couldn't execute query: $query");
 	echo "<table width=\"904\" border=\"1\" cellpadding=\"0\" cellspacing=\"0\">";
 	$num_results=mysql_num_rows($result);
@@ -165,9 +176,15 @@ function get_edit_list($sale_ref)
 		<td>$sprod_material</td>
 		<td>$sprod_colour</td>
 		<td width=\"80\">$sprod_unit</td>
-		<td width=\"120\"> &yen;$sprod_price</td>
-		<td ><a href=\"index.php?page=order&subpage=delete&sprod_no=$sprod_no&sale_ref=$sale_ref\">Delete</a></td>
-		</tr>";
+		<td width=\"120\"> &yen;$sprod_price</td>";
+
+		if (!$isPaymentExist) {
+			echo "<td ><a href=\"index.php?page=order&subpage=delete&sprod_no=$sprod_no&sale_ref=$sale_ref\">Delete</a></td>";
+		} else {
+			echo "<td >Delete</td>";
+		}
+
+		echo "</tr>";
 	}
 	echo "</table>"; 
 	//<input type=\"submit\" name=\"isfindadd\" value=\"update\">";
