@@ -18,7 +18,7 @@ if (!isset($_POST['date_end'])) {
           <TD vAlign=top bgColor=#eefafc>
               
       
-            <table width="180" border="0" cellspacing="10">
+            <table border="0" cellspacing="10">
               <tr>
                 <td><p> <FORM method="POST" action="<?= $_SERVER['PHP_SELF']; ?>?page=<?=$page?>&subpage=<?=$subpage?>">
 				  <br>

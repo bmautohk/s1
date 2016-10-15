@@ -13,20 +13,20 @@ function getPayReport($date_start,$date_end,$access,$user_name)
 	if ($access==Admin_name){
 	
 		$result = mysql_query("SELECT * FROM ben_sale, ben_bal, ben_sale_prod where sale_ref=sprod_ref and  bal_ref=sprod_ref and DATE(bal_dat) between '$date_start' and '$date_end' order by bal_dat desc, bal_ref"  ,$db) or die (mysql_error()."<br />Couldn't execute query: $query");
-		}
+	}
 	else{
 		$result = mysql_query("SELECT * FROM ben_sale, ben_bal, ben_sale_prod where sale_ref=sprod_ref and  bal_ref=sprod_ref and  sale_group='$user_name' and DATE(bal_dat) between '$date_start' and '$date_end' order by bal_dat desc, bal_ref"  ,$db) or die (mysql_error()."<br />Couldn't execute query: $query");
 	}
 	$num_results=mysql_num_rows($result);
 	//table echo 
-	echo "<table width=\"350\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">";
+	echo "<table border=\"1\" cellspacing=\"0\" cellpadding=\"0\">";
 	echo "<tr align=\"right\" valign=\"top\"><td >Order No.</td><td >Sale Group </td><td >Payment Date</td>
 	<td >Product ID</td><td>Price</td><td>Shipping</td><td>total</td><td >Payment Amount</td>
 	<td >Detail</td>\n";
 	
 	//loop
 	$bal_pay_total=0;
-	$prev_bal_ref = 0;
+	$prev_bal_ref = '';
 	for ($i=0;$i<$num_results;$i++)
 	{
 		$row=mysql_fetch_array($result);
@@ -35,7 +35,6 @@ function getPayReport($date_start,$date_end,$access,$user_name)
 		$sale_group=$row["sale_group"];
 		$sprod_id=$row["sprod_id"];
 		$sale_ref=$row["sale_ref"];
-		
 
 		if ($prev_bal_ref != $bal_ref) {
 			$prev_bal_ref = $bal_ref;
@@ -96,7 +95,7 @@ function genCSVByDate($date_start,$date_end,$access,$user_name)
 	
 	//loop
 	$bal_pay_total=0;
-	$prev_bal_ref = 0;
+	$prev_bal_ref = '';
 	for ($i=0;$i<$num_results;$i++)
 	{
 		
