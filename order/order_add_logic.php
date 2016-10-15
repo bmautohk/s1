@@ -213,7 +213,8 @@ function importYahoo($db, $file_name, $actual_file_name, $salesGroup) {
 		// Order
 		$order['sale_ref'] = trim($ws->getCell("A".$rowNo)->getValue());
 		$order['order_date'] = date('Y-m-d');
-		$order['sale_group'] = $salesGroup;
+		//$order['sale_group'] = $salesGroup;
+		$order['sale_group'] = $ws->getCell("B".$rowNo)->getValue();
 		$order['sale_name'] = convert($ws->getCell("K".$rowNo)->getValue());
 		$order['sale_ship_fee'] = $ws->getCell("AE".$rowNo)->getValue();
 		if ($order['sale_ship_fee'] == '－') {
@@ -262,6 +263,7 @@ function importYahoo($db, $file_name, $actual_file_name, $salesGroup) {
 		$debt['debt_shipping_method'] = 'Air Mail';
 		$debt['debt_email_sent'] = NULL;
 
+		// Remarks
 		$remark = $ws->getCell("AC".$rowNo)->getValue();
 
 		$cash_on_delivery = $ws->getCell("AF".$rowNo)->getValue();
@@ -271,6 +273,14 @@ function importYahoo($db, $file_name, $actual_file_name, $salesGroup) {
 			}
 			
 			$remark .= $cash_on_delivery;
+		}
+
+		if ($ws->getCell("AB".$rowNo)->getValue() == '商品代引') {
+			if ($remark != '') {
+				$remark .= '/';
+			}
+			
+			$remark .= '商品代引： '.$ws->getCell("AG".$rowNo)->getValue().'円';
 		}
 		
 		$debt['debt_remark'] = convert($remark);
@@ -406,15 +416,21 @@ function importYahooShopping($db, $file_name, $actual_file_name, $salesGroup) {
 		$debt['debt_shipping_method'] = 'Air Mail';
 		$debt['debt_email_sent'] = NULL;
 
-		$remark = $ws->getCell("N".$rowNo)->getValue().'/'.$ws->getCell("L".$rowNo)->getValue();
+		if (strtolower($ws->getCell("AE".$rowNo)->getValue()) == 'payment_d1') {
+			$remark = '商品代引：'.$ws->getCell("N".$rowNo)->getValue().'円';
+		}
+		//$remark = $ws->getCell("N".$rowNo)->getValue().'/'.$ws->getCell("L".$rowNo)->getValue();
 		$debt['debt_remark'] = convert($remark);
 		
 		// Balacne
-		$balance['sale_ref'] = $order['sale_ref'];
-		$balance['bal_pay'] = $ws->getCell("N".$rowNo)->getValue();
-		$balance['bal_pay_type'] = 'Store';
-		$balance['bal_ship_type'] = '';
-
+		$totalPrice = $ws->getCell("N".$rowNo)->getValue();
+		if ($totalPrice != NULL && $totalPrice != '') {
+			$balance['sale_ref'] = $order['sale_ref'];
+			$balance['bal_pay'] = $ws->getCell("N".$rowNo)->getValue();
+			$balance['bal_pay_type'] = 'Store';
+			$balance['bal_ship_type'] = '';
+		}
+		
 		// Validation
 		if (empty($order['sale_ref'])) {
 			$error_message = '<br>Line '.$rowNo.': Order No.(column A) is mandatory.';
@@ -474,7 +490,9 @@ function importYahooShopping($db, $file_name, $actual_file_name, $salesGroup) {
 				$debt['debt_bank'], $debt['debt_pay_method'], $debt['debt_shipping_method'],
 				$debt['debt_email_sent'], $debt['debt_remark']);
 		
-		insertBalance($balance['sale_ref'], $balance['bal_pay'], $balance['bal_pay_type'], $balance['bal_ship_type']);
+		if (!empty($balance)) {
+			insertBalance($balance['sale_ref'], $balance['bal_pay'], $balance['bal_pay_type'], $balance['bal_ship_type']);
+		}
 	}
 
 	return true;
@@ -573,6 +591,10 @@ function importRakuten($db, $file_name, $actual_file_name, $salesGroup) {
 		
 		// Remarks
 		$remark = $ws->getCell("AT".$rowNo)->getValue();
+
+		if ($ws->getCell("AL".$rowNo)->getValue() == '代金引換') {
+			$remark .= '\n'.'商品代引： '.$ws->getCell("BD".$rowNo)->getValue().'円';
+		}
 		
 		/* $remark2 = $ws->getCell("BJ".$rowNo)->getValue();
 		if (!empty($remark2)) {
@@ -587,35 +609,41 @@ function importRakuten($db, $file_name, $actual_file_name, $salesGroup) {
 		$debt['debt_remark'] = convert($remark);
 		
 	/** Balance */
-		$balance['sale_ref'] = $order['sale_ref'];
-		$balance['bal_pay'] = $ws->getCell("BJ".$rowNo)->getValue();
-		
-		// Payment Type
-		$type = $ws->getCell("AL".$rowNo)->getValue();
-		switch ($type) {
-			case "クレジットカード":
-				$balance['bal_pay_type'] = 'Credit Card';
-				break;
-			case "銀行振込":
-				$balance['bal_pay_type'] = 'Bank';
-				break;
-			default:
-				$balance['bal_pay_type'] = '';
-		}
-		
-		//[配送日時指定:]19～21時[注文フォーム:]
-		$delivery = $ws->getCell("AT".$rowNo)->getValue();
-		$start_idx = mb_strpos($delivery, ']', 0, 'UTF-8');
-		$end_idx = mb_strpos($delivery, '[', 3, 'UTF-8');
-		$delivery_time = convert(mb_substr($delivery, $start_idx + 1, $end_idx - $start_idx - 1, 'UTF-8'));
-		$balance['bal_delivery_time_optaion_id'] = NULL;
-		$balance['bal_delivery_time'] = $delivery_time;
-		
-		// Shipping Type
-		if ($type == '代金引換') {
-			$balance['bal_ship_type'] = 'COD';
-		} else {
-			$balance['bal_ship_type'] = '';
+		$requiredCost = $ws->getCell("BD".$rowNo)->getValue();
+		if ($requiredCost != NULL && $requiredCost != '') {
+
+			$balance['sale_ref'] = $order['sale_ref'];
+			$balance['bal_pay'] = $ws->getCell("BJ".$rowNo)->getValue();
+			
+			// Payment Type
+			$type = $ws->getCell("AL".$rowNo)->getValue();
+			switch ($type) {
+				case "クレジットカード":
+					$balance['bal_pay_type'] = 'Credit Card';
+					break;
+				case "銀行振込":
+					$balance['bal_pay_type'] = 'Bank';
+					break;
+				default:
+					$balance['bal_pay_type'] = '';
+			}
+			
+			//[配送日時指定:]19～21時[注文フォーム:]
+			$delivery = $ws->getCell("AT".$rowNo)->getValue();
+			$start_idx = mb_strpos($delivery, ']', 0, 'UTF-8');
+			$end_idx = mb_strpos($delivery, '[', 3, 'UTF-8');
+			$delivery_time = convert(mb_substr($delivery, $start_idx + 1, $end_idx - $start_idx - 1, 'UTF-8'));
+			$balance['bal_delivery_time_optaion_id'] = NULL;
+			$balance['bal_delivery_time'] = $delivery_time;
+			
+			// Shipping Type
+			if ($type == '代金引換') {
+				$balance['bal_ship_type'] = 'COD';
+
+				$debt['debt_remark'] = $debt['debt_remark'].'\n'.convert('代引 : '.$ws->getCell("BC".$rowNo)->getValue().'円');
+			} else {
+				$balance['bal_ship_type'] = '';
+			}
 		}
 		
 		// Validation
@@ -676,8 +704,10 @@ function importRakuten($db, $file_name, $actual_file_name, $salesGroup) {
 				$debt['debt_bank'], $debt['debt_pay_method'], $debt['debt_shipping_method'],
 				$debt['debt_email_sent'], $debt['debt_remark']);
 		
-		insertBalance($balance['sale_ref'], $balance['bal_pay'], $balance['bal_pay_type'], $balance['bal_ship_type'],
-				$balance['bal_delivery_date'], $balance['bal_delivery_time_option_id'], $balance['bal_delivery_time']);
+		if (!empty($balance)) {
+			insertBalance($balance['sale_ref'], $balance['bal_pay'], $balance['bal_pay_type'], $balance['bal_ship_type'],
+					$balance['bal_delivery_date'], $balance['bal_delivery_time_option_id'], $balance['bal_delivery_time']);
+		}
 	}
 	
 	return true;
