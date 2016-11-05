@@ -120,6 +120,7 @@ function getOrderListByDate($date_start,$date_end,$access,$user_name)
 			$order['sale_sts'] = $row["sts"];
 			$order['sale_prod_id'] = $row["sprod_id"];
 			$order['sprod_unit']=$row["sprod_unit"];
+			$order['sprod_colour']=$row["sprod_colour"];
 			
 			// Price
 			$order['product_price'] = $row['sprod_price'] * $row['sprod_unit'];
@@ -265,10 +266,10 @@ function genCSVByDate($date_start,$date_end,$status,$access,$user_name,$isRetrie
 
 	if (!$isRetrieveProductId) {
 		if ($access==Admin_name) {
-			$sql = "FROM ben_sale where sale_date between '$date_start' and '$date_end' ";
+			$sql = "FROM ben_sale left outer join ben_sale_prod on sale_ref = sprod_ref where sale_date between '$date_start' and '$date_end' ";
 		}
 		else {
-			$sql = "FROM ben_sale where sale_group='$user_name' and sale_date between '$date_start' and '$date_end' ";
+			$sql = "FROM ben_sale left outer join ben_sale_prod on sale_ref = sprod_ref where sale_group='$user_name' and sale_date between '$date_start' and '$date_end' ";
 		}
 	}
 	else {
@@ -324,6 +325,7 @@ function genCSVByDate($date_start,$date_end,$status,$access,$user_name,$isRetrie
 		$order['sale_tax']=$sale_tax;
 		$order['sprod_id'] = $row['sprod_id']; 
 		$order['sprod_unit'] = $row['sprod_unit'];
+		$order['sprod_colour'] = $row['sprod_colour'];
 		
 		//payment of product
 		$cost_prod=getprod_cost($sale_ref);
@@ -525,7 +527,7 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 
 	//table echo
 	echo "<table width=1400 border=\"1\" cellspacing=\"0\" cellpadding=\"0\">";
-	echo "<tr align=\"right\" valign=\"top\"><td >Order date</td><td >Auction ID</td><td >Client Yahoo Id.</td><td > Group</td><td width=\'120\'>Client email</td><td width='100'>Client Name</td><td width='150'> Note</td><td width='120'> Client's Payment Name</td><td>product No.</td><td width='60'>Price</td><td width='60'>Shipping </td><td width='60'>Total</td><td >Payment</td><td width='80'>Return</td><td width='80'>Shipping</td><td width='100'>Remark</td><td>Order status</td></tr>\n";
+	echo "<tr align=\"right\" valign=\"top\"><td >Order date</td><td >Auction ID</td><td >Client Yahoo Id.</td><td > Group</td><td width=\'120\'>Client email</td><td width='100'>Client Name</td><td width='150'> Note</td><td width='120'> Client's Payment Name</td><td>product No.</td><td width='60'>Price</td><td width='60'>&#x20;&#x984F;&#x8272;</td><td width='60'>Shipping </td><td width='60'>Total</td><td >Payment</td><td width='80'>Return</td><td width='80'>Shipping</td><td width='100'>Remark</td><td>Order status</td></tr>\n";
 	
 	if ($num_rows > 0) {
 		$sql = $sql_select.$sql."order by sale_date desc LIMIT $page_start, $per_page ";
@@ -548,6 +550,7 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 			$sale_tax=$row["sale_tax"];
 			$sts=$row["sts"];
 			$sale_prod_id=$row["sprod_id"];
+			$sprod_colour = $row['sprod_colour'];
 			
 			//payment of product
 			$cost_prod=getprod_cost($sale_ref);
@@ -658,7 +661,7 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 				$remark ="<a href=\"index.php?page=order&subpage=remark&ale_ref=".$sale_ref." \">Fill in</a>";
 			}
 
-			echo "<tr align=\"right\" valign=\"top\"> <td>".$sale_date."</td><td>".$sale_edit."<br> $sale_yahoo_id (".$sale_dat .")</td><td >".$sale_yahoo_id."&nbsp;</td><td >".$sale_group."&nbsp;</td><td width=\"100\" style=\"word-wrap:break-word;\">".$sale_email."&nbsp;</td><td >".$sale_name."&nbsp;</td><td>".$debt_data."&nbsp;</td><td>".$debt_pay_name."&nbsp;</td><td>$sale_prod_id</td><td >$cost_prod</td><td >$sale_ship_fee</td><td >$cost_total</td><td>".$bal_data."</td><td>".$return_data."</td><td $ship_bg >".$ship_data."</td><td >".$remark."&nbsp;</td><td>".$sts."&nbsp;</td></tr>\n";
+			echo "<tr align=\"right\" valign=\"top\"> <td>".$sale_date."</td><td>".$sale_edit."<br> $sale_yahoo_id (".$sale_dat .")</td><td >".$sale_yahoo_id."&nbsp;</td><td >".$sale_group."&nbsp;</td><td width=\"100\" style=\"word-wrap:break-word;\">".$sale_email."&nbsp;</td><td >".$sale_name."&nbsp;</td><td>".$debt_data."&nbsp;</td><td>".$debt_pay_name."&nbsp;</td><td>$sale_prod_id</td><td >$cost_prod</td><td>$sprod_colour</td><td>$sale_ship_fee</td><td >$cost_total</td><td>".$bal_data."</td><td>".$return_data."</td><td $ship_bg >".$ship_data."</td><td >".$remark."&nbsp;</td><td>".$sts."&nbsp;</td></tr>\n";
 		}
 		//end loop
 		

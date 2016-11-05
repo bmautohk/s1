@@ -74,18 +74,18 @@
                             <input name="bal_pay_type" type="radio" value="Post Office" <? if ($bal_pay_type=='Post Office') {echo "checked";} ?>>
                             <br />
                             
-                            <? echo mb_convert_encoding('????�M?', "EUC-JP","UTF-8"); ?>
+                            <? echo mb_convert_encoding('コンビニ決済', "EUC-JP","UTF-8"); ?>
                             <input name="bal_pay_type" type="radio" value="Store" <? if ($bal_pay_type=='Store') {echo "checked";} ?>>
                             
-                            <? echo mb_convert_encoding('???�M?', "EUC-JP","UTF-8"); ?>
+                            <? echo mb_convert_encoding('クレカ決済', "EUC-JP","UTF-8"); ?>
                             <input name="bal_pay_type" type="radio" value="Credit Card" <? if ($bal_pay_type=='Credit Card') {echo "checked";} ?>>
                             
-							<? echo mb_convert_encoding('???�M?', "EUC-JP","UTF-8"); ?>
+							<? echo mb_convert_encoding('カード決済', "EUC-JP","UTF-8"); ?>
                             <input name="bal_pay_type" type="radio" value="Card" <? if ($bal_pay_type=='Card') {echo "checked";} ?>>
                             
                             <br />
                             
-							<? echo mb_convert_encoding('?��Edy�M?', "EUC-JP","UTF-8"); ?>
+							<? echo mb_convert_encoding('楽天Edy決済', "EUC-JP","UTF-8"); ?>
                             <input name="bal_pay_type" type="radio" value="Rakuten" <? if ($bal_pay_type=='Rakuten') {echo "checked";} ?>>
 
                         	</div>
@@ -170,7 +170,7 @@
                       </tr>
                       
                       <tr>
-                        <td valign="top">&#37197;&#36948;&#26085; : </td> <!-- �t�F�� -->
+                        <td valign="top">&#37197;&#36948;&#26085; : </td> <!-- 配達日 -->
 
                         <td colspan="3">
                         	<input name="bal_delivery_date" type="text" value="<? echo $bal_delivery_date; ?>" size=20 />
@@ -179,7 +179,7 @@
                       </tr>
                       
                       <tr>
-                        <td valign="top">&#37197;&#36948;&#26178;&#38291; : </td> <!-- �t�F�ɶ� -->
+                        <td valign="top">&#37197;&#36948;&#26178;&#38291; : </td> <!-- 配達時間 -->
 
                         <td colspan="3">
                         	<select name="bal_delivery_time_option_id" id="bal_delivery_time_option_id">

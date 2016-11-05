@@ -1,3 +1,37 @@
+<?
+
+$start_date = date("Y-m-d");
+$end_date = date("Y-m-d");
+
+$isGetOrderByDate = true;
+if (!isset($_GET['date_start']) and !isset($_GET['date_end']) ) {
+
+    if (!isset($_SESSION['date_start'])) {
+        $start_date = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-1,date("Y")));
+        $end_date = date("Y-m-d");
+    }
+    else{
+        $start_date = $_SESSION['date_start'];
+        $end_date = $_SESSION['date_end'];
+    }
+}
+
+if (isset($_GET['date_start']) and isset($_GET['date_end']) and !isset($_GET['issearch'])) {
+    $_SESSION['date_start'] = $_GET['date_start'];
+    $_SESSION['date_end'] = $_GET['date_end'];
+    
+    $start_date = $_SESSION['date_start'];
+    $end_date = $_SESSION['date_end'];
+}
+
+if (isset($_GET['issearch'])) {
+    $isGetOrderByDate = false;
+    $start_date = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-150,date("Y")));
+    $end_date = date("Y-m-d"); 
+}
+
+?>
+
  <TD vAlign=top bgColor=#eefafc>
 
      
@@ -166,11 +200,11 @@
 
     <td width="30">From</td>
 
-    <td width="100"><script>DateInput('date_start', true, 'YYYY-MM-DD')</script>&nbsp;</td>
+    <td width="100"><script>DateInput('date_start', true, 'YYYY-MM-DD', '<?=$start_date ?>')</script>&nbsp;</td>
 
     <td width="16">To </td>
 
-    <td width="84"><script>DateInput('date_end', true, 'YYYY-MM-DD')</script>&nbsp;</td>
+    <td width="84"><script>DateInput('date_end', true, 'YYYY-MM-DD', '<?=$end_date ?>')</script>&nbsp;</td>
 
   </tr>
 
@@ -191,42 +225,18 @@
 
                  <? 
 
-				 $isGetOrderByDate = true;
-				 if (!isset($_GET['date_start']) and !isset($_GET['date_end']) ) {
-						$today = date("Y-m-d");
-						$today_10 = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-1,date("Y")));
-
-						if (!isset($_SESSION['date_start'])) {
-							$orders = getOrderListByDate($today_10,$today,$group2, $user_name);
-						}
-						else{
-							$orders = getOrderListByDate($_SESSION['date_start'],$_SESSION['date_end'],$group2, $user_name);
-						}
-				}
-				
-				if (isset($_GET['date_start']) and isset($_GET['date_end']) and !isset($_GET['issearch'])) {
-					$_SESSION['date_start'] = $_GET['date_start'];
-					$_SESSION['date_end'] = $_GET['date_end'];
-					//$_SESSION['zpage'] = $_GET['zpage'];
-					$orders = getOrderListByDate($_SESSION['date_start'],$_SESSION['date_end'],$group2, $user_name);
-				 }
-				 
-				 if (isset($_GET['issearch'])) {
-				 	$isGetOrderByDate = false;
-				 	$today = date("Y-m-d"); 
-					$today_60 = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-150,date("Y")));
-					
+				 if (!$isGetOrderByDate) {
 					$input_sale_ref = $sale_ref;
 					if (isset($hide_sale_ref)) {
 						$input_sale_ref = $hide_sale_ref;
 					}
 					
-					getOrderListByFilter($input_sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$today_60,$today,$min_m,$max_m,$debt_cust_address1,$debt_cust_address2,$debt_post_co,$total_m, $total_price,$group2, $user_name,$prod_cd,$client_tel,$sts);
-				 }
+					getOrderListByFilter($input_sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$start_date,$end_date,$min_m,$max_m,$debt_cust_address1,$debt_cust_address2,$debt_post_co,$total_m, $total_price,$group2, $user_name,$prod_cd,$client_tel,$sts);
 
-				 ?>
-
-                 <? if ($isGetOrderByDate) {?>
+				}
+                else if ($isGetOrderByDate) {
+                    $orders = getOrderListByDate($start_date,$end_date,$group2, $user_name);
+                ?>
                  	<table width="1400" border="1" cellspacing="0" cellpadding="0">
                  		<tr align="right" valign="top">
                  			<td>Order date</td>
@@ -239,6 +249,7 @@
                  			<td width='120'> Client's Payment Name</td>
                  			<td>Product No.</td>
                  			<td width='60'>Price</td>
+                            <td width='60'>&#x20;&#x984F;&#x8272;</td>
 							<td width='60'>Qty</td>
                  			<td width='60'>Shipping </td>
                  			<td width='60'>Total</td>
@@ -266,6 +277,7 @@
                  				<td><?=$order['debt_pay_name'] ?>&nbsp;</td>
                  				<td><?=$order['sale_prod_id'] ?></td>
                  				<td><?=$order['product_price'] ?></td>
+                                <td><?=$order['sprod_colour'] ?></td>
 								<td><?=$order['sprod_unit']?></td>
                  				<td><?=$order['sale_ship_fee'] ?></td>
                  				<td><?=$order['cost_total'] ?></td>

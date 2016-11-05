@@ -50,6 +50,8 @@
 		$sheet->setCellValueByColumnAndRow($i++, 1, 'Product No.');
 	}
 	$sheet->setCellValueByColumnAndRow($i++, 1, 'Price')
+			->setCellValueByColumnAndRow($i++, 1, '顏色')
+			->setCellValueByColumnAndRow($i++, 1, 'Qty')
 			->setCellValueByColumnAndRow($i++, 1, 'Shipping')
 			->setCellValueByColumnAndRow($i++, 1, 'Total')
 			->setCellValueByColumnAndRow($i++, 1, 'Payment')
@@ -127,8 +129,10 @@
 			}
 			
 			$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($order['cost_prod']))
-				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['sale_ship_fee']))
-				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['cost_total']))
+				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['sprod_colour']))
+				->setCellValueByColumnAndRow($i++, $rowNo, $order['sprod_unit'])
+				->setCellValueByColumnAndRow($i++, $rowNo, $order['sale_ship_fee'])
+				->setCellValueByColumnAndRow($i++, $rowNo, $order['cost_total'])
 				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['bal_data']))
 				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['return_data']))
 				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['ship_data']))
@@ -144,7 +148,7 @@
 	//$objPHPExcel->setActiveSheetIndex(0);
 	
 	
-	// Redirect output to a client��s web browser (Excel5)
+	// Redirect output to a client¡¦s web browser (Excel5)
 	//header('Content-Type: application/vnd.ms-excel');
 	header("Content-type:application/vnd.ms-excel;charset=euc");
 	header('Content-Disposition: attachment;filename="order.xls"');
