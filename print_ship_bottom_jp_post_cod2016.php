@@ -27,6 +27,7 @@ var $header_title=array();
 function Set_header_title($header_title) {
 	$this->header_title=$header_title;
 }
+
 function Body($invoice_no,$addr_id)
 {
   $debt_row=getdebt_data($invoice_no);
@@ -77,11 +78,11 @@ function Body($invoice_no,$addr_id)
 	}
 	
 	
-$this->SetY(-2);
+	$this->SetY(-2);
 
-   $this->SetTextColor(0,0,0);
+   	$this->SetTextColor(0,0,0);
  
-  $border=0; //TODO
+  	$border=0; //TODO
   
 
 	
@@ -91,7 +92,6 @@ $this->SetY(-2);
 	$this->SetFont(KOZMIN, '',20);
 	$this->Cell(17,12,"",$border,0,'L',0);
 	$this->Cell(8,12,"",$border,0,'L',0);
-	//$this->Cell(53,12,$debt_row['debt_post_co'],$border,1,'L',0);
 	$this->Cell(53,12,$debt_post_co,$border,1,'L',0);
 
 // Client address
@@ -162,7 +162,7 @@ $this->Ln(4);
 	$this->Cell(100,8,$sprod_id,$border,0,'L',0);
 	$this->Cell(5,8,"",$border,1,'C',0); */
 	$this->SetFont(KOZMIN, '',10);
-	$this->SetXY(165, 78);
+	$this->SetXY(165, 58);
 	foreach ($prod_rows as $prod_row) {
 		$this->MultiCell(30,6,$prod_row["sprod_id"].chr(13).chr(10).$sprod_material.' '.$sprod_colour,$border,'L',0);
 		$this->SetX(165);
@@ -172,13 +172,13 @@ $this->Ln(4);
 // Product Name
 	$this->SetFont(KOZMIN, '',7);
  	//$this->SetXY(165, 65);
-	$this->SetXY(138, 30);
+	$this->SetXY(138, 26);
 	$this->MultiCell(50,4,$sprod_name,$border,'L',0);
 	
 	
 // Delivery Date & Time
 	$this->SetFont(KOZMIN, '',10);
-	$this->SetXY(133, 17);
+	$this->SetXY(133, 13);
 	$this->MultiCell(25,4,$bal['bal_delivery_date'].chr(13).chr(10).$bal['bal_delivery_time'],$border,'L',0);
  	
 }
@@ -194,9 +194,9 @@ function Header()
 	$this->SetDrawColor(255,255,255);
 	$this->SetFillColor(233,233,233);
 	$this->SetTextColor(0,0,0);
-	 
-	//$this->Ln(24);
-	$this->Ln(16);
+	
+	//$this->Ln(16);
+	$this->Ln(12);
  
 }
 
