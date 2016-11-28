@@ -384,10 +384,12 @@ function importYahooShopping($db, $file_name, $actual_file_name, $salesGroup) {
 		$product['sale_ref'] = $order['sale_ref'];
 		$product['sprod_id'] = $ws->getCell("F".$rowNo)->getValue();
 		$product['sprod_name'] = convert($ws->getCell("G".$rowNo)->getValue());
-		$product['sprod_price'] = $ws->getCell("M".$rowNo)->getValue();
 		$product['sprod_unit'] = $ws->getCell("H".$rowNo)->getValue();
 		$product['sprod_material'] = convert($ws->getCell("AJ".$rowNo)->getValue());
 		$product['sprod_colour'] = convert($ws->getCell("AK".$rowNo)->getValue());
+
+		$total = $ws->getCell("M".$rowNo)->getValue();;
+		$product['sprod_price'] = ceil($total / $product['sprod_unit']);
 
 		// Debt
 		$debt['sale_ref'] = $order['sale_ref'];
