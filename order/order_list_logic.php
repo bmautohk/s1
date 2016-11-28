@@ -661,7 +661,14 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 				$remark ="<a href=\"index.php?page=order&subpage=remark&ale_ref=".$sale_ref." \">Fill in</a>";
 			}
 
-			echo "<tr align=\"right\" valign=\"top\"> <td>".$sale_date."</td><td>".$sale_edit."<br> $sale_yahoo_id (".$sale_dat .")</td><td >".$sale_yahoo_id."&nbsp;</td><td >".$sale_group."&nbsp;</td><td width=\"100\" style=\"word-wrap:break-word;\">".$sale_email."&nbsp;</td><td >".$sale_name."&nbsp;</td><td>".$debt_data."&nbsp;</td><td>".$debt_pay_name."&nbsp;</td><td>$sale_prod_id</td><td >$cost_prod</td><td>$sprod_colour</td><td>$sale_ship_fee</td><td >$cost_total</td><td>".$bal_data."</td><td>".$return_data."</td><td $ship_bg >".$ship_data."</td><td >".$remark."&nbsp;</td><td>".$sts."&nbsp;</td></tr>\n";
+			if ($sts=="O") {
+				$stsBlink="id='divtoBlink'";
+				$sts="OUT";
+			} else {
+				$stsBlink="";
+			}
+
+			echo "<tr align=\"right\" valign=\"top\"> <td>".$sale_date."</td><td>".$sale_edit."<br> $sale_yahoo_id (".$sale_dat .")</td><td >".$sale_yahoo_id."&nbsp;</td><td >".$sale_group."&nbsp;</td><td width=\"100\" style=\"word-wrap:break-word;\">".$sale_email."&nbsp;</td><td >".$sale_name."&nbsp;</td><td>".$debt_data."&nbsp;</td><td>".$debt_pay_name."&nbsp;</td><td>$sale_prod_id</td><td >$cost_prod</td><td>$sprod_colour</td><td>$sale_ship_fee</td><td >$cost_total</td><td>".$bal_data."</td><td>".$return_data."</td><td $ship_bg >".$ship_data."</td><td >".$remark."&nbsp;</td><td><font ".$stsBlink.">".$sts."</font>&nbsp;</td></tr>\n";
 		}
 		//end loop
 		

@@ -82,6 +82,7 @@
 		 <option value="A" <? if ($sts=="A") { echo "selected=\"selected\"";}?>>Active</option>
 			<option value="C" <? if ($sts=="C") { echo "selected=\"selected\"";}?>>Cancel</option>
 			<option value="B" <? if ($sts=="B") { echo "selected=\"selected\"";}?>>Back</option>
+			<option value="O" <? if ($sts=="O") { echo "selected=\"selected\"";}?>>Out Of Stock</option>
 </select>
 		  </div></td>
 		 <tr>

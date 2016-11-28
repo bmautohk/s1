@@ -32,6 +32,17 @@ if (isset($_GET['issearch'])) {
 
 ?>
 
+<style type='text/css'>   
+ .backgroundRed { color: red; 
+ font-weight: bold;}
+ </style>
+<script>
+  setInterval(function(){
+       //$("#divtoBlink").toggleClass("backgroundRed");
+		 $("[id=divtoBlink]").toggleClass("backgroundRed");
+     },1000)
+</script>
+
  <TD vAlign=top bgColor=#eefafc>
 
      
@@ -171,6 +182,7 @@ if (isset($_GET['issearch'])) {
 		 <option value="A" >Active</option>
 		<option value="C" >Cancel</option>
 		<option value="B" >Back</option>
+		<option value="O" >Out of Stock</option>
 		</select>
 </td>
 
@@ -329,7 +341,7 @@ if (isset($_GET['issearch'])) {
                  						<a href="index.php?page=order&subpage=remark&sale_ref=<?=$order['sale_ref'] ?>">Fill in</a>
                  					<? }?>
                  				</td>
-                 				<td><?=$order['sale_sts'] ?></td>
+                 				<td ><font <?php if ($order['sale_sts']=="O") echo "id='divtoBlink'";?>><?=$order['sale_sts'] ?></font> </td>
                  			</tr>
                  		<? }?>
                  	</table>
