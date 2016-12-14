@@ -341,7 +341,7 @@ if (isset($_GET['issearch'])) {
                  						<a href="index.php?page=order&subpage=remark&sale_ref=<?=$order['sale_ref'] ?>">Fill in</a>
                  					<? }?>
                  				</td>
-                 				<td ><font <?php if ($order['sale_sts']=="O") echo "id='divtoBlink'";?>><?=$order['sale_sts'] ?></font> </td>
+                 				<td ><font <?php if ($order['sale_sts']=="O") {echo "id='divtoBlink'";$order['sale_sts']="OUT";}?>><?=$order['sale_sts'] ?></font> </td>
                  			</tr>
                  		<? }?>
                  	</table>
