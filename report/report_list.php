@@ -1,3 +1,18 @@
+<?
+if (isset($_POST['date_start'])) {
+	$start_date = $_POST['date_start'];
+} else {
+	$start_date = date("Y-m-d");
+}
+
+if (isset($_POST['date_end'])) {
+	$end_date = $_POST['date_end'];
+} else {
+	$end_date = date("Y-m-d");
+}
+
+?>
+
 <TD vAlign=top bgColor=#eefafc>
             ---------------------------------------------------------------------------------------------------------------------------------------------------<br>
               
@@ -54,9 +69,9 @@ Group:
 				<table width="406" border="0">
   <tr>
     <td width="30">From</td>
-    <td width="100"><script>DateInput('date_start', true, 'YYYY-MM-DD')</script>&nbsp;</td>
+    <td width="100"><script>DateInput('date_start', true, 'YYYY-MM-DD', '<?=$start_date ?>')</script>&nbsp;</td>
     <td width="16">To </td>
-    <td width="84"><script>DateInput('date_end', true, 'YYYY-MM-DD')</script>&nbsp;</td>
+    <td width="84"><script>DateInput('date_end', true, 'YYYY-MM-DD', '<?=$end_date ?>')</script>&nbsp;</td>
   </tr>
 </table>
 
@@ -75,7 +90,7 @@ Group:
 				 $today_20 = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-2,date("Y")));
 				 if (isset($_POST['date_start']) and isset($_POST['date_end']) and isset($_POST['sale_top']))
 				 {
-				 	echo 'Part 0';
+				 	//echo 'Part 0';
 				 $date_start = $_POST['date_start'];
 				 $date_end = $_POST['date_end'];
 				 $sale_top = $_POST['sale_top'];

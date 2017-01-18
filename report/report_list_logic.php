@@ -39,8 +39,19 @@ function getReportTop($date_start,$date_end,$sale_top,$sale_select)
 	
 	$db=connectDatabase();
 	mysql_select_db(DB_NAME,$db);
-	$sql = "select sum(sprod_price * sprod_unit + sprod_price*sprod_unit*sale_tax/100 + sale_ship_fee - sale_discount) as price, sale_group, count(sale_ref) as counter from ben_sale, ben_sale_prod where sale_ref=sprod_ref and sale_date between '$date_start' and '$date_end' GROUP by sale_group order by price desc limit 0, $sale_select";
-	//echo $sql;
+//	$sql = "select sum(sprod_price * sprod_unit + sprod_price*sprod_unit*sale_tax/100 + sale_ship_fee - sale_discount) as price, sale_group, count(sale_ref) as counter from ben_sale, ben_sale_prod where sale_ref=sprod_ref and sale_date between '$date_start' and '$date_end' GROUP by sale_group order by price desc limit 0, $sale_select";
+	
+	$sql = "select sale_group, sum(price) price, count(sale_ref) as counter
+			from 
+			(
+				select sale_group, sale_ref, sum(sprod_price*sprod_unit)-sale_discount + sum(sprod_price*sprod_unit)*(sale_tax/100) + sale_ship_fee as price
+				from ben_sale, ben_sale_prod
+				where sale_ref=sprod_ref and sale_date between '$date_start' and '$date_end'
+				group by sale_group, sale_ref
+			) tmp
+			GROUP by sale_group order by price desc
+			limit 0, $sale_select";
+
 	$result = mysql_query($sql ,$db) or die (mysql_error()."<br />Couldn't execute query: $query");
 	
 	
