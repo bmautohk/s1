@@ -658,7 +658,7 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 				$remark ="<a href=\"index.php?page=order&subpage=remark&sale_ref=".$sale_ref." \">$remark</a>";
 			}	
 			else {
-				$remark ="<a href=\"index.php?page=order&subpage=remark&ale_ref=".$sale_ref." \">Fill in</a>";
+				$remark ="<a href=\"index.php?page=order&subpage=remark&sale_ref=".$sale_ref." \">Fill in</a>";
 			}
 
 			if ($sts=="O") {
