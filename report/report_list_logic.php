@@ -41,12 +41,17 @@ function getReportTop($date_start,$date_end,$sale_top,$sale_select)
 	mysql_select_db(DB_NAME,$db);
 //	$sql = "select sum(sprod_price * sprod_unit + sprod_price*sprod_unit*sale_tax/100 + sale_ship_fee - sale_discount) as price, sale_group, count(sale_ref) as counter from ben_sale, ben_sale_prod where sale_ref=sprod_ref and sale_date between '$date_start' and '$date_end' GROUP by sale_group order by price desc limit 0, $sale_select";
 	
-	$sql = "select sale_group, sum(price) price, count(sale_ref) as counter
+	$sql = "select sale_group, sum(price) price, sum(active_payment_total) active_payment_total, sum(nonactive_payment_total) nonactive_payment_total, count(sale_ref) as counter, sum(active_pyament_counter) active_pyament_counter
 			from 
 			(
-				select sale_group, sale_ref, sum(sprod_price*sprod_unit)-sale_discount + sum(sprod_price*sprod_unit)*(sale_tax/100) + sale_ship_fee as price
-				from ben_sale, ben_sale_prod
-				where sale_ref=sprod_ref and sale_date between '$date_start' and '$date_end'
+				select sale_group, sale_ref, sum(sprod_price*sprod_unit)-sale_discount + sum(sprod_price*sprod_unit)*(sale_tax/100) + sale_ship_fee as price,
+					case when sts = 'A' then bal_pay else 0 end active_payment_total, 
+					case when sts <> 'A' then bal_pay else 0 end nonactive_payment_total,
+					case when sts = 'A' and bal_pay > 0 then 1 else 0 end active_pyament_counter
+				from ben_sale
+				join ben_sale_prod on sale_ref=sprod_ref 
+				left outer join ben_bal on bal_ref = sale_ref
+				where sale_date between '$date_start' and '$date_end'
 				group by sale_group, sale_ref
 			) tmp
 			GROUP by sale_group order by price desc
@@ -58,7 +63,7 @@ function getReportTop($date_start,$date_end,$sale_top,$sale_select)
 	$num_results=mysql_num_rows($result);
 	//table echo 
 	echo "<table width=\"500\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">";
-	echo "<tr valign=\"top\" align=\"left\"><td>Group</td><td>Total Sale</td><td>Order</td></tr>\n";
+	echo "<tr valign=\"top\" align=\"left\"><td>Group</td><td>Total Sale</td><td>Payment Total<br />(Active)</td><td>Payment Total<br />(Non-active)</td><td>Order</td><td>Payment Order<br />(Active)</td></tr>\n";
 	
 	
 	//loop
@@ -67,9 +72,12 @@ function getReportTop($date_start,$date_end,$sale_top,$sale_select)
 		$row=mysql_fetch_array($result);
 		$sale_group=$row["sale_group"];
 		$sale_price=$row["price"];
+		$active_payment_total = $row["active_payment_total"];
+		$nonactive_payment_total = $row["nonactive_payment_total"];
 		$counter=$row["counter"];
+		$active_pyament_counter = $row["active_pyament_counter"];
 		
-		echo "<tr valign=\"top\" align=\"left\"> <td>".$sale_group."</td><td>".number_format($sale_price,2,'.','')."</td><td>$counter</td><tr>";
+		echo "<tr valign=\"top\" align=\"left\"> <td>".$sale_group."</td><td>".number_format($sale_price,2,'.','')."</td><td>".number_format($active_payment_total,2,'.','')."</td><td>".number_format($nonactive_payment_total,2,'.','')."</td><td>$counter</td><td>$active_pyament_counter</td><tr>";
 	}
 	//end loop
 	

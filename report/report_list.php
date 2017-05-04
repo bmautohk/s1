@@ -1,14 +1,14 @@
 <?
 if (isset($_POST['date_start'])) {
-	$start_date = $_POST['date_start'];
+	$date_start = $_POST['date_start'];
 } else {
-	$start_date = date("Y-m-d");
+	$date_start = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-2,date("Y")));
 }
 
 if (isset($_POST['date_end'])) {
-	$end_date = $_POST['date_end'];
+	$date_end = $_POST['date_end'];
 } else {
-	$end_date = date("Y-m-d");
+	$date_end = date("Y-m-d");
 }
 
 ?>
@@ -69,9 +69,9 @@ Group:
 				<table width="406" border="0">
   <tr>
     <td width="30">From</td>
-    <td width="100"><script>DateInput('date_start', true, 'YYYY-MM-DD', '<?=$start_date ?>')</script>&nbsp;</td>
+    <td width="100"><script>DateInput('date_start', true, 'YYYY-MM-DD', '<?=$date_start ?>')</script>&nbsp;</td>
     <td width="16">To </td>
-    <td width="84"><script>DateInput('date_end', true, 'YYYY-MM-DD', '<?=$end_date ?>')</script>&nbsp;</td>
+    <td width="84"><script>DateInput('date_end', true, 'YYYY-MM-DD', '<?=$date_end ?>')</script>&nbsp;</td>
   </tr>
 </table>
 
@@ -86,13 +86,13 @@ Group:
                  <? 
 				 $get_username = $_POST['get_username']; 
 				 $print_link = "&nbsp;";
-				 $today = date("Y-m-d"); 
-				 $today_20 = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-2,date("Y")));
+				 //$today = date("Y-m-d"); 
+				 //$today_20 = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-2,date("Y")));
 				 if (isset($_POST['date_start']) and isset($_POST['date_end']) and isset($_POST['sale_top']))
 				 {
 				 	//echo 'Part 0';
-				 $date_start = $_POST['date_start'];
-				 $date_end = $_POST['date_end'];
+				 //$date_start = $_POST['date_start'];
+				 //$date_end = $_POST['date_end'];
 				 $sale_top = $_POST['sale_top'];
 				 $sale_select = $_POST['sale_select'];
 				 getReportTop($date_start,$date_end,$sale_top,$sale_select);
@@ -102,14 +102,14 @@ Group:
 				 $reportData = NULL;
 				 if (!isset($_POST['date_start']) and !isset($_POST['date_end']) and !isset($_POST['search_sale']) and !isset($_POST['sale_top']))
 				 {
-				 $reportData = getOrderReport($today_20,$today, 'sale_date','desc','date','','','');
-				 $print_link = "<a href=\"print_report.php?date_start=$today_20&date_end=$today&mod=date&sale_or=sale_date&sale_as=desc\" onClick=\"NewWindow(this.href,'mywin','800','500','no','center');return false\" onFocus=\"this.blur()\">Preview Report</a>";
+				 $reportData = getOrderReport($date_start,$date_end, 'sale_date','desc','date','','','');
+				 $print_link = "<a href=\"print_report.php?date_start=$date_start&date_end=$date_end&mod=date&sale_or=sale_date&sale_as=desc\" onClick=\"NewWindow(this.href,'mywin','800','500','no','center');return false\" onFocus=\"this.blur()\">Preview Report</a>";
 				 }
 				  
 				 if (isset($_POST['date_start']) and isset($_POST['date_end']) and !isset($_POST['search_sale']) and !isset($_POST['sale_top']))
 				 {
-				 $date_start = $_POST['date_start'];
-				 $date_end = $_POST['date_end'];
+				 //$date_start = $_POST['date_start'];
+				 //$date_end = $_POST['date_end'];
 				 $sale_or = $_POST['sale_or'];
 				 $sale_as = $_POST['sale_as'];
 				 $mod = "date";
