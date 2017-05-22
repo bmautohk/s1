@@ -36,14 +36,14 @@
 			<td><?=number_format($data['sale_ship_fee']) ?></td>
 			<td><?=$data['sale_tax'] ?></td>
 			<td width='120'>
-				<? if ($data['bal_pay'] != NULL) { ?>
+				<? if ($data['bal_pay'] !== NULL) { ?>
 					<a href="index.php?page=order&subpage=balance&sale_ref=<?=$data['sale_ref'] ?>"><?=$data['bal_pay']?><br>(<?=$data['bal_dat']?>)</a>
 				<? } else { ?>
 					<a href="index.php?page=order&subpage=balance&sale_ref=<?=$data['sale_ref'] ?>">Not Pay</a>
 				<? } ?>
 			</td>
 			<td>
-				<? if ($data['return_pay'] != NULL) { ?>
+				<? if ($data['return_pay'] !== NULL) { ?>
 					<a href="index.php?page=order&subpage=balance&sale_ref=<?=$data['sale_ref'] ?>"><?=$data['return_pay']?><br>(<?=$data['return_dat']?>)</a>
 				<? } else { ?>
 					<a href="index.php?page=order&subpage=balance&sale_ref=<?=$data['sale_ref'] ?>">No Refund</a>

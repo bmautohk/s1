@@ -5,8 +5,10 @@ $sale_or = $_GET['sale_or'];
 $sale_as = $_GET['sale_as'];
 $mod = $_GET['mod'];
 $mod2 = $_GET['mod2'];
+$prod_id = $_GET['prod_id'];
+$username = $_GET['username'];
 
-$print_link ="date_start=$date_start&date_end=$date_end&mod=$mod&mod2=$mod2&sale_or=$sale_or&sale_as=$sale_as";
+$print_link ="date_start=$date_start&date_end=$date_end&mod=$mod&mod2=$mod2&sale_or=$sale_or&sale_as=$sale_as&username=$username&prod_id=$prod_id";
 				  
 				?>
 <!-- THREE STEPS TO INSTALL FRAME PRINT:

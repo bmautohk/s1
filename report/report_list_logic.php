@@ -82,7 +82,7 @@ function getReportTop($date_start,$date_end,$sale_top,$sale_select)
 	//end loop
 	
 	echo "</table>";
-	}
+}
 
 function getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod, $username,$mod2,$prod_id)
 {
@@ -103,9 +103,10 @@ function getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod, $username,
 	$db=connectDatabase();
 	mysql_select_db(DB_NAME,$db);
 	
-	$sum_sql = "SELECT sale_ref, sum(sprod_price*sprod_unit)-sale_discount + sum(sprod_price*sprod_unit)*(sale_tax/100) + sale_ship_fee as p_total,
+	$sum_sql = "SELECT sale_ref, sum(sprod_price*sprod_unit) total_product_price, 
 	sale_discount, sale_ship_fee, sale_tax ,SUM( product_cost_rmb * sprod_unit ) AS pcost ";
-	
+	// sum(sprod_price*sprod_unit)-sale_discount + sum(sprod_price*sprod_unit)*(sale_tax/100) + sale_ship_fee as p_total,
+
 	$select_sql = "SELECT sprod_name,sale_email, 
 	sum(sprod_price*sprod_unit)-sale_discount + sum(sprod_price*sprod_unit)*(sale_tax/100) + sale_ship_fee as p_total, 
 	sale_group, sale_ref, sale_date, sale_dat, sprod_id, sale_tax, sale_discount,sale_ship_fee, sum(sprod_price*sprod_unit) as s_total, sum(product_cost_rmb * sprod_unit) as product_cost_rmb ";
@@ -149,14 +150,24 @@ function getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod, $username,
 	
 	$reportData = array();
 	$totalSale = array();
+	$totalTax = array();
 	for ($i=0;$i<$num_results;$i++) {
 		$row=mysql_fetch_array($result);
-		$totalSale[$row['sale_ref']] = $row['p_total'];
+		$sale_ref = $row['sale_ref'];
+
+		$discount = $row['sale_discount'];
+		$ship_fee = $row['sale_ship_fee'];
+		$tax = $row['total_product_price'] * ($row['sale_tax'] / 100.0);
+		$total = $row['total_product_price'] - $discount + $tax + $ship_fee;
+
+		$totalSale[$sale_ref] = $total;
+		$totalTax[$sale_ref] = $tax;
+
 		$totalCost=$totalCost+$row['pcost'];
-		$sale_total_total = $sale_total_total+ $row['p_total'];
-		$dis_total = $dis_total + $row['sale_discount'];
-		$ship_total = $ship_total + $row['sale_ship_fee'];
-		$tax_total = $tax_total + $row['sale_tax'];
+		$sale_total_total = $sale_total_total+ $total;
+		$dis_total = $dis_total + $discount;
+		$ship_total = $ship_total + $ship_fee;
+		$tax_total = $tax_total + $tax;
 	}
 	
 	mysql_free_result($result);
@@ -179,6 +190,7 @@ function getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod, $username,
 	
 	
 	//loop
+	$prevSaleRef = '';
 	$balData = array();
 	$returnData = array();
 	$reportData['row'] = array();
@@ -190,19 +202,35 @@ function getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod, $username,
 		$row=mysql_fetch_array($result);
 		$sale_ref=$row["sale_ref"];
 		$sprod_id = $row["sprod_id"];
-		
+
+		if ($prevSaleRef == $sale_ref) {
+			$isSameOrder = true;
+		} else {
+			$isSameOrder = false;
+			$prevSaleRef = $sale_ref;
+		}
+			
 		$data['sale_date'] = $row["sale_date"];
 		$data['sale_ref'] = $sale_ref;
 		$data['sprod_id'] =$sprod_id;
 		$data['sprod_name'] = $row["sprod_name"];
 		$data['sale_email'] = $row["sale_email"];
-		$data['sale_total'] = $totalSale[$sale_ref];
 		$data['product_cost_rmb'] = $row["product_cost_rmb"];
 		$data['sub_total'] = $row["s_total"];
-		$data['sale_discount'] = $row["sale_discount"];
-		$data['sale_ship_fee'] = $row["sale_ship_fee"];
-		$data['sale_tax'] = $row["sale_tax"];
 		$data['sale_group'] = $row["sale_group"];
+
+		if (!$isSameOrder) {
+			$data['sale_total'] = $totalSale[$sale_ref];
+			$data['sale_discount'] = $row["sale_discount"];
+			$data['sale_ship_fee'] = $row["sale_ship_fee"];
+			$data['sale_tax'] = $totalTax[$sale_ref];
+		} else {
+			$data['sale_total'] = 0;
+			$data['sale_discount'] = 0;
+			$data['sale_ship_fee'] = 0;
+			$data['sale_tax'] = 0;
+		}
+
 		/* 20160619
 		*/
 		$debt_row=getdebt_data($sale_ref);
@@ -254,7 +282,7 @@ function getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod, $username,
 
 		// bal
 		if ($balData[$sale_ref] != null) {
-			$data['bal_pay'] = $balData[$sale_ref]['bal_pay'];
+			$data['bal_pay'] = $isSameOrder ? 0 : $balData[$sale_ref]['bal_pay'];
 			$data['bal_dat'] = $balData[$sale_ref]['bal_dat'];
 			//$bal_data = "<a href=\"index.php?page=order&subpage=balance&sale_ref=".$sale_ref." \">". $balData[$sale_ref]['bal_pay'] ."<br> (".$balData[$sale_ref]['bal_dat'].")</a>";
 		}
@@ -266,7 +294,7 @@ function getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod, $username,
 		
 		// return
 		if ($returnData[$sale_ref] != null) {
-			$data['return_pay'] = $returnData[$sale_ref]['return_pay'];
+			$data['return_pay'] = $isSameOrder ? 0 : $returnData[$sale_ref]['return_pay'];
 			$data['return_dat'] = $returnData[$sale_ref]['return_dat'];
 			//$return_data = "<a href=\"index.php?page=order&subpage=balance&sale_ref=".$sale_ref." \">". $returnData[$sale_ref]['return_pay'] ."<br> (".$returnData[$sale_ref]['return_dat'].")</a>";
 		}

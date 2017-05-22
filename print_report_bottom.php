@@ -41,16 +41,16 @@ include('report/report_list_logic.php');
 				 $sale_as = $_GET['sale_as'];
 				 $mod = $_GET['mod'];
 				 $mod2 = $_GET['mod2'];
-				 if ($_GET['date_start']!='')
-				 {
-				 $reportData = getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod,$mod2,"");
+				 $prod_id = $_GET['prod_id'];
+				 $username = $_GET['username'];
+				 if ($_GET['date_start']!='') {
+				 	$reportData = getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod,$username,$mod2,$prod_id);
 				  
-				 }else
-				 {
-				 $reportData = getOrderReport('','',$sale_or,$sale_as,$mod,$mod2,"");
+				 } else {
+				 	$reportData = getOrderReport('','',$sale_or,$sale_as,$mod,$username,$mod2,$prod_id);
 				
 				 }
-
+				 
 				 if ($reportData != NULL) {
 				 	include 'report/report_list_data.php';
 				 }
