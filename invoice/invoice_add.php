@@ -33,14 +33,14 @@
                     <br />
                     <br />
                     Sales Code : 
-                    <input name="sales_cd" type="text" id="sales_cd" value="<?=$sales_cd ?>" />
+                    <input name="sales_cd" type="text" id="sales_cd" />
                     <!--input name="find_sales_id" type="button" id="find_sales_id" value="SearchID" onclick="window.open('invoice_find_product.php','popuppage','width=500,height=400,top=100,left=100 scrollbars=1');" /-->
                     Sales Name : 
-                    <input name="sales_name" type="text" id="sales_name" size="40" value="<?=$sales_name ?>" />
+                    <input name="sales_name" type="text" id="sales_name" size="40" />
                     <br />
                     <br />
       Cust. Code : 
-       <input name="cust_cd" type="text" id="cust_cd" onchange="findCustomer()"/>
+       <input name="cust_cd" type="text" id="cust_cd" />
        <!--input name="calButton3" type="button" id="calButton3" value="SearchID" onclick="window.open('invoice_find_product.php','popuppage','width=500,height=400,top=100,left=100 scrollbars=1');" /-->
        Customer Name : 
        <input name="cust_name" type="text" id="cust_name" size="40" />

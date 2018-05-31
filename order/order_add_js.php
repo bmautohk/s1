@@ -26,6 +26,7 @@ missinginfo = "";
 //}
 
 
+
 if ((document.form1.sale_ref_a[0].checked) && (document.form1.sale_ref_aa.value == "" )) {
 missinginfo += "\n     -  Order Number";
 }

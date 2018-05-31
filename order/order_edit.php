@@ -115,8 +115,8 @@
         <tr bgcolor="#CCCCCC" style="text-align:center">
           <td width="213">Product No.</td>
           <td width="162"><div align="center">Products Name</div></td>
-          <td>&#x6750;&#x8CEA;</td> <!-- 材質 -->
-          <td>&#x984F;&#x8272;</td> <!-- 頻色 -->
+          <td>&#x6750;&#x8CEA;</td> <!-- ?�質 -->
+          <td>&#x984F;&#x8272;</td> <!-- ?�色 -->
           <td width="82"><div align="center">Qty Unit</div></td>
           <td width="117"><div align="center">Unit Price </div></td>
           <td width="68"><div align="center">&nbsp; </div></td>

@@ -418,10 +418,37 @@ function importYahooShopping($db, $file_name, $actual_file_name, $salesGroup) {
 		$debt['debt_shipping_method'] = 'Air Mail';
 		$debt['debt_email_sent'] = NULL;
 
+		// Remarks
 		if (strtolower($ws->getCell("AE".$rowNo)->getValue()) == 'payment_d1') {
 			$remark = '商品代引：'.$ws->getCell("N".$rowNo)->getValue().'円';
+		} else {
+			$remark = '';
 		}
-		//$remark = $ws->getCell("N".$rowNo)->getValue().'/'.$ws->getCell("L".$rowNo)->getValue();
+		
+		if (!is_null($ws->getCell("Y".$rowNo)->getValue())) {
+			if ($remark != '') {
+				$remark .= ' ';
+			}
+
+			$remark .= $ws->getCell("Y".$rowNo)->getValue();
+		}
+		
+		if (!is_null($ws->getCell("Z".$rowNo)->getValue())) {
+			if ($remark != '') {
+				$remark .= ' ';
+			}
+
+			$remark .= $ws->getCell("Z".$rowNo)->getValue();
+		}
+		
+		if (!is_null($ws->getCell("AA".$rowNo)->getValue())) {
+			if ($remark != '') {
+				$remark .= ' ';
+			}
+
+			$remark .= $ws->getCell("AA".$rowNo)->getValue();
+		}
+
 		$debt['debt_remark'] = convert($remark);
 		
 		// Balacne
@@ -436,10 +463,28 @@ function importYahooShopping($db, $file_name, $actual_file_name, $salesGroup) {
 		// Validation
 		if (empty($order['sale_ref'])) {
 			$error_message = '<br>Line '.$rowNo.': Order No.(column A) is mandatory.';
+			//20180531 added 	
+		}else if (strlen($order['sale_ref'])>16){
+			$error_message = '<br>Line '.$rowNo.': Sale_ref length is more than 16 digits';
 		} else if (isOrderExist($db, $order['sale_ref']) || array_key_exists($order['sale_ref'], $orderNoSet)) {
 			$error_message = '<br>Line '.$rowNo.': Order No.['.$order['sale_ref'].'] has already existed.';
 		}
 
+		//20180531 added for check length remark
+		if (strlen($debt['debt_remark'])>16){
+			$error_message = '<br>Line '.$rowNo.': debt_remark length is more than 16 digits';
+		}
+		if (strlen($debt['debt_cust_address1'])>16){
+			$error_message = '<br>Line '.$rowNo.': debt_cust_address1 length is more than 16 digits';
+		}
+		if (strlen($debt['debt_cust_address2'])>16){
+			$error_message = '<br>Line '.$rowNo.': debt_cust_address2 length is more than 16 digits';
+		}
+		if (strlen($debt['debt_cust_address3'])>16){
+			$error_message = '<br>Line '.$rowNo.': debt_cust_address3 length is more than 16 digits';
+		}
+		
+		
 		if (empty($product['sprod_id'])) {
 			$error_message = '<br>Line '.$rowNo.': Product No.(column E) is mandatory.';
 		}
@@ -521,9 +566,10 @@ function importRakuten($db, $file_name, $actual_file_name, $salesGroup) {
 		$balance = array();
 
 		// Order
-		$order_no = $ws->getCell("A".$rowNo)->getValue();
+		$order['sale_ref'] = $ws->getCell("A".$rowNo)->getValue();
+		/*$order_no = $ws->getCell("A".$rowNo)->getValue();
 		$pos = strrpos($order_no, '-');
-		$order['sale_ref'] = trim(substr($order_no, $pos + 1));
+		$order['sale_ref'] = trim(substr($order_no, $pos + 1));*/
 		
 		$order['order_date'] = date('Y-m-d');
 		$order['sale_group'] = $salesGroup;
@@ -651,8 +697,28 @@ function importRakuten($db, $file_name, $actual_file_name, $salesGroup) {
 		// Validation
 		if (empty($order['sale_ref'])) {
 			$error_message = '<br>Line '.$rowNo.': Order No.(column A) is mandatory.';
-		} else if (isOrderExist($db, $order['sale_ref']) || array_key_exists($order['sale_ref'], $orderNoSet)) {
+			
+		//20180531 added 	
+		}else if (strlen($order['sale_ref'])>16){
+			$error_message = '<br>Line '.$rowNo.': Sale_ref length is more than 16 digits';
+		}else if (isOrderExist($db, $order['sale_ref']) || array_key_exists($order['sale_ref'], $orderNoSet)) {
 			$error_message = '<br>Line '.$rowNo.': Order No.['.$order['sale_ref'].'] has already existed.';
+		}
+		
+		
+		//20180531 added for check length remark
+		if (strlen($debt['debt_remark'])>16){
+			$error_message = '<br>Line '.$rowNo.': debt_remark length is more than 16 digits';
+		}
+		
+		if (strlen($debt['debt_cust_address1'])>16){
+			$error_message = '<br>Line '.$rowNo.': debt_cust_address1 length is more than 16 digits';
+		}
+		if (strlen($debt['debt_cust_address2'])>16){
+			$error_message = '<br>Line '.$rowNo.': debt_cust_address2 length is more than 16 digits';
+		}
+		if (strlen($debt['debt_cust_address3'])>16){
+			$error_message = '<br>Line '.$rowNo.': debt_cust_address3 length is more than 16 digits';
 		}
 		
 		if (empty($product['sprod_id'])) {

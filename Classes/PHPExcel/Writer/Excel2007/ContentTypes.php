@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2014 PHPExcel
+ * Copyright (c) 2006 - 2011 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Writer_Excel2007
- * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version    1.8.0, 2014-03-02
+ * @version    1.7.6, 2011-02-27
  */
 
 
@@ -31,19 +31,18 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Writer_Excel2007
- * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Writer_Excel2007_ContentTypes extends PHPExcel_Writer_Excel2007_WriterPart
 {
 	/**
 	 * Write content types to XML format
 	 *
-	 * @param 	PHPExcel	$pPHPExcel
-	 * @param	boolean		$includeCharts	Flag indicating if we should include drawing details for charts
+	 * @param 	PHPExcel $pPHPExcel
 	 * @return 	string 						XML Output
-	 * @throws 	PHPExcel_Writer_Exception
+	 * @throws 	Exception
 	 */
-	public function writeContentTypes(PHPExcel $pPHPExcel = null, $includeCharts = FALSE)
+	public function writeContentTypes(PHPExcel $pPHPExcel = null)
 	{
 		// Create XML writer
 		$objWriter = null;
@@ -86,26 +85,9 @@ class PHPExcel_Writer_Excel2007_ContentTypes extends PHPExcel_Writer_Excel2007_W
 			);
 
 			// Workbook
-			if($pPHPExcel->hasMacros()){ //Macros in workbook ?
-				// Yes : not standard content but "macroEnabled"
-				$this->_writeOverrideContentType(
-					$objWriter, '/xl/workbook.xml', 'application/vnd.ms-excel.sheet.macroEnabled.main+xml'
-				);
-				//... and define a new type for the VBA project
-				$this->_writeDefaultContentType(
-							$objWriter, 'bin', 'application/vnd.ms-office.vbaProject'
-						);
-				if($pPHPExcel->hasMacrosCertificate()){// signed macros ?
-					// Yes : add needed information
-					$this->_writeOverrideContentType(
-						$objWriter, '/xl/vbaProjectSignature.bin', 'application/vnd.ms-office.vbaProjectSignature'
-				);
-				}
-			}else{// no macros in workbook, so standard type
-				$this->_writeOverrideContentType(
-					$objWriter, '/xl/workbook.xml', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml'
-				);
-			}
+			$this->_writeOverrideContentType(
+				$objWriter, '/xl/workbook.xml', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml'
+			);
 
 			// DocProps
 			$this->_writeOverrideContentType(
@@ -117,7 +99,7 @@ class PHPExcel_Writer_Excel2007_ContentTypes extends PHPExcel_Writer_Excel2007_W
 			);
 
 			$customPropertyList = $pPHPExcel->getProperties()->getCustomProperties();
-			if (!empty($customPropertyList)) {
+			if (count($customPropertyList) > 0) {
 				$this->_writeOverrideContentType(
 					$objWriter, '/docProps/custom.xml', 'application/vnd.openxmlformats-officedocument.custom-properties+xml'
 				);
@@ -137,26 +119,11 @@ class PHPExcel_Writer_Excel2007_ContentTypes extends PHPExcel_Writer_Excel2007_W
 			);
 
 			// Add worksheet relationship content types
-			$chart = 1;
 			for ($i = 0; $i < $sheetCount; ++$i) {
-				$drawings = $pPHPExcel->getSheet($i)->getDrawingCollection();
-				$drawingCount = count($drawings);
-				$chartCount = ($includeCharts) ? $pPHPExcel->getSheet($i)->getChartCount() : 0;
-
-				//	We need a drawing relationship for the worksheet if we have either drawings or charts
-				if (($drawingCount > 0) || ($chartCount > 0)) {
+				if ($pPHPExcel->getSheet($i)->getDrawingCollection()->count() > 0) {
 					$this->_writeOverrideContentType(
 						$objWriter, '/xl/drawings/drawing' . ($i + 1) . '.xml', 'application/vnd.openxmlformats-officedocument.drawing+xml'
 					);
-				}
-
-				//	If we have charts, then we need a chart relationship for every individual chart
-				if ($chartCount > 0) {
-					for ($c = 0; $c < $chartCount; ++$c) {
-						$this->_writeOverrideContentType(
-							$objWriter, '/xl/charts/chart' . $chart++ . '.xml', 'application/vnd.openxmlformats-officedocument.drawingml.chart+xml'
-						);
-					}
 				}
 			}
 
@@ -195,16 +162,7 @@ class PHPExcel_Writer_Excel2007_ContentTypes extends PHPExcel_Writer_Excel2007_W
 						);
 				}
 			}
-			if($pPHPExcel->hasRibbonBinObjects()){//Some additional objects in the ribbon ?
-				//we need to write "Extension" but not already write for media content
-				$tabRibbonTypes=array_diff($pPHPExcel->getRibbonBinObjects('types'), array_keys($aMediaContentTypes));
-				foreach($tabRibbonTypes as $aRibbonType){
-					$mimeType='image/.'.$aRibbonType;//we wrote $mimeType like customUI Editor
-					$this->_writeDefaultContentType(
-						$objWriter, $aRibbonType, $mimeType
-					);
-				}	
-			}
+
 			$sheetCount = $pPHPExcel->getSheetCount();
 			for ($i = 0; $i < $sheetCount; ++$i) {
 				if (count($pPHPExcel->getSheet()->getHeaderFooter()->getImages()) > 0) {
@@ -231,7 +189,7 @@ class PHPExcel_Writer_Excel2007_ContentTypes extends PHPExcel_Writer_Excel2007_W
 	 *
 	 * @param 	string	$pFile	Filename
 	 * @return 	string	Mime Type
-	 * @throws 	PHPExcel_Writer_Exception
+	 * @throws 	Exception
 	 */
 	private function _getImageMimeType($pFile = '')
 	{
@@ -239,7 +197,7 @@ class PHPExcel_Writer_Excel2007_ContentTypes extends PHPExcel_Writer_Excel2007_W
 			$image = getimagesize($pFile);
 			return image_type_to_mime_type($image[2]);
 		} else {
-			throw new PHPExcel_Writer_Exception("File $pFile does not exist");
+			throw new Exception("File $pFile does not exist");
 		}
 	}
 
@@ -249,7 +207,7 @@ class PHPExcel_Writer_Excel2007_ContentTypes extends PHPExcel_Writer_Excel2007_W
 	 * @param 	PHPExcel_Shared_XMLWriter 	$objWriter 		XML Writer
 	 * @param 	string 						$pPartname 		Part name
 	 * @param 	string 						$pContentType 	Content type
-	 * @throws 	PHPExcel_Writer_Exception
+	 * @throws 	Exception
 	 */
 	private function _writeDefaultContentType(PHPExcel_Shared_XMLWriter $objWriter = null, $pPartname = '', $pContentType = '')
 	{
@@ -260,7 +218,7 @@ class PHPExcel_Writer_Excel2007_ContentTypes extends PHPExcel_Writer_Excel2007_W
 			$objWriter->writeAttribute('ContentType', 	$pContentType);
 			$objWriter->endElement();
 		} else {
-			throw new PHPExcel_Writer_Exception("Invalid parameters passed.");
+			throw new Exception("Invalid parameters passed.");
 		}
 	}
 
@@ -270,7 +228,7 @@ class PHPExcel_Writer_Excel2007_ContentTypes extends PHPExcel_Writer_Excel2007_W
 	 * @param 	PHPExcel_Shared_XMLWriter 	$objWriter 		XML Writer
 	 * @param 	string 						$pPartname 		Part name
 	 * @param 	string 						$pContentType 	Content type
-	 * @throws 	PHPExcel_Writer_Exception
+	 * @throws 	Exception
 	 */
 	private function _writeOverrideContentType(PHPExcel_Shared_XMLWriter $objWriter = null, $pPartname = '', $pContentType = '')
 	{
@@ -281,7 +239,7 @@ class PHPExcel_Writer_Excel2007_ContentTypes extends PHPExcel_Writer_Excel2007_W
 			$objWriter->writeAttribute('ContentType', 	$pContentType);
 			$objWriter->endElement();
 		} else {
-			throw new PHPExcel_Writer_Exception("Invalid parameters passed.");
+			throw new Exception("Invalid parameters passed.");
 		}
 	}
 }

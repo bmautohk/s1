@@ -16,6 +16,15 @@ missinginfo = "";
 
 if ((document.form1.sale_ref_a[0].checked) && (document.form1.sale_ref_aa.value == "" )) {
 missinginfo += "\n     -  Order Number";
+
+}
+if (document.form1.sale_ref_a[0].checked) {
+		if($('#sale_ref_aa').val().length>16){
+				missinginfo+='\n        -   Auction ID length is more than 16';
+				 
+			}else{
+				
+			}
 }
 <? for ($m=1;$m<=$prod_n;$m++) {?>
 
@@ -179,6 +188,16 @@ function getProductStock(idx, product_id) {
 				});
 			}
 	});
+}
+
+function submitToSagawa($location){
+	if($location=='JP'){
+	 document.getElementById("frm_jp").action = "<?=$page ?>/order_ship_report_sagawa_csv.php"; 
+	  document.getElementById("frm_jp").submit();
+	}else if ($location=='HK'){
+	document.getElementById("frm_hk").action = "<?=$page ?>/order_ship_report_sagawa_csv.php"; 
+	  document.getElementById("frm_hk").submit();	
+	}
 }
 //  End -->
 </script>

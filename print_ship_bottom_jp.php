@@ -239,7 +239,7 @@ exit;
 			</table>
 		</div>
 		
-		<div class="style6" style="height:40px; padding-left:2px; overflow:hidden;">
+		<div class="style6" style="height:40px; padding-left:2px;padding-top:10px; overflow:hidden;">
     		<span class="delivery" style="width:75px; float:left"><?=$bal['bal_delivery_date'] ?>&nbsp;</span>
 			<span class="delivery"><?=$bal['bal_delivery_time'] ?>&nbsp;</span>
     	</div>
@@ -410,6 +410,7 @@ exit;
     		<? } ?>
     	
     		<br />
+			<? echo "".$debt_row['debt_remark'];?>
     		<?=$bal['bal_delivery_date'] ?>
     		<?=$bal['bal_delivery_time'] ?>
     	</div>

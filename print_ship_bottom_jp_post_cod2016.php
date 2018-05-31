@@ -95,17 +95,17 @@ function Body($invoice_no,$addr_id)
 	$this->Cell(53,12,$debt_post_co,$border,1,'L',0);
 
 // Client address
-	$address = $debt_row['debt_cust_address1'].' '.$debt_row['debt_cust_address2'].' '.$debt_row['debt_cust_address3'];
-	$address_line1 = mb_substr($address, 0, 14, 'EUC-JP');
-	$address_line2 = mb_substr($address, 14, mb_strlen($address), 'EUC-JP');
+	//$address = $debt_row['debt_cust_address1'].' '.$debt_row['debt_cust_address2'].' '.$debt_row['debt_cust_address3'];
+	//$address_line1 = mb_substr($address, 0, 16, 'EUC-JP');
+	//$address_line2 = mb_substr($address, 16, mb_strlen($address), 'EUC-JP');
 	
 	$this->SetFont(KOZMIN, '',11);
 	$this->Cell(17,8,"",$border,0,'R',0);
-	$this->Cell(63,8,$address_line1,$border,0,'L',0);
+	$this->Cell(63,8,$debt_row['debt_cust_address1'],$border,0,'L',0);
  	$this->Cell(100,8,"",$border,1,'L',0);
 
    	$this->Cell(17,8,"",$border,0,'L',0);
-	$this->Cell(63,8,$address_line2,$border,0,'L',0);
+	$this->Cell(63,8,$debt_row['debt_cust_address2'].$debt_row['debt_cust_address3'],$border,0,'L',0);
  	$this->Cell(100,8,"",$border,1,'L',0);
 
  	$this->Cell(20,4,'',$border, 0, 'L',0);

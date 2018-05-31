@@ -122,7 +122,7 @@ Group:
 				 $mod = $_POST['sale_ref'];
 				 $mod2 = $_POST['prod_name'];
 				 $prod_id = $_POST['prod_id'];
-				 $reportData = getOrderReport('','',$sale_or,$sale_as,$mod,$get_username,$mod2,$mod3);
+				 $reportData = getOrderReport('','',$sale_or,$sale_as,$mod,$get_username,$mod2,$prod_id);
 				 $print_link = "<a href=\"print_report.php?date_start=&date_end=&mod=$mod&mod2=$mod2&prod_id=$prod_id&sale_or=$sale_or&sale_as=$sale_as\" onClick=\"NewWindow(this.href,'mywin','800','500','no','center');return false\" onFocus=\"this.blur()\">Preview Report</a>";
 				 }
 				 

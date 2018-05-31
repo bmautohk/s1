@@ -234,13 +234,16 @@ $mail->Password = "invoice2010"; // SMTP password
 $mail->CharSet ="shift_jis";
 $mail->From = "statisticreport@bmautohk.com";
 $mail->FromName = "report";
-$mail->AddAddress("qqtester2011@gmail.com");
-/* $mail->AddAddress("bmbensze@163.com");
-$mail->AddAddress("fannyyu338@yahoo.co.jp");
+$mail->AddAddress("rickykei@gmail.com");
+$mail->AddAddress("bmbensze@163.com");
+$mail->AddAddress("bm.ben.sze@gmail.com");
+//$mail->AddAddress("fannyyu338@yahoo.co.jp");
 $mail->AddAddress("catalog2000@goo.jp");
 $mail->AddAddress("s1118s@yahoo.co.jp");
+$mail->AddAddress("summary1@163.com");
 $mail->AddBCC ("statisticreport@bmautohk.com");
-$mail->AddReplyTo("statisticreport@bmautohk.com"); */
+$mail->AddBCC ("kellysmwong@gmail.com");
+$mail->AddReplyTo("statisticreport@bmautohk.com");
 $mail->WordWrap = 50;                              // set word wrap
 $mail->IsHTML(false);                               // send as HTML
 $mail->Subject="daily report kaito";

@@ -54,9 +54,9 @@
       <? echo $sale_order_no_message; ?><br>
       <table width="586" border="1" cellpadding="0" cellspacing="0">
         <tr>
-          <td width="140"><input name="sale_ref_a" type="radio" value="a" checked>
+          <td width="140"><input name="sale_ref_a" id="sale_ref_a" type="radio" value="a" checked>
           Order No. (Yahoo) </td>
-          <td width="159"><input name="sale_ref_aa" type="text"></td>
+          <td width="159"><input id="sale_ref_aa" name="sale_ref_aa" type="text"></td>
           <td width="153"><input name="sale_ref_a" type="radio" value="b">		    
             <input name="sale_ref_bb" type="hidden" value="<? echo getsale_ref_next();?>">
               Order No. (Auto)</td><td width="106"><? echo getsale_ref_next(); ?>&nbsp;</td>
@@ -208,7 +208,7 @@
                   </tr>
               </table>
                   <p>
-                    <input type="submit" name="isorder" value="New Order">
+                    <input type="submit" name="isorder" value="New Order" >
 </p>
             </form> 
             <table width="964" border="0" cellspacing="0" cellpadding="20">
@@ -248,6 +248,8 @@ $(function() {
 		$('#sale_name').val(selectOpt.text().substring(selectOpt.val().length + 3));
 	});
 
+	
+	 
 	<? if ($error_msg != '') {?>
 		alert('<?=$error_msg ?>');
 	<? }?>

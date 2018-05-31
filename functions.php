@@ -71,6 +71,8 @@ $tool_bar_array["invoice"]="<TABLE width=\"800\" cellPadding=10>
                   tracking_no</a></span></TD>
 				     <TD width=\"273\"><span class=\"cat cat\"><a href=\"index.php?page=order&subpage=upload_container\" class=\"big\">upload  <br>
                   container</a></span></TD>
+				  <TD width=\"273\"><span class=\"cat cat\"><a href=\"index.php?page=order&subpage=upload_sagawa_csv\" class=\"big\">upload  <br>
+                  sagawa</a></span></TD>
               </TR>
             </TBODY>
           </TABLE>";

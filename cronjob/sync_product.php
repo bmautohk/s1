@@ -3,7 +3,7 @@ include_once('../config.php');
 include_once('../functions.php');
 
 $db = mysql_connect(DB_HOST, DB_LOGIN, DB_PASSWORD);
-//$db_pm = mysql_connect($server_pm, $dbusername_pm, $dbpassword_pm);
+$db_pm = mysql_connect($server_pm, $dbusername_pm, $dbpassword_pm);
 $db_pmkaito = mysql_connect($server_pmkaito, $dbusername_pmkaito, $dbpassword_pmkaito);
 
 //$pm_product_sql = "select no_jp, made, model, model_no, year, item_group, material, product_desc_jp, pcs, colour, colour_no, supplier, kaito from product_master where prod_sn = '3174'";

@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2014 PHPExcel
+ * Copyright (c) 2006 - 2011 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category	PHPExcel
  * @package		PHPExcel_Calculation
- * @copyright	Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright	Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license		http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version		1.8.0, 2014-03-02
+ * @version		1.7.6, 2011-02-27
  */
 
 
@@ -41,7 +41,7 @@ if (!defined('PHPEXCEL_ROOT')) {
  *
  * @category	PHPExcel
  * @package		PHPExcel_Calculation
- * @copyright	Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright	Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Calculation_MathTrig {
 
@@ -61,7 +61,7 @@ class PHPExcel_Calculation_MathTrig {
 				}
 			}
 		}
-		if (!empty($factorArray)) {
+		if (count($factorArray) > 0) {
 			rsort($factorArray);
 			return $factorArray;
 		} else {
@@ -76,79 +76,61 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * ATAN2
+	 *	ATAN2
 	 *
-	 * This function calculates the arc tangent of the two variables x and y. It is similar to
-	 *		calculating the arc tangent of y Ã· x, except that the signs of both arguments are used
+	 *	This function calculates the arc tangent of the two variables x and y. It is similar to
+	 *		calculating the arc tangent of y ÷ x, except that the signs of both arguments are used
 	 *		to determine the quadrant of the result.
-	 * The arctangent is the angle from the x-axis to a line containing the origin (0, 0) and a
+	 *	The arctangent is the angle from the x-axis to a line containing the origin (0, 0) and a
 	 *		point with coordinates (xCoordinate, yCoordinate). The angle is given in radians between
 	 *		-pi and pi, excluding -pi.
 	 *
-	 * Note that the Excel ATAN2() function accepts its arguments in the reverse order to the standard
+	 *	Note that the Excel ATAN2() function accepts its arguments in the reverse order to the standard
 	 *		PHP atan2() function, so we need to reverse them here before calling the PHP atan() function.
 	 *
-	 * Excel Function:
+	 *	Excel Function:
 	 *		ATAN2(xCoordinate,yCoordinate)
 	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	float	$xCoordinate		The x-coordinate of the point.
-	 * @param	float	$yCoordinate		The y-coordinate of the point.
-	 * @return	float	The inverse tangent of the specified x- and y-coordinates.
+	 *	@access	public
+	 *	@category Mathematical and Trigonometric Functions
+	 *	@param	float	$xCoordinate		The x-coordinate of the point.
+	 *	@param	float	$yCoordinate		The y-coordinate of the point.
+	 *	@return	float	The inverse tangent of the specified x- and y-coordinates.
 	 */
-	public static function ATAN2($xCoordinate = NULL, $yCoordinate = NULL) {
-		$xCoordinate	= PHPExcel_Calculation_Functions::flattenSingleValue($xCoordinate);
-		$yCoordinate	= PHPExcel_Calculation_Functions::flattenSingleValue($yCoordinate);
+	public static function ATAN2($xCoordinate, $yCoordinate) {
+		$xCoordinate	= (float) PHPExcel_Calculation_Functions::flattenSingleValue($xCoordinate);
+		$yCoordinate	= (float) PHPExcel_Calculation_Functions::flattenSingleValue($yCoordinate);
 
-		$xCoordinate	= ($xCoordinate !== NULL)	? $xCoordinate : 0.0;
-		$yCoordinate	= ($yCoordinate !== NULL)	? $yCoordinate : 0.0;
-
-		if (((is_numeric($xCoordinate)) || (is_bool($xCoordinate))) &&
-			((is_numeric($yCoordinate)))  || (is_bool($yCoordinate))) {
-			$xCoordinate	= (float) $xCoordinate;
-			$yCoordinate	= (float) $yCoordinate;
-
-			if (($xCoordinate == 0) && ($yCoordinate == 0)) {
-				return PHPExcel_Calculation_Functions::DIV0();
-			}
-
-			return atan2($yCoordinate, $xCoordinate);
+		if (($xCoordinate == 0) && ($yCoordinate == 0)) {
+			return PHPExcel_Calculation_Functions::DIV0();
 		}
-		return PHPExcel_Calculation_Functions::VALUE();
-	}	//	function ATAN2()
+
+		return atan2($yCoordinate, $xCoordinate);
+	}	//	function REVERSE_ATAN2()
 
 
 	/**
-	 * CEILING
+	 *	CEILING
 	 *
-	 * Returns number rounded up, away from zero, to the nearest multiple of significance.
-	 *		For example, if you want to avoid using pennies in your prices and your product is
-	 *		priced at $4.42, use the formula =CEILING(4.42,0.05) to round prices up to the
-	 *		nearest nickel.
+	 *	Returns number rounded up, away from zero, to the nearest multiple of significance.
 	 *
-	 * Excel Function:
-	 *		CEILING(number[,significance])
-	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	float	$number			The number you want to round.
-	 * @param	float	$significance	The multiple to which you want to round.
-	 * @return	float	Rounded Number
+	 *	@param	float	$number			Number to round
+	 *	@param	float	$significance	Significance
+	 *	@return	float	Rounded Number
 	 */
-	public static function CEILING($number, $significance = NULL) {
+	public static function CEILING($number,$significance=null) {
 		$number			= PHPExcel_Calculation_Functions::flattenSingleValue($number);
 		$significance	= PHPExcel_Calculation_Functions::flattenSingleValue($significance);
 
-		if ((is_null($significance)) &&
-			(PHPExcel_Calculation_Functions::getCompatibilityMode() == PHPExcel_Calculation_Functions::COMPATIBILITY_GNUMERIC)) {
+		if ((is_null($significance)) && (PHPExcel_Calculation_Functions::getCompatibilityMode() == PHPExcel_Calculation_Functions::COMPATIBILITY_GNUMERIC)) {
 			$significance = $number/abs($number);
 		}
 
 		if ((is_numeric($number)) && (is_numeric($significance))) {
-			if ($significance == 0.0) {
-				return 0.0;
-			} elseif (self::SIGN($number) == self::SIGN($significance)) {
+			if (self::SIGN($number) == self::SIGN($significance)) {
+				if ($significance == 0.0) {
+					return 0;
+				}
 				return ceil($number / $significance) * $significance;
 			} else {
 				return PHPExcel_Calculation_Functions::NaN();
@@ -159,21 +141,16 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * COMBIN
+	 *	COMBIN
 	 *
-	 * Returns the number of combinations for a given number of items. Use COMBIN to
-	 *		determine the total possible number of groups for a given number of items.
+	 *	Returns the number of combinations for a given number of items. Use COMBIN to
+	 *	determine the total possible number of groups for a given number of items.
 	 *
-	 * Excel Function:
-	 *		COMBIN(numObjs,numInSet)
-	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	int		$numObjs	Number of different objects
-	 * @param	int		$numInSet	Number of objects in each combination
-	 * @return	int		Number of combinations
+	 *	@param	int		$numObjs	Number of different objects
+	 *	@param	int		$numInSet	Number of objects in each combination
+	 *	@return	int		Number of combinations
 	 */
-	public static function COMBIN($numObjs, $numInSet) {
+	public static function COMBIN($numObjs,$numInSet) {
 		$numObjs	= PHPExcel_Calculation_Functions::flattenSingleValue($numObjs);
 		$numInSet	= PHPExcel_Calculation_Functions::flattenSingleValue($numInSet);
 
@@ -190,32 +167,19 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * EVEN
+	 *	EVEN
 	 *
-	 * Returns number rounded up to the nearest even integer.
-	 * You can use this function for processing items that come in twos. For example,
-	 *		a packing crate accepts rows of one or two items. The crate is full when
-	 *		the number of items, rounded up to the nearest two, matches the crate's
-	 *		capacity.
+	 *	Returns number rounded up to the nearest even integer.
 	 *
-	 * Excel Function:
-	 *		EVEN(number)
-	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	float	$number			Number to round
-	 * @return	int		Rounded Number
+	 *	@param	float	$number			Number to round
+	 *	@return	int		Rounded Number
 	 */
 	public static function EVEN($number) {
 		$number	= PHPExcel_Calculation_Functions::flattenSingleValue($number);
 
 		if (is_null($number)) {
 			return 0;
-		} elseif (is_bool($number)) {
-			$number = (int) $number;
-		}
-
-		if (is_numeric($number)) {
+		} elseif (is_numeric($number)) {
 			$significance = 2 * self::SIGN($number);
 			return (int) self::CEILING($number,$significance);
 		}
@@ -224,18 +188,12 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * FACT
+	 *	FACT
 	 *
-	 * Returns the factorial of a number.
-	 * The factorial of a number is equal to 1*2*3*...* number.
+	 *	Returns the factorial of a number.
 	 *
-	 * Excel Function:
-	 *		FACT(factVal)
-	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	float	$factVal	Factorial Value
-	 * @return	int		Factorial
+	 *	@param	float	$factVal	Factorial Value
+	 *	@return	int		Factorial
 	 */
 	public static function FACT($factVal) {
 		$factVal	= PHPExcel_Calculation_Functions::flattenSingleValue($factVal);
@@ -262,23 +220,17 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * FACTDOUBLE
+	 *	FACTDOUBLE
 	 *
-	 * Returns the double factorial of a number.
+	 *	Returns the double factorial of a number.
 	 *
-	 * Excel Function:
-	 *		FACTDOUBLE(factVal)
-	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	float	$factVal	Factorial Value
-	 * @return	int		Double Factorial
+	 *	@param	float	$factVal	Factorial Value
+	 *	@return	int		Double Factorial
 	 */
 	public static function FACTDOUBLE($factVal) {
-		$factLoop	= PHPExcel_Calculation_Functions::flattenSingleValue($factVal);
+		$factLoop	= floor(PHPExcel_Calculation_Functions::flattenSingleValue($factVal));
 
 		if (is_numeric($factLoop)) {
-			$factLoop	= floor($factLoop);
 			if ($factVal < 0) {
 				return PHPExcel_Calculation_Functions::NaN();
 			}
@@ -294,20 +246,15 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * FLOOR
+	 *	FLOOR
 	 *
-	 * Rounds number down, toward zero, to the nearest multiple of significance.
+	 *	Rounds number down, toward zero, to the nearest multiple of significance.
 	 *
-	 * Excel Function:
-	 *		FLOOR(number[,significance])
-	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	float	$number			Number to round
-	 * @param	float	$significance	Significance
-	 * @return	float	Rounded Number
+	 *	@param	float	$number			Number to round
+	 *	@param	float	$significance	Significance
+	 *	@return	float	Rounded Number
 	 */
-	public static function FLOOR($number, $significance = NULL) {
+	public static function FLOOR($number,$significance=null) {
 		$number			= PHPExcel_Calculation_Functions::flattenSingleValue($number);
 		$significance	= PHPExcel_Calculation_Functions::flattenSingleValue($significance);
 
@@ -330,41 +277,26 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * GCD
+	 *	GCD
 	 *
-	 * Returns the greatest common divisor of a series of numbers.
-	 * The greatest common divisor is the largest integer that divides both
-	 *		number1 and number2 without a remainder.
+	 *	Returns the greatest common divisor of a series of numbers
 	 *
-	 * Excel Function:
-	 *		GCD(number1[,number2[, ...]])
-	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	mixed	$arg,...		Data values
-	 * @return	integer					Greatest Common Divisor
+	 *	@param	$array	Values to calculate the Greatest Common Divisor
+	 *	@return	int		Greatest Common Divisor
 	 */
 	public static function GCD() {
 		$returnValue = 1;
-		$allValuesFactors = array();
+		$allPoweredFactors = array();
 		// Loop through arguments
 		foreach(PHPExcel_Calculation_Functions::flattenArray(func_get_args()) as $value) {
-			if (!is_numeric($value)) {
-				return PHPExcel_Calculation_Functions::VALUE();
-			} elseif ($value == 0) {
-				continue;
-			} elseif($value < 0) {
-				return PHPExcel_Calculation_Functions::NaN();
+			if ($value == 0) {
+				break;
 			}
 			$myFactors = self::_factors($value);
 			$myCountedFactors = array_count_values($myFactors);
 			$allValuesFactors[] = $myCountedFactors;
 		}
 		$allValuesCount = count($allValuesFactors);
-		if ($allValuesCount == 0) {
-			return 0;
-		}
-
 		$mergedArray = $allValuesFactors[0];
 		for ($i=1;$i < $allValuesCount; ++$i) {
 			$mergedArray = array_intersect_key($mergedArray,$allValuesFactors[$i]);
@@ -406,26 +338,16 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * INT
+	 *	INT
 	 *
-	 * Casts a floating point value to an integer
+	 *	Casts a floating point value to an integer
 	 *
-	 * Excel Function:
-	 *		INT(number)
-	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	float	$number			Number to cast to an integer
-	 * @return	integer	Integer value
+	 *	@param	float	$number			Number to cast to an integer
+	 *	@return	integer	Integer value
 	 */
 	public static function INT($number) {
 		$number	= PHPExcel_Calculation_Functions::flattenSingleValue($number);
 
-		if (is_null($number)) {
-			return 0;
-		} elseif (is_bool($number)) {
-			return (int) $number;
-		}
 		if (is_numeric($number)) {
 			return (int) floor($number);
 		}
@@ -434,20 +356,12 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * LCM
+	 *	LCM
 	 *
-	 * Returns the lowest common multiplier of a series of numbers
-	 * The least common multiple is the smallest positive integer that is a multiple
-	 * of all integer arguments number1, number2, and so on. Use LCM to add fractions
-	 * with different denominators.
+	 *	Returns the lowest common multiplier of a series of numbers
 	 *
-	 * Excel Function:
-	 *		LCM(number1[,number2[, ...]])
-	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	mixed	$arg,...		Data values
-	 * @return	int		Lowest Common Multiplier
+	 *	@param	$array	Values to calculate the Lowest Common Multiplier
+	 *	@return	int		Lowest Common Multiplier
 	 */
 	public static function LCM() {
 		$returnValue = 1;
@@ -486,27 +400,23 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * LOG_BASE
+	 *	LOG_BASE
 	 *
-	 * Returns the logarithm of a number to a specified base. The default base is 10.
+	 *	Returns the logarithm of a number to a specified base. The default base is 10.
 	 *
-	 * Excel Function:
+	 *	Excel Function:
 	 *		LOG(number[,base])
 	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	float	$number		The positive real number for which you want the logarithm
-	 * @param	float	$base		The base of the logarithm. If base is omitted, it is assumed to be 10.
-	 * @return	float
+	 *	@access	public
+	 *	@category Mathematical and Trigonometric Functions
+	 *	@param	float	$value		The positive real number for which you want the logarithm
+	 *	@param	float	$base		The base of the logarithm. If base is omitted, it is assumed to be 10.
+	 *	@return	float
 	 */
-	public static function LOG_BASE($number = NULL, $base = 10) {
+	public static function LOG_BASE($number, $base=10) {
 		$number	= PHPExcel_Calculation_Functions::flattenSingleValue($number);
-		$base	= (is_null($base)) ? 10 : (float) PHPExcel_Calculation_Functions::flattenSingleValue($base);
+		$base	= (is_null($base))	? 10 :	(float) PHPExcel_Calculation_Functions::flattenSingleValue($base);
 
-		if ((!is_numeric($base)) || (!is_numeric($number)))
-			return PHPExcel_Calculation_Functions::VALUE();
-		if (($base <= 0) || ($number <= 0))
-			return PHPExcel_Calculation_Functions::NaN();
 		return log($number, $base);
 	}	//	function LOG_BASE()
 
@@ -514,13 +424,6 @@ class PHPExcel_Calculation_MathTrig {
 	/**
 	 * MDETERM
 	 *
-	 * Returns the matrix determinant of an array.
-	 *
-	 * Excel Function:
-	 *		MDETERM(array)
-	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
 	 * @param	array	$matrixValues	A matrix of values
 	 * @return	float
 	 */
@@ -530,7 +433,6 @@ class PHPExcel_Calculation_MathTrig {
 
 		$row = $maxColumn = 0;
 		foreach($matrixValues as $matrixRow) {
-			if (!is_array($matrixRow)) { $matrixRow = array($matrixRow); }
 			$column = 0;
 			foreach($matrixRow as $matrixCell) {
 				if ((is_string($matrixCell)) || ($matrixCell === null)) {
@@ -547,7 +449,7 @@ class PHPExcel_Calculation_MathTrig {
 		try {
 			$matrix = new PHPExcel_Shared_JAMA_Matrix($matrixData);
 			return $matrix->det();
-		} catch (PHPExcel_Exception $ex) {
+		} catch (Exception $ex) {
 			return PHPExcel_Calculation_Functions::VALUE();
 		}
 	}	//	function MDETERM()
@@ -556,13 +458,6 @@ class PHPExcel_Calculation_MathTrig {
 	/**
 	 * MINVERSE
 	 *
-	 * Returns the inverse matrix for the matrix stored in an array.
-	 *
-	 * Excel Function:
-	 *		MINVERSE(array)
-	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
 	 * @param	array	$matrixValues	A matrix of values
 	 * @return	array
 	 */
@@ -572,7 +467,6 @@ class PHPExcel_Calculation_MathTrig {
 
 		$row = $maxColumn = 0;
 		foreach($matrixValues as $matrixRow) {
-			if (!is_array($matrixRow)) { $matrixRow = array($matrixRow); }
 			$column = 0;
 			foreach($matrixRow as $matrixCell) {
 				if ((is_string($matrixCell)) || ($matrixCell === null)) {
@@ -589,7 +483,7 @@ class PHPExcel_Calculation_MathTrig {
 		try {
 			$matrix = new PHPExcel_Shared_JAMA_Matrix($matrixData);
 			return $matrix->inverse()->getArray();
-		} catch (PHPExcel_Exception $ex) {
+		} catch (Exception $ex) {
 			return PHPExcel_Calculation_Functions::VALUE();
 		}
 	}	//	function MINVERSE()
@@ -609,7 +503,6 @@ class PHPExcel_Calculation_MathTrig {
 
 		$rowA = 0;
 		foreach($matrixData1 as $matrixRow) {
-			if (!is_array($matrixRow)) { $matrixRow = array($matrixRow); }
 			$columnA = 0;
 			foreach($matrixRow as $matrixCell) {
 				if ((is_string($matrixCell)) || ($matrixCell === null)) {
@@ -624,7 +517,6 @@ class PHPExcel_Calculation_MathTrig {
 			$matrixA = new PHPExcel_Shared_JAMA_Matrix($matrixAData);
 			$rowB = 0;
 			foreach($matrixData2 as $matrixRow) {
-				if (!is_array($matrixRow)) { $matrixRow = array($matrixRow); }
 				$columnB = 0;
 				foreach($matrixRow as $matrixCell) {
 					if ((is_string($matrixCell)) || ($matrixCell === null)) {
@@ -642,7 +534,7 @@ class PHPExcel_Calculation_MathTrig {
 			}
 
 			return $matrixA->times($matrixB)->getArray();
-		} catch (PHPExcel_Exception $ex) {
+		} catch (Exception $ex) {
 			return PHPExcel_Calculation_Functions::VALUE();
 		}
 	}	//	function MMULT()
@@ -672,13 +564,13 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * MROUND
+	 *	MROUND
 	 *
-	 * Rounds a number to the nearest multiple of a specified value
+	 *	Rounds a number to the nearest multiple of a specified value
 	 *
-	 * @param	float	$number			Number to round
-	 * @param	int		$multiple		Multiple to which you want to round $number
-	 * @return	float	Rounded Number
+	 *	@param	float	$number			Number to round
+	 *	@param	int		$multiple		Multiple to which you want to round $number
+	 *	@return	float	Rounded Number
 	 */
 	public static function MROUND($number,$multiple) {
 		$number		= PHPExcel_Calculation_Functions::flattenSingleValue($number);
@@ -699,12 +591,12 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * MULTINOMIAL
+	 *	MULTINOMIAL
 	 *
-	 * Returns the ratio of the factorial of a sum of values to the product of factorials.
+	 *	Returns the ratio of the factorial of a sum of values to the product of factorials.
 	 *
-	 * @param	array of mixed		Data Series
-	 * @return	float
+	 *	@param	array of mixed		Data Series
+	 *	@return	float
 	 */
 	public static function MULTINOMIAL() {
 		$summer = 0;
@@ -733,23 +625,19 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * ODD
+	 *	ODD
 	 *
-	 * Returns number rounded up to the nearest odd integer.
+	 *	Returns number rounded up to the nearest odd integer.
 	 *
-	 * @param	float	$number			Number to round
-	 * @return	int		Rounded Number
+	 *	@param	float	$number			Number to round
+	 *	@return	int		Rounded Number
 	 */
 	public static function ODD($number) {
 		$number	= PHPExcel_Calculation_Functions::flattenSingleValue($number);
 
 		if (is_null($number)) {
 			return 1;
-		} elseif (is_bool($number)) {
-			$number = (int) $number;
-		}
-
-		if (is_numeric($number)) {
+		} elseif (is_numeric($number)) {
 			$significance = self::SIGN($number);
 			if ($significance == 0) {
 				return 1;
@@ -767,43 +655,40 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * POWER
+	 *	POWER
 	 *
-	 * Computes x raised to the power y.
+	 *	Computes x raised to the power y.
 	 *
-	 * @param	float		$x
-	 * @param	float		$y
-	 * @return	float
+	 *	@param	float		$x
+	 *	@param	float		$y
+	 *	@return	float
 	 */
 	public static function POWER($x = 0, $y = 2) {
 		$x	= PHPExcel_Calculation_Functions::flattenSingleValue($x);
 		$y	= PHPExcel_Calculation_Functions::flattenSingleValue($y);
 
 		// Validate parameters
-		if ($x == 0.0 && $y == 0.0) {
-			return PHPExcel_Calculation_Functions::NaN();
-		} elseif ($x == 0.0 && $y < 0.0) {
+		if ($x == 0 && $y <= 0) {
 			return PHPExcel_Calculation_Functions::DIV0();
 		}
 
 		// Return
-		$result = pow($x, $y);
-		return (!is_nan($result) && !is_infinite($result)) ? $result : PHPExcel_Calculation_Functions::NaN();
+		return pow($x, $y);
 	}	//	function POWER()
 
 
 	/**
-	 * PRODUCT
+	 *	PRODUCT
 	 *
-	 * PRODUCT returns the product of all the values and cells referenced in the argument list.
+	 *	PRODUCT returns the product of all the values and cells referenced in the argument list.
 	 *
-	 * Excel Function:
+	 *	Excel Function:
 	 *		PRODUCT(value1[,value2[, ...]])
 	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	mixed		$arg,...		Data values
-	 * @return	float
+	 *	@access	public
+	 *	@category Mathematical and Trigonometric Functions
+	 *	@param	mixed		$arg,...		Data values
+	 *	@return	float
 	 */
 	public static function PRODUCT() {
 		// Return value
@@ -830,18 +715,18 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * QUOTIENT
+	 *	QUOTIENT
 	 *
-	 * QUOTIENT function returns the integer portion of a division. Numerator is the divided number
+	 *	QUOTIENT function returns the integer portion of a division. Numerator is the divided number
 	 *		and denominator is the divisor.
 	 *
-	 * Excel Function:
+	 *	Excel Function:
 	 *		QUOTIENT(value1[,value2[, ...]])
 	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	mixed		$arg,...		Data values
-	 * @return	float
+	 *	@access	public
+	 *	@category Mathematical and Trigonometric Functions
+	 *	@param	mixed		$arg,...		Data values
+	 *	@return	float
 	 */
 	public static function QUOTIENT() {
 		// Return value
@@ -888,12 +773,11 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	public static function ROMAN($aValue, $style=0) {
-		$aValue	= PHPExcel_Calculation_Functions::flattenSingleValue($aValue);
+		$aValue	= (integer) PHPExcel_Calculation_Functions::flattenSingleValue($aValue);
 		$style	= (is_null($style))	? 0 :	(integer) PHPExcel_Calculation_Functions::flattenSingleValue($style);
 		if ((!is_numeric($aValue)) || ($aValue < 0) || ($aValue >= 4000)) {
 			return PHPExcel_Calculation_Functions::VALUE();
 		}
-		$aValue = (integer) $aValue;
 		if ($aValue == 0) {
 			return '';
 		}
@@ -917,20 +801,20 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * ROUNDUP
+	 *	ROUNDUP
 	 *
-	 * Rounds a number up to a specified number of decimal places
+	 *	Rounds a number up to a specified number of decimal places
 	 *
-	 * @param	float	$number			Number to round
-	 * @param	int		$digits			Number of digits to which you want to round $number
-	 * @return	float	Rounded Number
+	 *	@param	float	$number			Number to round
+	 *	@param	int		$digits			Number of digits to which you want to round $number
+	 *	@return	float	Rounded Number
 	 */
 	public static function ROUNDUP($number,$digits) {
 		$number	= PHPExcel_Calculation_Functions::flattenSingleValue($number);
 		$digits	= PHPExcel_Calculation_Functions::flattenSingleValue($digits);
 
 		if ((is_numeric($number)) && (is_numeric($digits))) {
-			$significance = pow(10,(int) $digits);
+			$significance = pow(10,$digits);
 			if ($number < 0.0) {
 				return floor($number * $significance) / $significance;
 			} else {
@@ -942,20 +826,20 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * ROUNDDOWN
+	 *	ROUNDDOWN
 	 *
-	 * Rounds a number down to a specified number of decimal places
+	 *	Rounds a number down to a specified number of decimal places
 	 *
-	 * @param	float	$number			Number to round
-	 * @param	int		$digits			Number of digits to which you want to round $number
-	 * @return	float	Rounded Number
+	 *	@param	float	$number			Number to round
+	 *	@param	int		$digits			Number of digits to which you want to round $number
+	 *	@return	float	Rounded Number
 	 */
 	public static function ROUNDDOWN($number,$digits) {
 		$number	= PHPExcel_Calculation_Functions::flattenSingleValue($number);
 		$digits	= PHPExcel_Calculation_Functions::flattenSingleValue($digits);
 
 		if ((is_numeric($number)) && (is_numeric($digits))) {
-			$significance = pow(10,(int) $digits);
+			$significance = pow(10,$digits);
 			if ($number < 0.0) {
 				return ceil($number * $significance) / $significance;
 			} else {
@@ -967,15 +851,15 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * SERIESSUM
+	 *	SERIESSUM
 	 *
-	 * Returns the sum of a power series
+	 *	Returns the sum of a power series
 	 *
-	 * @param	float			$x	Input value to the power series
-	 * @param	float			$n	Initial power to which you want to raise $x
-	 * @param	float			$m	Step by which to increase $n for each term in the series
-	 * @param	array of mixed		Data Series
-	 * @return	float
+	 *	@param	float			$x	Input value to the power series
+	 *	@param	float			$n	Initial power to which you want to raise $x
+	 *	@param	float			$m	Step by which to increase $n for each term in the series
+	 *	@param	array of mixed		Data Series
+	 *	@return	float
 	 */
 	public static function SERIESSUM() {
 		// Return value
@@ -1007,19 +891,17 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * SIGN
+	 *	SIGN
 	 *
-	 * Determines the sign of a number. Returns 1 if the number is positive, zero (0)
-	 *		if the number is 0, and -1 if the number is negative.
+	 *	Determines the sign of a number. Returns 1 if the number is positive, zero (0)
+	 *	if the number is 0, and -1 if the number is negative.
 	 *
-	 * @param	float	$number			Number to round
-	 * @return	int		sign value
+	 *	@param	float	$number			Number to round
+	 *	@return	int		sign value
 	 */
 	public static function SIGN($number) {
 		$number	= PHPExcel_Calculation_Functions::flattenSingleValue($number);
 
-		if (is_bool($number))
-			return (int) $number;
 		if (is_numeric($number)) {
 			if ($number == 0.0) {
 				return 0;
@@ -1031,12 +913,12 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * SQRTPI
+	 *	SQRTPI
 	 *
-	 * Returns the square root of (number * pi).
+	 *	Returns the square root of (number * pi).
 	 *
-	 * @param	float	$number		Number
-	 * @return	float	Square Root of Number * Pi
+	 *	@param	float	$number		Number
+	 *	@return	float	Square Root of Number * Pi
 	 */
 	public static function SQRTPI($number) {
 		$number	= PHPExcel_Calculation_Functions::flattenSingleValue($number);
@@ -1052,14 +934,14 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * SUBTOTAL
+	 *	SUBTOTAL
 	 *
-	 * Returns a subtotal in a list or database.
+	 *	Returns a subtotal in a list or database.
 	 *
-	 * @param	int		the number 1 to 11 that specifies which function to
+	 *	@param	int		the number 1 to 11 that specifies which function to
 	 *					use in calculating subtotals within a list.
-	 * @param	array of mixed		Data Series
-	 * @return	float
+	 *	@param	array of mixed		Data Series
+	 *	@return	float
 	 */
 	public static function SUBTOTAL() {
 		$aArgs = PHPExcel_Calculation_Functions::flattenArray(func_get_args());
@@ -1109,17 +991,17 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * SUM
+	 *	SUM
 	 *
-	 * SUM computes the sum of all the values and cells referenced in the argument list.
+	 *	SUM computes the sum of all the values and cells referenced in the argument list.
 	 *
-	 * Excel Function:
+	 *	Excel Function:
 	 *		SUM(value1[,value2[, ...]])
 	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	mixed		$arg,...		Data values
-	 * @return	float
+	 *	@access	public
+	 *	@category Mathematical and Trigonometric Functions
+	 *	@param	mixed		$arg,...		Data values
+	 *	@return	float
 	 */
 	public static function SUM() {
 		// Return value
@@ -1139,18 +1021,18 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * SUMIF
+	 *	SUMIF
 	 *
-	 * Counts the number of cells that contain numbers within the list of arguments
+	 *	Counts the number of cells that contain numbers within the list of arguments
 	 *
-	 * Excel Function:
+	 *	Excel Function:
 	 *		SUMIF(value1[,value2[, ...]],condition)
 	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	mixed		$arg,...		Data values
-	 * @param	string		$condition		The criteria that defines which cells will be summed.
-	 * @return	float
+	 *	@access	public
+	 *	@category Mathematical and Trigonometric Functions
+	 *	@param	mixed		$arg,...		Data values
+	 *	@param	string		$condition		The criteria that defines which cells will be summed.
+	 *	@return	float
 	 */
 	public static function SUMIF($aArgs,$condition,$sumArgs = array()) {
 		// Return value
@@ -1158,17 +1040,13 @@ class PHPExcel_Calculation_MathTrig {
 
 		$aArgs = PHPExcel_Calculation_Functions::flattenArray($aArgs);
 		$sumArgs = PHPExcel_Calculation_Functions::flattenArray($sumArgs);
-		if (empty($sumArgs)) {
+		if (count($sumArgs) == 0) {
 			$sumArgs = $aArgs;
 		}
 		$condition = PHPExcel_Calculation_Functions::_ifCondition($condition);
 		// Loop through arguments
 		foreach ($aArgs as $key => $arg) {
-			if (!is_numeric($arg)) {
-				$arg = str_replace('"', '""', $arg);
-				$arg = PHPExcel_Calculation::_wrapResult(strtoupper($arg));
-			}
-
+			if (!is_numeric($arg)) { $arg = PHPExcel_Calculation::_wrapResult(strtoupper($arg)); }
 			$testCondition = '='.$arg.$condition;
 			if (PHPExcel_Calculation::getInstance()->_calculateFormulaValue($testCondition)) {
 				// Is it a value within our criteria
@@ -1184,12 +1062,7 @@ class PHPExcel_Calculation_MathTrig {
 	/**
 	 * SUMPRODUCT
 	 *
-	 * Excel Function:
-	 *		SUMPRODUCT(value1[,value2[, ...]])
-	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	mixed		$arg,...		Data values
+	 * @param	mixed	$value	Value to check
 	 * @return	float
 	 */
 	public static function SUMPRODUCT() {
@@ -1197,12 +1070,6 @@ class PHPExcel_Calculation_MathTrig {
 
 		$wrkArray = PHPExcel_Calculation_Functions::flattenArray(array_shift($arrayList));
 		$wrkCellCount = count($wrkArray);
-
-		for ($i=0; $i< $wrkCellCount; ++$i) {
-			if ((!is_numeric($wrkArray[$i])) || (is_string($wrkArray[$i]))) {
-				$wrkArray[$i] = 0;
-			}
-		}
 
 		foreach($arrayList as $matrixData) {
 			$array2 = PHPExcel_Calculation_Functions::flattenArray($matrixData);
@@ -1212,10 +1079,10 @@ class PHPExcel_Calculation_MathTrig {
 			}
 
 			foreach ($array2 as $i => $val) {
-				if ((!is_numeric($val)) || (is_string($val))) {
-					$val = 0;
+				if (((is_numeric($wrkArray[$i])) && (!is_string($wrkArray[$i]))) &&
+					((is_numeric($val)) && (!is_string($val)))) {
+					$wrkArray[$i] *= $val;
 				}
-				$wrkArray[$i] *= $val;
 			}
 		}
 
@@ -1224,17 +1091,17 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * SUMSQ
+	 *	SUMSQ
 	 *
-	 * SUMSQ returns the sum of the squares of the arguments
+	 *	SUMSQ returns the sum of the squares of the arguments
 	 *
-	 * Excel Function:
+	 *	Excel Function:
 	 *		SUMSQ(value1[,value2[, ...]])
 	 *
-	 * @access	public
-	 * @category Mathematical and Trigonometric Functions
-	 * @param	mixed		$arg,...		Data values
-	 * @return	float
+	 *	@access	public
+	 *	@category Mathematical and Trigonometric Functions
+	 *	@param	mixed		$arg,...		Data values
+	 *	@return	float
 	 */
 	public static function SUMSQ() {
 		// Return value
@@ -1256,8 +1123,7 @@ class PHPExcel_Calculation_MathTrig {
 	/**
 	 * SUMX2MY2
 	 *
-	 * @param	mixed[]	$matrixData1	Matrix #1
-	 * @param	mixed[]	$matrixData2	Matrix #2
+	 * @param	mixed	$value	Value to check
 	 * @return	float
 	 */
 	public static function SUMX2MY2($matrixData1,$matrixData2) {
@@ -1286,8 +1152,7 @@ class PHPExcel_Calculation_MathTrig {
 	/**
 	 * SUMX2PY2
 	 *
-	 * @param	mixed[]	$matrixData1	Matrix #1
-	 * @param	mixed[]	$matrixData2	Matrix #2
+	 * @param	mixed	$value	Value to check
 	 * @return	float
 	 */
 	public static function SUMX2PY2($matrixData1,$matrixData2) {
@@ -1316,8 +1181,7 @@ class PHPExcel_Calculation_MathTrig {
 	/**
 	 * SUMXMY2
 	 *
-	 * @param	mixed[]	$matrixData1	Matrix #1
-	 * @param	mixed[]	$matrixData2	Matrix #2
+	 * @param	mixed	$value	Value to check
 	 * @return	float
 	 */
 	public static function SUMXMY2($matrixData1,$matrixData2) {
@@ -1344,30 +1208,34 @@ class PHPExcel_Calculation_MathTrig {
 
 
 	/**
-	 * TRUNC
+	 *	TRUNC
 	 *
-	 * Truncates value to the number of fractional digits by number_digits.
+	 *	Truncates value to the number of fractional digits by number_digits.
 	 *
-	 * @param	float		$value
-	 * @param	int			$digits
-	 * @return	float		Truncated value
+	 *	@param	float		$value
+	 *	@param	int			$number_digits
+	 *	@return	float		Truncated value
 	 */
-	public static function TRUNC($value = 0, $digits = 0) {
-		$value	= PHPExcel_Calculation_Functions::flattenSingleValue($value);
-		$digits	= PHPExcel_Calculation_Functions::flattenSingleValue($digits);
+	public static function TRUNC($value = 0, $number_digits = 0) {
+		$value			= PHPExcel_Calculation_Functions::flattenSingleValue($value);
+		$number_digits	= PHPExcel_Calculation_Functions::flattenSingleValue($number_digits);
 
 		// Validate parameters
-		if ((!is_numeric($value)) || (!is_numeric($digits)))
+		if ($number_digits < 0) {
 			return PHPExcel_Calculation_Functions::VALUE();
-		$digits	= floor($digits);
+		}
 
 		// Truncate
-		$adjust = pow(10, $digits);
+		if ($number_digits > 0) {
+			$value = $value * pow(10, $number_digits);
+		}
+		$value = intval($value);
+		if ($number_digits > 0) {
+			$value = $value / pow(10, $number_digits);
+		}
 
-		if (($digits > 0) && (rtrim(intval((abs($value) - abs(intval($value))) * $adjust),'0') < $adjust/10))
-			return $value;
-
-		return (intval($value * $adjust)) / $adjust;
+		// Return
+		return $value;
 	}	//	function TRUNC()
 
 }	//	class PHPExcel_Calculation_MathTrig

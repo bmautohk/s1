@@ -137,7 +137,7 @@ function Header()
 	$this->SetFillColor(233,233,233);
 	$this->SetTextColor(0,0,0);
 	 
-	$this->Ln(12);
+	$this->Ln(17);
  
 }
 

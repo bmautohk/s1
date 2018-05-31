@@ -1,0 +1,8 @@
+<?
+require ("functions.php");
+
+
+getuserlist();
+
+
+?>
