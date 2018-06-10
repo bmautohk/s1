@@ -30,7 +30,8 @@
               <table width="680" border="0" cellspacing="0" cellpadding="10">
                 <tr>
                   <td>
-                      <br>
+					 <input type="checkbox" name="address_restriction" id="address_restriction" value="Y"> &#21046;&#38480;&#35299;&#38500;
+				     <br>
                       Number of Product 
 
                       <select name="prod_n" onChange="javascript:location.href='index.php?page=<?=$page?>&subpage=<?=$subpage?>&prod_n='+this.options[this.selectedIndex].value">

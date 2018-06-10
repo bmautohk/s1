@@ -19,6 +19,17 @@
         } ?>
 
         <table width="380" height="224" border="1" cellpadding="0" cellspacing="0">
+		<tr align="right">
+          <td width="140" align="left">&#21046;&#38480;&#35299;&#38500;: </td>
+          <td colspan="2">
+		  <?php if ($address_restriction=="Y"){?>
+		  <input type="checkbox" name="address_restriction" id="address_restriction" value="Y" checked> 
+		  <?php }else{ ?>
+		  <input type="checkbox" name="address_restriction" id="address_restriction" value="Y"> 
+		  <?php } ?>
+		  </td>
+        </tr>
+		
         <tr align="right">
           <td width="140" align="left">Sales Date: </td>
           <td colspan="2"><script>DateInput('orderdate', true, 'YYYY-MM-DD', '<? echo $sale_date;?>')</script></td>

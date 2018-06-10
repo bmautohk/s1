@@ -95,6 +95,7 @@ if (isset($_POST['importYahoo']) || isset($_POST['importYahooShopping']) || isse
 		sale_chk_ref = $sale_chk_ref,
 		sale_ship_fee = ".$sale_ship_fee.",
 		sale_discount = ".$sale_discount.",
+		address_restriction = '".trim($_POST['address_restriction'])."',  
 		sale_tax = ".$sale_tax;
 	sqlinsert($sql);
 	
@@ -385,8 +386,8 @@ function importYahooShopping($db, $file_name, $actual_file_name, $salesGroup) {
 		$product['sprod_id'] = $ws->getCell("F".$rowNo)->getValue();
 		$product['sprod_name'] = convert($ws->getCell("G".$rowNo)->getValue());
 		$product['sprod_unit'] = $ws->getCell("H".$rowNo)->getValue();
-		$product['sprod_material'] = convert($ws->getCell("AJ".$rowNo)->getValue());
-		$product['sprod_colour'] = convert($ws->getCell("AK".$rowNo)->getValue());
+		$product['sprod_colour'] = convert($ws->getCell("AJ".$rowNo)->getValue());
+		$product['sprod_material'] = convert($ws->getCell("AK".$rowNo)->getValue());
 
 		$total = $ws->getCell("M".$rowNo)->getValue();;
 		$product['sprod_price'] = ceil($total / $product['sprod_unit']);
@@ -471,20 +472,9 @@ function importYahooShopping($db, $file_name, $actual_file_name, $salesGroup) {
 		}
 
 		//20180531 added for check length remark
-		if (strlen($debt['debt_remark'])>16){
+		if (mb_strlen($debt['debt_remark'],'EUC-JP')>32){
 			$error_message = '<br>Line '.$rowNo.': debt_remark length is more than 16 digits';
 		}
-		if (strlen($debt['debt_cust_address1'])>16){
-			$error_message = '<br>Line '.$rowNo.': debt_cust_address1 length is more than 16 digits';
-		}
-		if (strlen($debt['debt_cust_address2'])>16){
-			$error_message = '<br>Line '.$rowNo.': debt_cust_address2 length is more than 16 digits';
-		}
-		if (strlen($debt['debt_cust_address3'])>16){
-			$error_message = '<br>Line '.$rowNo.': debt_cust_address3 length is more than 16 digits';
-		}
-		
-		
 		if (empty($product['sprod_id'])) {
 			$error_message = '<br>Line '.$rowNo.': Product No.(column E) is mandatory.';
 		}
@@ -707,19 +697,10 @@ function importRakuten($db, $file_name, $actual_file_name, $salesGroup) {
 		
 		
 		//20180531 added for check length remark
-		if (strlen($debt['debt_remark'])>16){
-			$error_message = '<br>Line '.$rowNo.': debt_remark length is more than 16 digits';
+		if (mb_strlen($debt['debt_remark'],'EUC-JP')>32){
+			$error_message = '<br>Line '.$rowNo.$debt['debt_remark'].': debt_remark length is more than 16 digits';
 		}
 		
-		if (strlen($debt['debt_cust_address1'])>16){
-			$error_message = '<br>Line '.$rowNo.': debt_cust_address1 length is more than 16 digits';
-		}
-		if (strlen($debt['debt_cust_address2'])>16){
-			$error_message = '<br>Line '.$rowNo.': debt_cust_address2 length is more than 16 digits';
-		}
-		if (strlen($debt['debt_cust_address3'])>16){
-			$error_message = '<br>Line '.$rowNo.': debt_cust_address3 length is more than 16 digits';
-		}
 		
 		if (empty($product['sprod_id'])) {
 			$error_message = '<br>Line '.$rowNo.': Product No.(column F/I) is mandatory.';

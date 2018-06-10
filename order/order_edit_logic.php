@@ -14,6 +14,7 @@ if (isset($_POST['isupdate']))
 		sale_tax = ".trim($_POST['sale_tax']).",
 		sale_date = '".trim($_POST['orderdate'])."',
 		sts = '".trim($_POST['sts'])."',
+		address_restriction = '".trim($_POST['address_restriction'])."',  
 		sale_dat = curdate() where sale_ref = '$sale_ref'";
 	
 	sqlinsert($sql);
@@ -37,6 +38,7 @@ if (isset($_GET['sale_ref']) or isset($_POST['isfind']))
 	
 	//if (isset($_POST['isfind'])) {$sale_ref = $_POST['sale_ref'];}
 	$sale_row = getsale_data($sale_ref);
+	$address_restriction = $sale_row['address_restriction'];
 	$sale_group = $sale_row['sale_group'];
 	$sale_email = $sale_row['sale_email'];
 	$sale_name = $sale_row['sale_name'];
