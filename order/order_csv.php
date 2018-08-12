@@ -46,9 +46,9 @@
 			->setCellValueByColumnAndRow($i++, 1, 'Client Name')
 			->setCellValueByColumnAndRow($i++, 1, 'Note')
 			->setCellValueByColumnAndRow($i++, 1, 'Client\'s Payment Name');
-	if ($isDisplayProductId) {
+	//if ($isDisplayProductId) {
 		$sheet->setCellValueByColumnAndRow($i++, 1, 'Product No.');
-	}
+	//}
 	$sheet->setCellValueByColumnAndRow($i++, 1, 'Price')
 			->setCellValueByColumnAndRow($i++, 1, '顏色')
 			->setCellValueByColumnAndRow($i++, 1, 'Qty')
@@ -124,9 +124,9 @@
 				->setCellValueByColumnAndRow($i++, $rowNo, conv(($order['debt_data'])))
 				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['debt_pay_name']));
 			
-			if ($isDisplayProductId) {
+			//if ($isDisplayProductId) {
 				$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($order['sprod_id']));
-			}
+			//}
 			
 			$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($order['cost_prod']))
 				->setCellValueByColumnAndRow($i++, $rowNo, conv($order['sprod_colour']))

@@ -73,6 +73,8 @@ $tool_bar_array["invoice"]="<TABLE width=\"800\" cellPadding=10>
                   container</a></span></TD>
 				  <TD width=\"273\"><span class=\"cat cat\"><a href=\"index.php?page=order&subpage=upload_sagawa_csv\" class=\"big\">upload  <br>
                   sagawa</a></span></TD>
+				  <TD width=\"273\"><span class=\"cat cat\"><a href=\"index.php?page=order&subpage=upload_sagawa_special_csv\" class=\"big\">special    <br>
+                  product</a></span></TD>
               </TR>
             </TBODY>
           </TABLE>";
@@ -92,6 +94,8 @@ $tool_bar_array["product"]="<TABLE width=\"1000\" cellPadding=5>
                   href=\"index.php?page=product&subpage=model_mapping\" class=\"big\">Model Mapping</A></span></TD>
                 <TD width=\"146\"><span class=\"cat cat\"><A  
                   href=\"index.php?page=product&subpage=upload\" class=\"big\">Upload Product</A></span></TD>
+				  <TD width=\"146\"><span class=\"cat cat\"><A  
+                  href=\"index.php?page=product&subpage=upload_old_product\" class=\"big\">Upload Old Product</A></span></TD>
               </TR>
             </TBODY>
           </TABLE>";
@@ -121,6 +125,8 @@ $tool_bar_array["report"]="<TABLE width=\"\" cellPadding=10>
               	<TD><span class=\"cat cat\"><a href=\"index.php?page=report&subpage=list\" class=\"big\">Order Report</a> </span></TD>
               	<TD><span class=\"cat cat\"><a href=\"index.php?page=report&subpage=group\" class=\"big\">Group Order Report</a> </span></TD>
               	<TD><span class=\"cat cat\"><a href=\"index.php?page=report&subpage=prod\" class=\"big\">Items Sold</a> </span></TD>
+				<TD><span class=\"cat cat\"><a href=\"index.php?page=report&subpage=prod_overview\" class=\"big\">Stock Overview</a> </span></TD>
+				
               </TR>
             </TBODY>
           </TABLE>";
@@ -374,7 +380,7 @@ function getsale_prod($sale_ref)
 	$total = number_format($sub_total-$sale_discount,2,'.','');
 	$total_tax =$total * $sale_tax / 100; 
 	$total_tax = number_format(round($total_tax, 0),2,'.','');
-	$total = number_format($total + $sale_ship_fee + total_tax,2,'.','');
+	$total = number_format($total + $sale_ship_fee + $total_tax,2,'.','');
 	
 	echo "<tr align=\"right\"> <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td  align=\"right\">Sub Total :</td><td width='120'>&yen;".$sub_total."</td></tr>\n";
 	echo "<tr align=\"right\"> <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td  align=\"right\">Discount :</td><td width='120'>&yen;".$sale_discount."</td></tr>\n";

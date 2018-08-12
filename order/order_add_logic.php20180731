@@ -35,7 +35,7 @@ if (isset($_GET['mod'])) {
 }
 
 // add new order
-if (isset($_POST['importYahoo']) || isset($_POST['importYahooShopping']) || isset($_POST['importRakuten']) || isset($_POST['importRakuten2018'])  ) {
+if (isset($_POST['importYahoo']) || isset($_POST['importYahooShopping']) || isset($_POST['importRakuten'])) {
 	$import = true;
 	$isValid = true;
 	
@@ -56,8 +56,6 @@ if (isset($_POST['importYahoo']) || isset($_POST['importYahooShopping']) || isse
 			$import_success = importYahooShopping($db, $file_name, $actual_file_name, $salesGroup);
 		} else if (isset($_POST['importRakuten'])) {
 			$import_success = importRakuten($db, $file_name, $actual_file_name, $salesGroup);
-		} else if (isset($_POST['importRakuten2018'])) {
-			$import_success = importRakuten2018($db, $file_name, $actual_file_name, $salesGroup);
 		}
 	}
 	
@@ -143,7 +141,7 @@ if (isset($_POST['importYahoo']) || isset($_POST['importYahooShopping']) || isse
 		
 		$sqla = "INSERT INTO ben_sale_prod SET
 			sprod_ref = '$sale_ref',
-			sprod_id =  upper('".trim($_POST[$sprod_id])."'),
+			sprod_id = '".trim($_POST[$sprod_id])."',
 			sprod_name = '".trim($_POST[$sprod_name])."',
 			sprod_material = '".$sprod_material."',
 			sprod_colour = '".$sprod_color."',
@@ -763,259 +761,6 @@ function importRakuten($db, $file_name, $actual_file_name, $salesGroup) {
 	
 	return true;
 }
-
-
-function importRakuten2018($db, $file_name, $actual_file_name, $salesGroup) {
-	global $error_message;
-	
-	$objPHPExcel = getExcelReader($file_name, $actual_file_name);
-	
-	$result = array();
-	$orderNoSet = array();
-	$ws = $objPHPExcel->getSheet(0);
-	foreach ($ws->getRowIterator() as $row) {
-		$rowNo = $row->getRowIndex();
-		if ($rowNo == 1) {
-			// Skip 1st row (i.e. header)
-			continue;
-		}
-	
-		$order = array();
-		$product = array();
-		$debt = array();
-		$balance = array();
-
-		// Order
-		$order['sale_ref'] = $ws->getCell("A".$rowNo)->getValue();
-		/*$order_no = $ws->getCell("A".$rowNo)->getValue();
-		$pos = strrpos($order_no, '-');
-		$order['sale_ref'] = trim(substr($order_no, $pos + 1));*/
-		
-		$order['order_date'] = date('Y-m-d');
-		$order['sale_group'] = $salesGroup;
-		$order['sale_name'] = convert($ws->getCell("BL".$rowNo)->getValue()
-								.$ws->getCell("BM".$rowNo)->getValue());
-								//.$ws->getCell("AA".$rowNo)->getValue()
-								//.$ws->getCell("AB".$rowNo)->getValue());
-		$order['sale_ship_fee'] = $ws->getCell("AB".$rowNo)->getValue();
-	
-		$order['sale_email'] = $ws->getCell("AV".$rowNo)->getValue();
-		$order['sale_yahoo_id'] = '';
-		$order['sale_chk_ref'] = 0;
-		$order['sale_discount'] = $ws->getCell("AH".$rowNo)->getValue();
-		$order['sale_tax'] = $ws->getCell("AA".$rowNo)->getValue()/$ws->getCell("Z".$rowNo)->getValue()*100;
-
-	/** Product */
-		$product['sale_ref'] = $order['sale_ref'];
-		$product['sprod_name'] = convert($ws->getCell("BU".$rowNo)->getValue());
-		//$product['sprod_price'] = $ws->getCell("H".$rowNo)->getValue();
-		$product['sprod_price'] = $ws->getCell("BX".$rowNo)->getValue();
-		$product['sprod_unit'] = $ws->getCell("BY".$rowNo)->getValue();
-		$product['sprod_material'] = convert($ws->getCell("DD".$rowNo)->getValue());
-		
-		$colour = $ws->getCell("CC".$rowNo)->getValue();
-		if (!empty($colour)) {
-			$product['sprod_colour'] = convert(substr($colour, 4));
-		}
-		
-		//$select = $ws->getCell("I".$rowNo)->getValue();
-		//if (empty($select)) {
-			$product['sprod_id'] = $ws->getCell("BV".$rowNo)->getValue();
-		//} else {
-	//		$pos1 = strrpos($select, '「');
-	//		$pos2 = strrpos($select, '」');
-	//		$product['sprod_id'] = substr($select, $pos1 + 3, $pos2 - $pos1 - 3);
-	//	}
-	
-	/** Debt */
-		$debt['sale_ref'] = $order['sale_ref'];
-		$debt['debt_pay_name'] = '';
-		
-		$addr = $ws->getCell("BI".$rowNo)->getValue()
-						.$ws->getCell("BJ".$rowNo)->getValue()
-						.$ws->getCell("BK".$rowNo)->getValue();
-		
-		// Address
-		$len = mb_strlen($addr, 'UTF-8');
-		$debt['debt_cust_address1'] = mb_substr($addr, 0, 12, 'UTF-8');
-		$debt['debt_cust_address2'] = mb_substr($addr, 12, 12, 'UTF-8');
-		$debt['debt_cust_address3'] = mb_substr($addr, 24, $len - 24, 'UTF-8');
-		
-		$debt['debt_cust_address1'] = convert($debt['debt_cust_address1']);
-		$debt['debt_cust_address2'] = convert($debt['debt_cust_address2']);
-		$debt['debt_cust_address3'] = convert($debt['debt_cust_address3']);
-		
-		$debt['debt_email'] = $ws->getCell("AV".$rowNo)->getValue();
-		$debt['debt_post_co'] = $ws->getCell("BG".$rowNo)->getValue().'-'
-								.$ws->getCell("BH".$rowNo)->getValue();
-		$debt['debt_tel'] = $ws->getCell("BP".$rowNo)->getValue().'-'
-							.$ws->getCell("BQ".$rowNo)->getValue().'-'
-							.$ws->getCell("BR".$rowNo)->getValue();
-		$debt['debt_mobile'] = '';
-		$debt['debt_bank'] = '';
-		$debt['debt_pay_method'] = 'Bank in';
-		$debt['debt_shipping_method'] = 'Air Mail';
-		$debt['debt_email_sent'] = NULL;
-		
-		// Remarks
-		$remark = $ws->getCell("CW".$rowNo)->getValue();
-
-		if ($ws->getCell("AL".$rowNo)->getValue() == '代金引換') {
-			$remark .= '\n'.'商品代引： '.$ws->getCell("BD".$rowNo)->getValue().'円';
-		}
-		
-		/* $remark2 = $ws->getCell("BJ".$rowNo)->getValue();
-		if (!empty($remark2)) {
-			$remark .= '/'.$remark2;
-		}
-		
-		$remark3 = $ws->getCell("BH".$rowNo)->getValue();
-		if (!empty($remark3)) {
-			$remark .= '/'.$remark3;
-		} */
-		
-		$debt['debt_remark'] = convert($remark);
-				
-			//deliver date 20180807
-			if ($ws->getCell("CR".$rowNo)->getValue()!=""){
-			$dateTimeObject = PHPExcel_Shared_Date::ExcelToPHPObject($ws->getCell("CR".$rowNo)->getValue());
-			$balance['bal_delivery_date']=$dateTimeObject->format('Y-m-d');
-			}
-	
-			$balance['bal_delivery_time'] = convert($ws->getCell("CQ".$rowNo)->getValue());
-			
-	/** Balance */
-		$requiredCost = $ws->getCell("AD".$rowNo)->getValue();
-		if ($requiredCost != NULL && $requiredCost != '') {
-
-			$balance['sale_ref'] = $order['sale_ref'];
-			$balance['bal_pay'] = $ws->getCell("AD".$rowNo)->getValue()+ $ws->getCell("AF".$rowNo)->getValue();
-			
-			// Payment Type
-			$type = $ws->getCell("M".$rowNo)->getValue();
-			switch ($type) {
-				case "クレジットカード":
-					$balance['bal_pay_type'] = 'Credit Card';
-					break;
-				case "銀行振込":
-					$balance['bal_pay_type'] = 'Bank';
-					break;
-				default:
-					$balance['bal_pay_type'] = '';
-			}
-			
-	
-			//$dateArr=explode('/',$ws->getCell("CR".$rowNo)->getValue());
-			//$balance['bal_delivery_date'] =  $dateArr[2].'-'.$dateArr[1].'-'.$dateArr[0];
-			//echo $balance['bal_delivery_date'];
-			
-			
-			
-			//[配送日時指定:]19～21時[注文フォーム:]
-			//$delivery = $ws->getCell("CW".$rowNo)->getValue();
-			//$start_idx = mb_strpos($delivery, ']', 0, 'UTF-8');
-			//$end_idx = mb_strpos($delivery, '[', 3, 'UTF-8');
-			//$delivery_time = convert(mb_substr($delivery, $start_idx + 1, $end_idx - $start_idx - 1, 'UTF-8'));
-			//$balance['bal_delivery_time_optaion_id'] = NULL;
-			//$balance['bal_delivery_time'] = $delivery_time;
-			
-			
-			
-			// Shipping Type
-			if ($type == '代金引換') {
-				$balance['bal_ship_type'] = 'COD';
-
-				$debt['debt_remark'] = $debt['debt_remark'].'\n'.convert('代引 : '.$ws->getCell("AC".$rowNo)->getValue().'円');
-			} else {
-				$balance['bal_ship_type'] = '';
-			}
-		}
-		
-		 
-		
-		//20180807 check productname
-		if (strlen($order['sprod_name'])>16){
-			$error_message = '<br>Line '.$rowNo.': Product Name length is more than 16 digits';
-		}
-	 
-		
-		// Validation
-		if (empty($order['sale_ref'])) {
-			$error_message = '<br>Line '.$rowNo.': Order No.(column A) is mandatory.';
-		//20180531 added 	
-		}else if (strlen($order['sale_ref'])>16){
-			$error_message = '<br>Line '.$rowNo.': Sale_ref length is more than 16 digits';
-		}else if (isOrderExist($db, $order['sale_ref']) || array_key_exists($order['sale_ref'], $orderNoSet)) {
-			$error_message = '<br>Line '.$rowNo.': Order No.['.$order['sale_ref'].'] has already existed.';
-		}
-		
-		
-		//20180531 added for check length remark
-		if (mb_strlen($debt['debt_remark'],'EUC-JP')>32){
-			$error_message = '<br>Line '.$rowNo.$debt['debt_remark'].': debt_remark length is more than 16 digits';
-		}
-		
-		
-		if (empty($product['sprod_id'])) {
-			$error_message = '<br>Line '.$rowNo.': Product No.(column F/I) is mandatory.';
-		}
-		
-		if (empty($product['sprod_name'])) {
-			$error_message = '<br>Line '.$rowNo.': Product Name(column E) is mandatory.';
-		}
-		
-		if (empty($product['sprod_price']) && $product['sprod_price'] != '0') {
-			$error_message = '<br>Line '.$rowNo.': Product Price(column H) is mandatory.';
-		} else if (!is_numeric($product['sprod_price'])) {
-			$error_message = '<br>Line '.$rowNo.': Product Price(column H) must be numeric.';
-		}
-		
-		if (empty($product['sprod_unit']) && $product['sprod_unit'] != '0') {
-			$error_message = '<br>Line '.$rowNo.': Product Unit(column G) is mandatory.';
-		} else if (!is_numeric($product['sprod_unit'])) {
-			$error_message = '<br>Line '.$rowNo.': Product Unit(column G) must be numeric.';
-		}
-		
-		if (!empty($error_message)) {
-			return false;
-		}
-		
-		$orderNoSet[$order['sale_ref']] = 1;
-		
-		$orderInfo['order'] = $order;
-		$orderInfo['product'] = $product;
-		$orderInfo['debt'] = $debt;
-		$orderInfo['balance'] = $balance;
-	
-		$result[] = $orderInfo;
-	}
-	
-	foreach ($result as $info) {
-		$order = $info['order'];
-		$product = $info['product'];
-		$debt = $info['debt'];
-		$balance = $info['balance'];
-	
-		insertSale($order['sale_ref'], $order['order_date'], $order['sale_group'], $order['sale_email'], $order['sale_name'],
-				$order['sale_yahoo_id'], $order['sale_chk_ref'], $order['sale_ship_fee'], $order['sale_discount'], $order['sale_tax']);
-	
-		insertSaleProduct($product['sale_ref'], $product['sprod_id'], $product['sprod_name'], $product['sprod_price'], $product['sprod_unit'], 
-				$product['sprod_material'], $product['sprod_colour']);
-	
-		insertDebt($debt['sale_ref'], $debt['debt_pay_name'], $debt['debt_cust_address1'], $debt['debt_cust_address2'],
-				$debt['debt_cust_address3'], $debt['debt_email'], $debt['debt_post_co'], $debt['debt_tel'], $debt['debt_mobile'],
-				$debt['debt_bank'], $debt['debt_pay_method'], $debt['debt_shipping_method'],
-				$debt['debt_email_sent'], $debt['debt_remark']);
-		
-		if (!empty($balance)) {
-			insertBalance($balance['sale_ref'], $balance['bal_pay'], $balance['bal_pay_type'], $balance['bal_ship_type'],
-					$balance['bal_delivery_date'], $balance['bal_delivery_time_option_id'], $balance['bal_delivery_time']);
-		}
-	}
-	
-	return true;
-}
-
 
 function convert($str) {
 	return mb_convert_encoding($str, 'EUC-JP', 'auto');

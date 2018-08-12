@@ -1,26 +1,4 @@
-<SCRIPT>
-	function confirmDelete(id, ask, url) //confirm order delete
-	{
-		temp = window.confirm(ask);
-		if (temp) //delete
-		{
-			window.location=url+id;
-		}
-	}
-	function open_window(link,w,h)
-	{
-		var win = "width="+w+",height="+h+",menubar=no,location=no,resizable=yes,scrollbars=yes";
-		newWin = window.open(link,'newWin',win);
-	}
-
-
-function goToURL(obj) {
-   //i = obj.listBox.selectedIndex;
-   //top.location = "<? echo $_SERVER['PHP_SELF']."?page=".$page."&subpage=".$subpage."&product_id=".$_GET['product_id']."&make_id="; ?>" + obj;
-}
-
- </script>
- <script language="JavaScript">
+<script language="JavaScript">
 <!--
 
 /***********************************************
@@ -75,16 +53,6 @@ function formCheck(formobj){
 		}
 	}
 
-	var value = $('select[name="product_model"]').val();
-	if (value == null || value == '') {
-		alertMsg += " - Model\n";
-	}
-
-	value = $('select[name="product_model_no"]').val();
-	if (value == null || value == '') {
-		//alertMsg += " - Model No.\n";
-	}
-
 	if (alertMsg.length == l_Msg){
 		return true;
 	}else{
@@ -93,4 +61,9 @@ function formCheck(formobj){
 	}
 }
 // -->
+function goToURL(obj) {
+   //i = obj.listBox.selectedIndex;
+   top.location = "<? echo $_SERVER['PHP_SELF']."?page=".$page."&subpage=".$subpage."&make_id="; ?>" + obj;
+}
+
 </script>

@@ -127,7 +127,7 @@
 
 	$total_tax = number_format(round($total_tax, 0),2,'.','');
 
-	$total = number_format($total + $sale_ship_fee + total_tax,2,'.','');
+	$total = number_format($total + $sale_ship_fee + $total_tax,2,'.','');
 
 	
 

@@ -32,7 +32,7 @@ function insertSaleProduct($sale_ref, $sprod_id, $sprod_name, $sprod_price, $spr
 		$sprod_material = NULL, $sprod_colour = NULL) {
 	$sql = "INSERT INTO ben_sale_prod SET
 			sprod_ref = '$sale_ref',
-			sprod_id = '".trim($sprod_id)."',
+			sprod_id = upper('".trim($sprod_id)."'),
 			sprod_name = '".trim($sprod_name)."',
 			sprod_price = ".trim($sprod_price).",
 			sprod_unit = ".trim($sprod_unit).",

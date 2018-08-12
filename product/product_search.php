@@ -268,6 +268,15 @@
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                   </tr>
+				  
+				  <tr>
+				  <td>Special Product</td>
+				  <td><select name="sagawa_label" id="sagawa_label">
+                    		 <option value="">All</option>
+                    		<option value="Y">Yes</option>
+                    		<option value="N">No</option>
+                    	</select> </td>
+				  </tr>
             </table>
             <input name="isfind" type="submit" id="isfind" value="Find" />
             
@@ -295,10 +304,11 @@
 			<td width="22">Web</td>
 			<td width="47"><div align="center">Dit</div></td>
 			<td width="57">Loc.</td>
+			<td width="57">searchable</td>
 		</tr>
 		<? foreach($products as $product) {?>
 			<tr align="center" valign="top" height="25">
-				<td><a href="index.php?page=product&subpage=edit&product_id=<?=$product["product_id"]?>"><?=$product["product_id"]?></a></td>
+				<td><a href="index.php?page=product&subpage=edit&product_id=<?=urlencode($product["product_id"])?>"><?=$product["product_id"]?></a></td>
 				<td><?=$product["product_name"] ?>&nbsp;</td>
 				<td><?=$product["product_pcs"] -  getprod_shipped($product["product_id"]) ?>&nbsp;</td>
 				<td><?=$product["product_stock_jp"] ?>&nbsp;</td>
@@ -311,6 +321,7 @@
 				<td><?=$product["product_web"] == 1 ? "Yes" : "-" ?></td>
 				<td><?=$row["product_dit"]=='' ? "&nbsp;" : "<a href =\"dit_file\\$product_dit\" target=\"_blank\">".$product_dit."</a>" ?>&nbsp;</td>
 				<td><?=$product["product_location"] ?>&nbsp;</td>
+				<td><?=$product["searchable"] ?>&nbsp;</td>
 			</tr>
 		<? } ?>
 		</table>

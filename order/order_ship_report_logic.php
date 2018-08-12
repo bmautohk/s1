@@ -99,15 +99,27 @@ function getShipReportData($access,$user_name,$group3) {
 		$data = array();
 		
 		$data['sprod_no'] = $row['sprod_no'];
+	
 		$data['bal_ref'] = $row["bal_ref"];
 		$data['sale_group'] = $row["sale_group"];
 		$data['sale_name'] = $row["sale_name"];
 		$data['bal_ship_type'] = $row["bal_ship_type"];
 		$data['sprod_id'] = $row["sprod_id"];
+		$prod_no=$data['sprod_id'];
 		$data['debt_remark'] = $row["debt_remark"];
 		$data['debt_post_co'] = $row["debt_post_co"];
 		
 		
+		//get RealStock 20180729
+		$realStock=getRealStockByItemArray($row["sprod_id"]);
+		$data['realstock']=$realStock;
+		
+		
+		$query = "SELECT sagawa_label,person_in_charge FROM product where product_id='$prod_no'";
+		$result2 = mysql_query($query, $db) or die (mysql_error()."<br />Couldn't execute query: $query");
+		$row2=mysql_fetch_array($result2);
+		$data['sagawa_label']= $row2["sagawa_label"];
+		$data['person_in_charge'] = $row2["person_in_charge"];
 		$data_list[] = $data;
 	}
 	
@@ -133,7 +145,7 @@ function getShipReport2($date_start,$date_end,$access,$user_name)
 	$num_results=mysql_num_rows($result);
 	//table echo 
 	echo "<table width=\"500\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">";
-	echo "<tr align=\"right\" valign=\"top\"><td><input type=\"checkbox\" name=\"cb_select_all\" /></td><td >Prod ID.</td><td >Group</td><td >post code</td><td >Client Name</td><td >Payment Date</td><td >Auction ID</td><td >Out Of Stock</td><td>Remark</td><td>Print Date</td>\n";
+	echo "<tr align=\"right\" valign=\"top\"><td><input type=\"checkbox\" name=\"cb_select_all\" /></td><td >Prod ID.</td><td>B+C</td><td>Remark</td><td>RealStock</td><td >Group</td><td >post code</td><td >Client Name</td><td >Payment Date</td><td >Auction ID</td><td >Out Of Stock</td><td>Print Date</td>\n";
 	
 	
 	//loop
@@ -149,19 +161,76 @@ function getShipReport2($date_start,$date_end,$access,$user_name)
 	$created_date=$row["created_date"];
 	$row_debt = getdebt_data($bal_ref);
 	$debt_remark = '';
-	if ($row_debt["debt_remark"]!=""){
-		$debt_remark = ' - '.$row_debt["debt_remark"];
-	}
-	
-	$debt_post_co = $row_debt["debt_post_co"];
+		if ($row_debt["debt_remark"]!=""){
+			$debt_remark = ' - '.$row_debt["debt_remark"];
+		}
 		
+		$debt_post_co = $row_debt["debt_post_co"];
+	
+
+			//get RealStock 20180729
+		$realStock=getRealStockByItemArray($sprod_id);
+		
+			//get person_in_charge 20180805
+			
+		$query = "SELECT sagawa_label,person_in_charge FROM product where product_id='$sprod_id'";
+		$result2 = mysql_query($query, $db) or die (mysql_error()."<br />Couldn't execute query: $query");
+		$row2=mysql_fetch_array($result2);
+	 
 				echo "<tr align=\"right\" valign=\"top\">	<td>";
               			 if (!empty($row_prod['sprod_no'])) { 
               			echo "<input type=\"checkbox\" name=\"cb_sprod_no[]\" value=\"".$row_prod['sprod_no']."\" />";
               			 } 
-              		echo "</td><td><a href='index.php?page=order&subpage=edit&sale_ref=$bal_ref'>".$sprod_id."</a>$debt_remark</td><td>&nbsp;".$sale_group."</td><td>&nbsp;".$debt_post_co."</td><td>&nbsp;".$sale_name."</td><td>".$bal_dat."</td><td><a href='index.php?page=order&subpage=shipping&sale_ref=$bal_ref'>".$bal_ref."</a></td><td >Y</td><td >$debt_remark  &nbsp;</td><td>$created_date</td></tr>\n";
+              		echo "</td><td><a href='index.php?page=order&subpage=edit&sale_ref=$bal_ref'>".$sprod_id."</a></td><td>".$row2["person_in_charge"]."</td><td >$debt_remark  &nbsp;</td><td>".$realStock."</td><td>&nbsp;".$sale_group."</td><td>&nbsp;".$debt_post_co."</td><td>&nbsp;".$sale_name."</td><td>".$bal_dat."</td><td><a href='index.php?page=order&subpage=shipping&sale_ref=$bal_ref'>".$bal_ref."</a></td><td >Y</td><td>$created_date</td></tr>\n";
 	}
 	//end loop
 	echo "</table>";
 }
+
+
+
+
+
+function getRealStockByItemArray($prodid){
+	
+ 
+	ob_flush();
+	flush();
+	$db=connectDatabase();
+	mysql_select_db(DB_NAME,$db);
+		
+	$sql2="SELECT check_date,sprod_id,product_name,product_cus_des,product_made,product_model,product_model_no,product.product_remark as product_remark,product_name,
+	product_pcs,product.product_cus_price as product_cus_price,product_cost_rmb,product_year,product_material,product_colour_no,
+	product.product_colour as product_colour,sum(sprod_unit) as totalqty ,
+	fix_inventory_qty 
+	FROM ben_sale, ben_check, ben_sale_prod
+	left outer join product on ben_sale_prod.sprod_id = product.product_id 
+	where sprod_ref=sale_ref 
+	and sprod_ref=check_ref and check_date != '0000-00-00' ";
+	$sql2=$sql2." and check_date>='2018-07-13' ";
+	$sql2=$sql2." and sprod_id ='".$prodid."' ";
+	
+	
+	
+	//echo $sql2;
+	
+	$result2 = mysql_query($sql2, $db);
+	
+	$row=mysql_fetch_array($result2);
+	
+		//find stock bal
+		$sql3="select sum(qty) as qty from container where product_id='".$prodid."'";
+		$result3 =  mysql_query($sql3,$db);
+		$row3=mysql_fetch_array($result3);
+		
+		$realStock=$row3["qty"]-$row['totalqty']+$row['fix_inventory_qty'];
+		//echo $prodid."+".$row3["qty"]."+".$row['totalqty']."+".$row['fix_inventory_qty'];
+		
+	return $realStock;
+	 
+}
+
+
+
+
 ?>

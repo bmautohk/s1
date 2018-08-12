@@ -188,7 +188,7 @@ if ($sale_email!='') {
 <script type="text/javascript" src="calendarDateInput.js">
 </script>
 <SCRIPT>
-	$('#btn_form_preview').attr('disabled', 'disabled');
+	//$('#btn_form_preview').attr('disabled', 'disabled');
 	$(document).ready(function(){
 		$('.preview').change(function(){
 			var method = $('#opt_method').val();
@@ -196,11 +196,11 @@ if ($sale_email!='') {
 			if (method != '' && addr_id != '') {
 				$('#form_preview').attr('height', '300');
 				$('#form_preview').attr('src', 'print_ship_bottom_' + method + '.php?sale_ref=<?=$sale_ref?>&addr_id=' + addr_id);
-				$('#btn_form_preview').attr('disabled', '');
+				//$('#btn_form_preview').attr('disabled', 'disabled');
 			}
 			else {
 				$('#form_preview').empty();
-				$('#btn_form_preview').attr('disabled', 'disabled');
+				//$('#btn_form_preview').attr('disabled', 'disabled');
 			}
 		});
 		

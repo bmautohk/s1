@@ -16,7 +16,7 @@
 
 function goToURL(obj) {
    //i = obj.listBox.selectedIndex;
-   //top.location = "<? echo $_SERVER['PHP_SELF']."?page=".$page."&subpage=".$subpage."&product_id=".$_GET['product_id']."&make_id="; ?>" + obj;
+   top.location = "<? echo $_SERVER['PHP_SELF']."?page=".$page."&subpage=".$subpage."&product_id=".$_GET['product_id']."&make_id="; ?>" + obj;
 }
 
  </script>
@@ -73,16 +73,6 @@ function formCheck(formobj){
 				}
 			}
 		}
-	}
-
-	var value = $('select[name="product_model"]').val();
-	if (value == null || value == '') {
-		alertMsg += " - Model\n";
-	}
-
-	value = $('select[name="product_model_no"]').val();
-	if (value == null || value == '') {
-		//alertMsg += " - Model No.\n";
 	}
 
 	if (alertMsg.length == l_Msg){

@@ -105,7 +105,7 @@ if (isset($_POST['isfindadd']))
 	
 	$sqla = "INSERT INTO ben_sale_prod SET
 		sprod_ref = '$sale_ref',
-		sprod_id = '".trim($_POST[$sprod_id_t])."',
+		sprod_id = upper('".trim($_POST[$sprod_id_t])."'),
 		sprod_name = '".trim($_POST[$sprod_name_t])."',
 		sprod_material = '".trim($_POST[$sprod_material_t])."',
 		sprod_colour = '".trim($_POST[$sprod_colour_t])."',

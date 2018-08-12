@@ -56,8 +56,8 @@
 		$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit(conv($row['debt_cust_address2']),$type);  //E
 		$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit(conv($row['debt_cust_address3']),$type);  //F
 		$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($row['sale_name']))  //G
-			->setCellValueByColumnAndRow($i++, $rowNo, conv($row['sale_name'])); //H
-		$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit(conv($row['bal_ref']),$type);   //I
+		->setCellValueByColumnAndRow($i++, $rowNo, conv($row['sale_name'])); //H
+		$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit(conv($row['bal_ref']),$type);  //I
 		$sheet->setCellValueByColumnAndRow($i++, $rowNo,"")  //J
 			->setCellValueByColumnAndRow($i++, $rowNo, "")  //K
 			->setCellValueByColumnAndRow($i++, $rowNo, "")  //L
@@ -184,7 +184,7 @@ function getShipReportData($access, $user_name, $group3, $sprod_no_list,$exportC
 		join ben_bal on sale_ref=bal_ref 
 		left outer join ben_sale_prod on sprod_ref = sale_ref
 		left outer join ben_debt on debt_ref = sale_ref
-		where group3='$group3'";
+		where group3 like '$group3'";
 		
 		if ($exportCSVonly!='true')
 		$query.=" and bal_ref not in (select check_ref from ben_check) ";

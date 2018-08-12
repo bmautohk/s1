@@ -21,6 +21,7 @@
 						<input name="importYahoo" type="submit" value="Import Yahoo" />
 						<input name="importYahooShopping" type="submit" value="Import Yahoo Shipping" />
 						<input name="importRakuten" type="submit" value="Import &#27005;&#22825;" />
+						<input name="importRakuten2018" type="submit" value="Import &#27005;&#22825; 2018" />
               		</td>
               	</tr>
             	</table>

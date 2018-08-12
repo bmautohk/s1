@@ -270,6 +270,7 @@ if (isset($_GET['issearch'])) {
                  			<td width='80'>Shipping</td>
                  			<td width='100'>Remark</td>
                  			<td>Order Status</td>
+							<td>RealStock</td>
                  		</tr>
                  		<? foreach ($orders as $order) {?>
                  			<tr align="right" valign="top">
@@ -342,6 +343,7 @@ if (isset($_GET['issearch'])) {
                  					<? }?>
                  				</td>
                  				<td ><font <?php if ($order['sale_sts']=="O") {echo "id='divtoBlink'";$order['sale_sts']="OUT";}?>><?=$order['sale_sts'] ?></font> </td>
+								<td ><font <?php if ($order['realstock']=="O") {echo "id='divtoBlink'";$order['sale_sts']="OUT";}?>><?=$order['realstock'] ?></font> </td>
                  			</tr>
                  		<? }?>
                  	</table>

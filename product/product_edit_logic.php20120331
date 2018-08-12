@@ -7,7 +7,6 @@ require("fileupload-class.php");
 
 $upload_message = "<font color='red'>Please upload your picture</font>";
 $edit_message = '';
-$error_msg = '';
 
 #--------------------------------#
 # Variables
@@ -66,7 +65,7 @@ $error_msg = '';
 # PHP
 #--------------------------------#
 	if (isset($_REQUEST['submitted'])) {
-		$fix_inventory_qty=$_POST['fix_inventory_qty'];
+	
 		$product_name=$_POST['product_name'];
 		$product_id=$_POST['product_id'];
 		$product_pcs=$_POST['product_pcs'];
@@ -82,18 +81,6 @@ $error_msg = '';
 		$product_remark=$_POST['product_remark'];
 	
 		$product_made=$_POST['product_made'];
-		
-		if (isset($custIds)) {
-			// Check duplidate customer seeling price
-			$custCount = array_count_values($custIds);
-			foreach ($custCount as $count) {
-				if ($count > 1) {
-					$error_msg='Duplicate customer is found when setting selling price';
-				}
-			}
-		}
-	
-	if ($error_msg == '') {
 
 		$product_photo=$product_id;
 		if (getprod_data($product_id)!='' and $product_id!=$_GET['product_id']) {
@@ -250,10 +237,7 @@ $error_msg = '';
 					product_auction_p = '$product_auction_p',
 					product_cost_rmb = '$product_cost_rmb',
 					product_qc = '$product_qc',
-					prod_on_order= '$prod_on_order',
-					sagawa_label= '$sagawa_label',
-					fix_inventory_qty='$fix_inventory_qty',
-					searchable='$searchable'
+					prod_on_order= '$prod_on_order'
 					";
 				
 				$sql = $upd_sql."where product_id = '$product_id'";
@@ -270,31 +254,31 @@ $error_msg = '';
 					sqlinsert($sql);
 				}
 				
-				// Delete customer market price
-				$sql = "DELETE FROM cust_prod_price WHERE product_id = '$product_id' ";
-				sqlinsert($sql);
-				if (isset($custIds)) {
-					foreach($custIds as $key => $custId) {
-						if (!empty($custId)) {
-							$customerSellingPrice = $custSellingPrices[$key];
-							if ($customerSellingPrice == null) {
-								$customerSellingPrice = 0;
-								$custSellingPrices[$key] = 0;
-							}
-				
-							$sql = "INSERT INTO cust_prod_price SET
-									cust_id = '$custId',
-									product_id = '$product_id',
-									market_price = '$customerSellingPrice'";
-							sqlinsert($sql);
-						}
-						else {
-							// Remove row from array
-							unset($custIds[$key]);
-						}
+				// Update sales group specific market price
+				$username = $_SESSION[user_name];
+				if (isset($sale_group_market_price) && is_numeric($sale_group_market_price)) {
+					if (isSaleGroupSpecificPriceExist($product_id)) {
+						// Update
+						$sql = "UPDATE sale_prod_price SET
+								market_price = $sale_group_market_price
+								WHERE username = '$username'
+								AND product_id = '$product_id'";
+					}
+					else {
+						// Insert
+						$sql = "INSERT INTO sale_prod_price SET
+								username = '$username',
+								product_id = '$product_id',
+								market_price = $sale_group_market_price";
 					}
 				}
-	} // End of if ($error_msg == '')
+				else {
+					// Delete
+					$sql = "DELETE FROM sale_prod_price 
+							WHERE username = '$username'
+							AND product_id = '$product_id'";
+				}
+				sqlinsert($sql);
  		}
 	else {
 		if (@$product_photo =='') {
@@ -305,8 +289,6 @@ $error_msg = '';
 		}
 		$disply_photo = "<img src=\"".$disply_photo."\" >";
 	}
-	
-	$customerOptions = genCustomerCodeOptions();
 
 /*********************
 * Function
@@ -333,32 +315,29 @@ function getProductData($product_id) {
 		}
 	}
 	
-	mysql_free_result($result);
-	mysql_close($db);
+	// Get sales group specific market price
+	$username = $_SESSION[user_name];
+	$result = mysql_query("SELECT market_price FROM sale_prod_price where username = '$username' and product_id = '$product_id'", $db) or die (mysql_error()."<br />Couldn't execute query: $query");
+	$num_results=mysql_num_rows($result);
+	if ($num_results > 0) {
+		$row2=mysql_fetch_array($result);
+		$row['sale_group_market_price'] = $row2['market_price'];
+	}
 	
 	return $row;
 }
 
-function getCustomerSellingPrices($product_id) {
+function isSaleGroupSpecificPriceExist($product_id) {
 	$db=connectDatabase();
-	mysql_select_db(DB_NAME,$db);
-	
-	$custIds = array();
-	$custSellingPrices = array();
-	
 	$username = $_SESSION[user_name];
-	$result = mysql_query("SELECT cust_id, market_price FROM cust_prod_price t1 join customer t2 on t1.cust_id = t2.id where product_id = '$product_id' ORDER BY cust_cd ", $db) or die (mysql_error()."<br />Couldn't execute query: $query");
+	$result = mysql_query("SELECT market_price FROM sale_prod_price where username = '$username' and product_id = '$product_id'", $db) or die (mysql_error()."<br />Couldn't execute query: $query");
 	$num_results=mysql_num_rows($result);
-	for ($i=0;$i<$num_results;$i++) {
-		$row=mysql_fetch_array($result);
-		$custIds[$i] = $row['cust_id'];
-		$custSellingPrices[$i] = $row['market_price'];
+	mysql_free_result($result);
+	
+	if ($num_results > 0) {
+		return true;
 	}
 	
-	mysql_free_result($result);
-	mysql_close($db);
-	
-	return array($custIds, $custSellingPrices);
+	return false;
 }
-
 ?>
