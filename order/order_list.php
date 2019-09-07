@@ -185,12 +185,16 @@ if (isset($_GET['issearch'])) {
 		<option value="O" >Out of Stock</option>
 		</select>
 </td>
+<td></td>
+                    <td>Payment:</td>
 
-                    <td>&nbsp;</td>
+                    <td><select name="nopayment" id="nopayment">
+		<option value=""> </option>
+		 <option value="nopayment" >No Payment</option>
+	 
+		</select></td>
 
-                    <td></td>
-
-                    <td></td>
+                    
 
                   </tr>
 
@@ -243,7 +247,7 @@ if (isset($_GET['issearch'])) {
 						$input_sale_ref = $hide_sale_ref;
 					}
 					
-					getOrderListByFilter($input_sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$start_date,$end_date,$min_m,$max_m,$debt_cust_address1,$debt_cust_address2,$debt_post_co,$total_m, $total_price,$group2, $user_name,$prod_cd,$client_tel,$sts);
+					getOrderListByFilter($input_sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$start_date,$end_date,$min_m,$max_m,$debt_cust_address1,$debt_cust_address2,$debt_post_co,$total_m, $total_price,$group2, $user_name,$prod_cd,$client_tel,$sts,$nopayment);
 
 				}
                 else if ($isGetOrderByDate) {
@@ -270,7 +274,6 @@ if (isset($_GET['issearch'])) {
                  			<td width='80'>Shipping</td>
                  			<td width='100'>Remark</td>
                  			<td>Order Status</td>
-							<td>RealStock</td>
                  		</tr>
                  		<? foreach ($orders as $order) {?>
                  			<tr align="right" valign="top">
@@ -295,7 +298,7 @@ if (isset($_GET['issearch'])) {
                  				<td><?=$order['sale_ship_fee'] ?></td>
                  				<td><?=$order['cost_total'] ?></td>
                  				<td>
-	                 				<? if ($order['bal_data'] != NULL) {?>
+	                 				<? if ($order['bal_data']['bal_pay'] != NULL) {?>
 	                 					<a href="index.php?page=order&subpage=balance&sale_ref=<?=$order['sale_ref'] ?>">&yen;<?=$order['bal_data']['bal_pay'] ?></a><br>
 	                 					<? 	switch($order['bal_data']['bal_pay_type']) {
 	                 							case "Store":
@@ -343,7 +346,6 @@ if (isset($_GET['issearch'])) {
                  					<? }?>
                  				</td>
                  				<td ><font <?php if ($order['sale_sts']=="O") {echo "id='divtoBlink'";$order['sale_sts']="OUT";}?>><?=$order['sale_sts'] ?></font> </td>
-								<td ><font <?php if ($order['realstock']=="O") {echo "id='divtoBlink'";$order['sale_sts']="OUT";}?>><?=$order['realstock'] ?></font> </td>
                  			</tr>
                  		<? }?>
                  	</table>

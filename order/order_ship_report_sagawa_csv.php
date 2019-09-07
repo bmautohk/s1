@@ -48,6 +48,8 @@
 				
 		$i = 0;
 		$rowNo++;
+			
+		 
 		$type = PHPExcel_Cell_DataType::TYPE_STRING;
 		$sheet->setCellValueByColumnAndRow($i++, $rowNo,  conv(substr($row['sale_group'],0,12)));   //A
 		$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit(conv($row['debt_tel']),$type);  //B
@@ -69,10 +71,15 @@
 			->setCellValueByColumnAndRow($i++, $rowNo, "");  //R
 			$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit('001', $type);//S
 			$sheet->setCellValueByColumnAndRow($i++, $rowNo, checkStr16(conv($row['sprod_id']))) //T
-			->setCellValueByColumnAndRow($i++, $rowNo, $row['sprod_name'])  //U
-			->setCellValueByColumnAndRow($i++, $rowNo, conv($row['sprod_unit']))  //V
-			->setCellValueByColumnAndRow($i++, $rowNo, conv($row['sprod_material'])."".conv($row['sprod_colour'])) //W
+			->setCellValueByColumnAndRow($i++, $rowNo, $row['sprod_name']);  //U
+			if ($row['bal_dat']!=null){
+				$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($row['sprod_unit']).' '.date("(d/M)", strtotime($row['bal_dat'])));  //V  $data['debt_dat']
+			}else{
+				$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($row['sprod_unit']).' ');  //V  $data['debt_dat']
+			}
+			$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($row['sprod_material'])."".conv($row['sprod_colour'])) //W
 			->setCellValueByColumnAndRow($i++, $rowNo, str_replace("\r",str_replace("\n",conv($row['debt_remark'])))) //X
+			//->setCellValueByColumnAndRow($i++, $rowNo,conv($row['debt_remark'])) //X
 			->setCellValueByColumnAndRow($i++, $rowNo, "1");  //Y
 			$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit('000', $type);  //Z
 			$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit('001', $type); //AA
@@ -199,7 +206,9 @@ function getShipReportData($access, $user_name, $group3, $sprod_no_list,$exportC
 		$query .= " and sale_group='$user_name' ";
 	}
 	
-	$query .= " order by bal_dat asc ";
+	//20180826
+	//$query .= " order by bal_dat asc ";
+	$query .= " order by sprod_id asc ";
 	
 	//echo $query;
 	$result = mysql_query($query, $db) or die (mysql_error()."<br />Couldn't execute query: $query");
@@ -232,7 +241,7 @@ function getShipReportData($access, $user_name, $group3, $sprod_no_list,$exportC
 		$data['sprod_name'] = $subResult["prod_name_arr_str"];
 		$data['sprod_unit'] = $subResult["sprod_unit"];
 		$data['bal_delivery_time_option_id'] = $row['bal_delivery_time_option_id'];
-		
+		$data['bal_dat']=$row['bal_dat'];
 
 		$data_list[] = $data;
 	}

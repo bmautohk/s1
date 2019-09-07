@@ -876,20 +876,36 @@ function importRakuten2018($db, $file_name, $actual_file_name, $salesGroup) {
 		
 		$debt['debt_remark'] = convert($remark);
 				
-			//deliver date 20180807
-			if ($ws->getCell("CR".$rowNo)->getValue()!=""){
-			$dateTimeObject = PHPExcel_Shared_Date::ExcelToPHPObject($ws->getCell("CR".$rowNo)->getValue());
-			$balance['bal_delivery_date']=$dateTimeObject->format('Y-m-d');
-			}
-	
-			$balance['bal_delivery_time'] = convert($ws->getCell("CQ".$rowNo)->getValue());
 			
 	/** Balance */
 		$requiredCost = $ws->getCell("AD".$rowNo)->getValue();
-		if ($requiredCost != NULL && $requiredCost != '') {
+	//20190829	if ($requiredCost != NULL && $requiredCost != '') {
 
+		
+		//deliver date 20180807 -- 20180827 fix problem import for bal table
+			if ($ws->getCell("CR".$rowNo)->getValue()!=""){
+			$dateTimeObject = PHPExcel_Shared_Date::ExcelToPHPObject($ws->getCell("CR".$rowNo)->getValue());
+		 
+			$balance['bal_delivery_date']=$dateTimeObject->format('Y-m-d');
+			}
+	
+			//$balance['bal_delivery_time'] = convert($ws->getCell("CQ".$rowNo)->getValue());
+			$balance['bal_delivery_time_option_id'] = $ws->getCell("CQ".$rowNo)->getValue();
+		
 			$balance['sale_ref'] = $order['sale_ref'];
-			$balance['bal_pay'] = $ws->getCell("AD".$rowNo)->getValue()+ $ws->getCell("AF".$rowNo)->getValue();
+			
+			
+			
+			 
+			if (is_null($requiredCost) ||  !is_numeric($requiredCost)) {
+				 
+				$balance['bal_pay']=null;
+	 
+			}else  {
+				  $balance['bal_pay'] = $ws->getCell("AD".$rowNo)->getValue()+ $ws->getCell("AF".$rowNo)->getValue();
+	 
+			 
+			}
 			
 			// Payment Type
 			$type = $ws->getCell("M".$rowNo)->getValue();
@@ -929,13 +945,13 @@ function importRakuten2018($db, $file_name, $actual_file_name, $salesGroup) {
 			} else {
 				$balance['bal_ship_type'] = '';
 			}
-		}
+	//	}
 		
 		 
 		
 		//20180807 check productname
-		if (strlen($order['sprod_name'])>16){
-			$error_message = '<br>Line '.$rowNo.': Product Name length is more than 16 digits';
+		if (strlen($product['sprod_name'])>32){
+			$error_message = '<br>Line '.$rowNo.': Product Name length is more than 32 digits';
 		}
 	 
 		
@@ -951,9 +967,19 @@ function importRakuten2018($db, $file_name, $actual_file_name, $salesGroup) {
 		
 		
 		//20180531 added for check length remark
-		if (mb_strlen($debt['debt_remark'],'EUC-JP')>32){
-			$error_message = '<br>Line '.$rowNo.$debt['debt_remark'].': debt_remark length is more than 16 digits';
+		/*
+		if (!preg_match('/[^A-Za-z0-9]/', $debt['debt_remark'])){
+			if ( strlen($debt['debt_remark'])>32 ){
+				$error_message = '<br>Line '.$rowNo.'['.$debt['debt_remark'].']: debt_remark length is more than 32 digits'.strlen($debt['debt_remark']);
+			}
+			
+		}else{
+			if (mb_strlen($debt['debt_remark'],'EUC-JP')>16 ){
+				$error_message = '<br>Line '.$rowNo.'['.$debt['debt_remark'].']: debt_remark length is more than 16 digits'.mb_strlen($debt['debt_remark'],'EUC-JP');
+			}
+			 
 		}
+*/
 		
 		
 		if (empty($product['sprod_id'])) {
@@ -989,14 +1015,14 @@ function importRakuten2018($db, $file_name, $actual_file_name, $salesGroup) {
 	
 		$result[] = $orderInfo;
 	}
-	
+	 
 	foreach ($result as $info) {
 		$order = $info['order'];
 		$product = $info['product'];
 		$debt = $info['debt'];
 		$balance = $info['balance'];
 	
-		insertSale($order['sale_ref'], $order['order_date'], $order['sale_group'], $order['sale_email'], $order['sale_name'],
+		insertSale($order['sale_ref'], $order['order_date'], $order['sale_group'], $order['sale_email'], addcslashes($order['sale_name'],"'"),
 				$order['sale_yahoo_id'], $order['sale_chk_ref'], $order['sale_ship_fee'], $order['sale_discount'], $order['sale_tax']);
 	
 		insertSaleProduct($product['sale_ref'], $product['sprod_id'], $product['sprod_name'], $product['sprod_price'], $product['sprod_unit'], 

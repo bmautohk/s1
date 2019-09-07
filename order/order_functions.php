@@ -84,11 +84,12 @@ function insertDebt($sale_ref, $debt_pay_name, $debt_cust_address1, $debt_cust_a
 
 function insertBalance($sale_ref, $bal_pay, $bal_pay_type, $bal_ship_type, $bal_delivery_date = NULL, 
 		$bal_delivery_time_option_id = NULL, $bal_delivery_time = NULL) {
+ 
 	$sql = "INSERT INTO ben_bal SET
 		
 			bal_ref='".$sale_ref."',
 				
-			bal_pay='".$bal_pay."',
+			bal_pay=".(is_null($bal_pay ) ? 'NULL' : "'".$bal_pay."'").",
 				
 			bal_pay_type='".$bal_pay_type."',
 				
@@ -101,6 +102,6 @@ function insertBalance($sale_ref, $bal_pay, $bal_pay_type, $bal_ship_type, $bal_
 			bal_delivery_time='".$bal_delivery_time."',
 				
 			bal_dat = curdate()";
-
+ 
 	sqlinsert($sql);
 }
