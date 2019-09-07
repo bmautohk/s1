@@ -298,7 +298,9 @@ if (isset($_GET['issearch'])) {
                  				<td><?=$order['sale_ship_fee'] ?></td>
                  				<td><?=$order['cost_total'] ?></td>
                  				<td>
-	                 				<? if ($order['bal_data']['bal_pay'] != NULL) {?>
+	                 				<?
+ 
+									if (is_null($order['bal_data']['bal_pay'])==false) {?>
 	                 					<a href="index.php?page=order&subpage=balance&sale_ref=<?=$order['sale_ref'] ?>">&yen;<?=$order['bal_data']['bal_pay'] ?></a><br>
 	                 					<? 	switch($order['bal_data']['bal_pay_type']) {
 	                 							case "Store":

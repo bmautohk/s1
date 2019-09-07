@@ -81,7 +81,7 @@ function getOrderListByDate($date_start,$date_end,$access,$user_name)
 	$zpage=$GLOBALS['zpage'];
 	
 	
-//	echo "sql=".$sql."OO";
+	
 	if ($num_rows == '') {
 		$query = mysql_query("SELECT count(sale_index) rec_cnt ".$sql, $db);
 		$row=mysql_fetch_array($query);
@@ -182,6 +182,8 @@ function getOrderListByDate($date_start,$date_end,$access,$user_name)
 					$order['bal_data'] = NULL;
 				}
 				
+				if ($sale_ref=='bl0907-00084829')
+				 
 				//return
 				$hasReturn = false;
 				$order['return_data'] = NULL;
@@ -201,11 +203,14 @@ function getOrderListByDate($date_start,$date_end,$access,$user_name)
 				}
 			}
 			else {
+				
+				 
 				// Order same as previous record => don't display "Shipping", "Total", "Payment" and "Return"
 				$order['sale_ship_fee'] = 0;
 				$order['cost_total'] = 0;
 				
 				if ($bal_row){
+					 
 					$order['bal_data']['bal_pay'] = 0;
 					$order['bal_data']['bal_pay_type'] = $bal_row['bal_pay_type'];
 					$order['bal_data']['bal_dat'] = $bal_row['bal_dat'];
@@ -367,8 +372,10 @@ function genCSVByDate($date_start,$date_end,$status,$access,$user_name,$isRetrie
 		$order['debt_pay_name'] = $debt_pay_name;
 		
 		//bal
-		if (getbal_data($sale_ref)){
-			$bal_row = getbal_data($sale_ref);
+		$bal_row = getbal_data($sale_ref);
+		 
+			if ($bal_row['bal_pay']!=NULL){
+			
 
 			$bal_pay_type = $bal_row['bal_pay_type'];
 			$order['bal_data'] = $bal_row['bal_pay'].chr(13).chr(10).$bal_pay_type."(".$bal_row['bal_dat'].") ";
@@ -517,7 +524,7 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 	}
 	
 	//echo "nopayment=".$nopayment;
-  echo $sql;
+ // echo $sql;
 	
 	$num_rows=$GLOBALS['num_rows'];
 	$per_page=$GLOBALS['per_page'];
@@ -596,8 +603,8 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 				$debt_data ="<a href=\"index.php?page=order&subpage=debt&sale_ref=".$sale_ref." \">Fill in</a>";
 			}
 			//bal
-	$bal_row = getbal_data($sale_ref);
-			if ($bal_row['bal_pay']!=NULL){		
+			$bal_row = getbal_data($sale_ref);
+			if (is_null($bal_row['bal_pay'])==false){		
 			
 				
 				$bal_pay_type = $bal_row['bal_pay_type'];
