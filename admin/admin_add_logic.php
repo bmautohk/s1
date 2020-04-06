@@ -28,7 +28,7 @@ exit;
 
 //or add it to the database
 $sql_add = "INSERT INTO $table_name VALUES
-			('$_POST[firstname]', '$_POST[lastname]', '$_POST[username]', PASSWORD('$_POST[password]'), 
+			('$_POST[firstname]', '$_POST[lastname]', '$_POST[username]', '$_POST[password]', 
 			'$_POST[group1]', '$_POST[group2]', '$_POST[group3]', '$_POST[pchange]', '$_POST[email]',
 			'$_POST[redirect]', '1', 'last_login()', '','')";
 

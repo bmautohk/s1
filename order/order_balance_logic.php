@@ -29,16 +29,6 @@ if (isset($_GET['sale_ref']) and getbal_data($_GET['sale_ref']))
 	
 	$bal_ship_type=$row['bal_ship_type'];
 	
-	$bal_delivery_date = $row['bal_delivery_date'];
-	
-	$bal_delivery_time_option_id = $row['bal_delivery_time_option_id'];
-	
-	if ($bal_delivery_time_option_id == NULL) {
-		$bal_delivery_time = $row['bal_delivery_time'];
-	} else {
-		$bal_delivery_time = '';
-	}
-	
 	$row_debt = getdebt_data($sale_ref);
 	
 	$debt_remark = $row_debt['debt_remark'];
@@ -73,11 +63,9 @@ if (isset($_GET['sale_ref']) and getreturn_data($_GET['sale_ref']))
 	
 	$return_track=$return_row['return_track'];
 	
-	$return_date=$return_row['return_date'];
-	
-	
+	$return_date=$return_row['return_date'];}
 
-} else{
+else{
 	
 	$return_pay='';
 	
@@ -105,21 +93,6 @@ if (isset($_POST['isupdate']) and $_POST['bal_pay']!='')
 	
 	$sale_ref=$_POST['sale_ref'];
 	
-	if ($_POST['bal_delivery_date'] == '') {
-		$delivery_date = 'NULL';
-	} else {
-		$delivery_date = "'".$_POST['bal_delivery_date']."'";
-	}
-	
-	if ($_POST['bal_delivery_time_option_id'] == '') {
-		$delivery_time_option_id = 'NULL';
-		$delivery_time = "'".$_POST['bal_delivery_time']."'";
-	} else {
-		$delivery_time_option_id = $_POST['bal_delivery_time_option_id'];
-		
-		$option = getDeliveryTimeOption($delivery_time_option_id);
-		$delivery_time = "'".$option['delivery_time']."'";
-	}
 	
 	
 	if (!getbal_data($sale_ref)) {
@@ -136,12 +109,6 @@ if (isset($_POST['isupdate']) and $_POST['bal_pay']!='')
 			
 			bal_ship_type='".$_POST['bal_ship_type']."',
 			
-			bal_delivery_date=".$delivery_date.",
-			
-			bal_delivery_time_option_id =".$delivery_time_option_id.",
-			
-			bal_delivery_time =".$delivery_time.",
-			
 			bal_dat = curdate()";
 		
 		
@@ -155,16 +122,6 @@ if (isset($_POST['isupdate']) and $_POST['bal_pay']!='')
 		$bal_pay_type=$row['bal_pay_type'];
 		
 		$bal_ship_type=$row['bal_ship_type'];
-		
-		$bal_delivery_date=$row['bal_delivery_date'];
-		
-		$bal_delivery_time_option_id=$row['bal_delivery_time_option_id'];
-		
-		if ($bal_delivery_time_option_id == 0) {
-			$bal_delivery_time=$row['bal_delivery_time'];
-		} else {
-			$bal_delivery_time = '';
-		}
 		
 	}
 	else 
@@ -182,13 +139,9 @@ if (isset($_POST['isupdate']) and $_POST['bal_pay']!='')
 				
 				bal_ship_type='".$_POST['bal_ship_type']."',
 				
-				bal_delivery_date = ".$delivery_date.",
-				
-				bal_delivery_time_option_id = ".$delivery_time_option_id.",
-				
-				bal_delivery_time = ".$delivery_time.",
-				
 				bal_dat = curdate() where bal_ref= '".$_POST['sale_ref']."'";
+			
+			
 			
 			sqlinsert($sqla);
 			
@@ -200,15 +153,9 @@ if (isset($_POST['isupdate']) and $_POST['bal_pay']!='')
 			
 			$bal_ship_type=$row['bal_ship_type'];
 			
-			$bal_delivery_date=$row['bal_delivery_date'];
 			
-			$bal_delivery_time_option_id=$row['bal_delivery_time_option_id'];
 			
-			if ($bal_delivery_time_option_id == 0) {
-				$bal_delivery_time=$row['bal_delivery_time'];
-			} else {
-				$bal_delivery_time = '';
-			}
+			
 			
 			//$bal_return=$row['bal_return'];
 			

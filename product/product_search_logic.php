@@ -26,10 +26,6 @@ if (isset($isfind)) {
 		$sql = $sql." and product_id like '%$sprod_id%'";
 	}
 	
-	if (isset($sagawa_label) && $sagawa_label != '') {
-		$sql = $sql." and sagawa_label like '$sagawa_label'";
-	}
-	
 	// Product JP No (Alias)
 	if (isset($product_jp_no) && $product_jp_no != '') {
 		$sql = $sql." and product_jp_no like '%$product_jp_no%'";

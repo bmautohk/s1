@@ -189,5 +189,10 @@ if ($_POST['event'] == 'save') {
 	$submit_success = 1;
 	$id = $invoice_id;
 }
+else {
+	// Retrieve sales information
+	$sales_cd = $_SESSION[user_name];
+	$sales_name = $_SESSION[user_name];
+}
 
 ?>

@@ -44,7 +44,7 @@
                     <br />
                     <br />
       Cust. Code: 
-       <input name="cust_cd" type="text" value="<? echo $cust_cd; ?>" id="cust_cd" />
+       <input name="cust_cd" type="text" value="<? echo $cust_cd; ?>" id="cust_cd" onchange="findCustomer()" />
        Customer Name.: 
        <input name="cust_name" type="text" id="cust_name" value="<? echo $cust_name; ?>" size="40" />
 <br>

@@ -66,7 +66,7 @@ $error_msg = '';
 # PHP
 #--------------------------------#
 	if (isset($_REQUEST['submitted'])) {
-		$fix_inventory_qty=$_POST['fix_inventory_qty'];
+	
 		$product_name=$_POST['product_name'];
 		$product_id=$_POST['product_id'];
 		$product_pcs=$_POST['product_pcs'];
@@ -250,10 +250,7 @@ $error_msg = '';
 					product_auction_p = '$product_auction_p',
 					product_cost_rmb = '$product_cost_rmb',
 					product_qc = '$product_qc',
-					prod_on_order= '$prod_on_order',
-					sagawa_label= '$sagawa_label',
-					fix_inventory_qty='$fix_inventory_qty',
-					searchable='$searchable'
+					prod_on_order= '$prod_on_order'
 					";
 				
 				$sql = $upd_sql."where product_id = '$product_id'";

@@ -162,12 +162,6 @@ echo $disply_photo;
                       	<td><input type=text name='product_sup' value='<?=$getprod_row['product_sup']?>' /></td>
                       </tr>
                       
-					  <tr>
-                      	<td>Fix Inventory Stock Bal</td>
-                      	<td><input type=text name='fix_inventory_qty' value='<?=$getprod_row['fix_inventory_qty']?>' /></td>
-                      </tr>
-                      
-					  
                       <tr>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
@@ -227,9 +221,6 @@ echo $disply_photo;
                       	<td>Magazine</td>
                       	<td><input type=text name='maz' value='<?=$getprod_row['maz']?>' /></td>
                       </tr>
-					  
-					
-					  
                       <tr>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
@@ -245,23 +236,6 @@ echo $disply_photo;
                       <tr>
                         <td>ºı√Ì¿∏ª∫</td>
                         <td><input name="prod_on_order" type="checkbox" id="prod_on_order" value="Y" <? if ($getprod_row['prod_on_order'] == 'Y') {?>checked="checked"<? }?>></td>
-                      </tr>
-					  <tr>
-                        <td>Special Product</td>
-                        <td><select name="sagawa_label" id="sagawa_label">
-                    		 
-                    		<option value="Y" <? if ($getprod_row['sagawa_label'] == 'Y'){echo "selected";}?>>Yes</option>
-                    		<option value="N" <? if ($getprod_row['sagawa_label'] == 'N'){echo "selected";}?>>No</option>
-                    	</select></td>
-                      </tr>
-					  
-					    <tr>
-                      	<td>Searchable</td>
-                      <td> <select name="searchable" id="searchable">
-                    		 
-                    		<option value="A" <? if ($getprod_row['searchable'] == 'A'){echo "selected";}?>>Available</option>
-                    		<option value="I" <? if ($getprod_row['searchable'] == 'I'){echo "selected";}?>>Invisible</option>
-                    	</select></td>
                       </tr>
                     </table> 
                                     <br>

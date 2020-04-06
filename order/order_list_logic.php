@@ -29,7 +29,6 @@ $total_m=$GLOBALS['total_m'];
 $total_price=$GLOBALS['total_price'];
 
 $sts=$GLOBALS['sts'];
-$nopayment=$GLOBALS['nopayment'];
 }
 
 else {
@@ -62,7 +61,6 @@ else {
 
 function getOrderListByDate($date_start,$date_end,$access,$user_name) 
 {
-
 	ob_flush();
 	flush();
 //echo "getOrderListByDate";
@@ -81,7 +79,7 @@ function getOrderListByDate($date_start,$date_end,$access,$user_name)
 	$zpage=$GLOBALS['zpage'];
 	
 	
-	
+//	echo "sql=".$sql."OO";
 	if ($num_rows == '') {
 		$query = mysql_query("SELECT count(sale_index) rec_cnt ".$sql, $db);
 		$row=mysql_fetch_array($query);
@@ -120,8 +118,6 @@ function getOrderListByDate($date_start,$date_end,$access,$user_name)
 			$order['sale_tax'] = $sale_tax;
 			$order['sale_sts'] = $row["sts"];
 			$order['sale_prod_id'] = $row["sprod_id"];
-			$order['sprod_unit']=$row["sprod_unit"];
-			$order['sprod_colour']=$row["sprod_colour"];
 			
 			// Price
 			$order['product_price'] = $row['sprod_price'] * $row['sprod_unit'];
@@ -182,8 +178,6 @@ function getOrderListByDate($date_start,$date_end,$access,$user_name)
 					$order['bal_data'] = NULL;
 				}
 				
-				if ($sale_ref=='bl0907-00084829')
-				 
 				//return
 				$hasReturn = false;
 				$order['return_data'] = NULL;
@@ -203,14 +197,11 @@ function getOrderListByDate($date_start,$date_end,$access,$user_name)
 				}
 			}
 			else {
-				
-				 
 				// Order same as previous record => don't display "Shipping", "Total", "Payment" and "Return"
 				$order['sale_ship_fee'] = 0;
 				$order['cost_total'] = 0;
 				
 				if ($bal_row){
-					 
 					$order['bal_data']['bal_pay'] = 0;
 					$order['bal_data']['bal_pay_type'] = $bal_row['bal_pay_type'];
 					$order['bal_data']['bal_dat'] = $bal_row['bal_dat'];
@@ -272,10 +263,10 @@ function genCSVByDate($date_start,$date_end,$status,$access,$user_name,$isRetrie
 
 	if (!$isRetrieveProductId) {
 		if ($access==Admin_name) {
-			$sql = "FROM ben_sale left outer join ben_sale_prod on sale_ref = sprod_ref where sale_date between '$date_start' and '$date_end' ";
+			$sql = "FROM ben_sale where sale_date between '$date_start' and '$date_end' ";
 		}
 		else {
-			$sql = "FROM ben_sale left outer join ben_sale_prod on sale_ref = sprod_ref where sale_group='$user_name' and sale_date between '$date_start' and '$date_end' ";
+			$sql = "FROM ben_sale where sale_group='$user_name' and sale_date between '$date_start' and '$date_end' ";
 		}
 	}
 	else {
@@ -330,8 +321,6 @@ function genCSVByDate($date_start,$date_end,$status,$access,$user_name,$isRetrie
 		$order['sale_ship_fee']=$sale_ship_fee;
 		$order['sale_tax']=$sale_tax;
 		$order['sprod_id'] = $row['sprod_id']; 
-		$order['sprod_unit'] = $row['sprod_unit'];
-		$order['sprod_colour'] = $row['sprod_colour'];
 		
 		//payment of product
 		$cost_prod=getprod_cost($sale_ref);
@@ -372,10 +361,8 @@ function genCSVByDate($date_start,$date_end,$status,$access,$user_name,$isRetrie
 		$order['debt_pay_name'] = $debt_pay_name;
 		
 		//bal
-		$bal_row = getbal_data($sale_ref);
-		 
-			if ($bal_row['bal_pay']!=NULL){
-			
+		if (getbal_data($sale_ref)){
+			$bal_row = getbal_data($sale_ref);
 
 			$bal_pay_type = $bal_row['bal_pay_type'];
 			$order['bal_data'] = $bal_row['bal_pay'].chr(13).chr(10).$bal_pay_type."(".$bal_row['bal_dat'].") ";
@@ -451,7 +438,7 @@ function genCSVByDate($date_start,$date_end,$status,$access,$user_name,$isRetrie
 	return $orders;
 }
 
-function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$date_start,$date_end,$min_m,$max_m,$debt_cust_address1,$debt_cust_address2,$debt_post_co,$total_m,$total_price,$access,$user_name,$prod_cd,$client_tel,$sts,$nopayment)
+function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$date_start,$date_end,$min_m,$max_m,$debt_cust_address1,$debt_cust_address2,$debt_post_co,$total_m,$total_price,$access,$user_name,$prod_cd,$client_tel,$sts)
 {
 	// echo "getOrderListByFilterFunc";
 	$db=connectDatabase();
@@ -460,7 +447,7 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 	$searchKey = "&sale_ref=$sale_ref&sale_name=".urlencode($sale_name)."&sale_email=$sale_email&sale_yahoo_id=$sale_yahoo_id" .
 		"&date_start=$date_start&date_end=$date_end&min_m=$min_m&max_m=$max_m" .
 		"&debt_cust_address1=$debt_cust_address1&debt_cust_address2=$debt_cust_address2" .
-		"&debt_post_co=$debt_post_co&total_m=$total_m&total_price=$total_price&issearch=Search&sts=$sts&prod_cd=$prod_cd&nopayment=$nopayment";
+		"&debt_post_co=$debt_post_co&total_m=$total_m&total_price=$total_price&issearch=Search&sts=$sts";
 
 	ob_flush();
 	flush();
@@ -478,19 +465,19 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 	if ($access==Admin_name) {
 //	echo "access name=admin";
 		if ($debt_cust_address1!='' or $debt_cust_address2!='' or $debt_post_co!='' or $client_tel!='') {
-			$sql = "from ben_sale as s,  ben_debt as d ,ben_sale_prod as s1 LEFT JOIN ben_bal ON sprod_ref = bal_ref where d.debt_ref= s.sale_ref and s.sale_ref = s1.sprod_ref and sale_date between '$date_start' and '$date_end' ";
+			$sql = "from ben_sale as s, ben_sale_prod as s1, ben_debt as d where d.debt_ref= s.sale_ref and s.sale_ref = s1.sprod_ref and sale_date between '$date_start' and '$date_end' ";
 		}
 		else {
-			$sql = "from ben_sale as s, ben_sale_prod as s1 LEFT JOIN ben_bal ON sprod_ref = bal_ref where s.sale_ref = s1.sprod_ref and sale_date between '$date_start' and '$date_end' ";
+			$sql = "from ben_sale as s, ben_sale_prod as s1 where s.sale_ref = s1.sprod_ref and sale_date between '$date_start' and '$date_end' ";
 		}
 	}
 	else {
 	//echo "access name=user";
 		if ($debt_cust_address1!='' or $debt_cust_address2!='' or $debt_post_co!='' or $client_tel!='') {
-			$sql = "from ben_sale as s, ben_debt as d, ben_sale_prod as s1  LEFT JOIN ben_bal ON sprod_ref = bal_ref where s.sale_group='$user_name' and d.debt_ref= s.sale_ref and s.sale_ref = s1.sprod_ref and sale_date between '$date_start' and '$date_end' ";
+			$sql = "from ben_sale as s, ben_sale_prod as s1, ben_debt as d where s.sale_group='$user_name' and d.debt_ref= s.sale_ref and s.sale_ref = s1.sprod_ref and sale_date between '$date_start' and '$date_end' ";
 		}
 		else {
-			$sql = "from ben_sale as s, ben_sale_prod as s1  LEFT JOIN ben_bal ON sprod_ref = bal_ref where s.sale_group='$user_name' and s.sale_ref = s1.sprod_ref and sale_date between '$date_start' and '$date_end' ";
+			$sql = "from ben_sale as s, ben_sale_prod as s1 where s.sale_group='$user_name' and s.sale_ref = s1.sprod_ref and sale_date between '$date_start' and '$date_end' ";
 		}
 	}
 	
@@ -511,9 +498,6 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 	if ($sale_email != ''){$sql = $sql."and sale_email like '%$sale_email%' ";}
 	if ($sale_yahoo_id != ''){$sql = $sql."and sale_yahoo_id like '%$sale_yahoo_id%' ";}
 	
-	//20180906
-	if ($nopayment != ''){$sql = $sql." and ben_bal.bal_pay is null ";}
-	
 	$sql = $sql."group by sale_ref ";
 	if ($min_m  != '' and $max_m!='' ){
 		$sql = $sql."having sprod_total >='$min_m' and sprod_total <='$max_m' ";
@@ -523,8 +507,7 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 		if ($total_price!='' and $total_m==''){$sql = $sql."having price_total = '$total_price'"; } 
 	}
 	
-	//echo "nopayment=".$nopayment;
- // echo $sql;
+  //  echo $sql;
 	
 	$num_rows=$GLOBALS['num_rows'];
 	$per_page=$GLOBALS['per_page'];
@@ -539,11 +522,11 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 
 	//table echo
 	echo "<table width=1400 border=\"1\" cellspacing=\"0\" cellpadding=\"0\">";
-	echo "<tr align=\"right\" valign=\"top\"><td >Order date</td><td >Auction ID</td><td >Client Yahoo Id.</td><td > Group</td><td width=\'120\'>Client email</td><td width='100'>Client Name</td><td width='150'> Note</td><td width='120'> Client's Payment Name</td><td>product No.</td><td width='60'>Price</td><td width='60'>&#x20;&#x984F;&#x8272;</td><td width='60'>Shipping </td><td width='60'>Total</td><td >Payment</td><td width='80'>Return</td><td width='80'>Shipping</td><td width='100'>Remark</td><td>Order status</td></tr>\n";
+	echo "<tr align=\"right\" valign=\"top\"><td >Order date</td><td >Auction ID</td><td >Client Yahoo Id.</td><td > Group</td><td width=\'120\'>Client email</td><td width='100'>Client Name</td><td width='150'> Note</td><td width='120'> Client's Payment Name</td><td>product No.</td><td width='60'>Price</td><td width='60'>Shipping </td><td width='60'>Total</td><td >Payment</td><td width='80'>Return</td><td width='80'>Shipping</td><td width='100'>Remark</td><td>Order status</td></tr>\n";
 	
 	if ($num_rows > 0) {
 		$sql = $sql_select.$sql."order by sale_date desc LIMIT $page_start, $per_page ";
- //echo "getOrderListByFilter".$sql;
+//echo "getOrderListByFilter".$sql;
 		$result = mysql_query($sql,$db) or die (mysql_error()."<br />Couldn't execute query: $sql");
 		$num_results=mysql_num_rows($result);
 //	echo "getOrderListByFilter".$num_results;
@@ -562,7 +545,6 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 			$sale_tax=$row["sale_tax"];
 			$sts=$row["sts"];
 			$sale_prod_id=$row["sprod_id"];
-			$sprod_colour = $row['sprod_colour'];
 			
 			//payment of product
 			$cost_prod=getprod_cost($sale_ref);
@@ -603,9 +585,8 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 				$debt_data ="<a href=\"index.php?page=order&subpage=debt&sale_ref=".$sale_ref." \">Fill in</a>";
 			}
 			//bal
-			$bal_row = getbal_data($sale_ref);
-			if (is_null($bal_row['bal_pay'])==false){		
-			
+			if (getbal_data($sale_ref)){		
+				$bal_row = getbal_data($sale_ref);
 				
 				$bal_pay_type = $bal_row['bal_pay_type'];
 				
@@ -671,17 +652,10 @@ function getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$
 				$remark ="<a href=\"index.php?page=order&subpage=remark&sale_ref=".$sale_ref." \">$remark</a>";
 			}	
 			else {
-				$remark ="<a href=\"index.php?page=order&subpage=remark&sale_ref=".$sale_ref." \">Fill in</a>";
+				$remark ="<a href=\"index.php?page=order&subpage=remark?&ale_ref=".$sale_ref." \">Fill in</a>";
 			}
 
-			if ($sts=="O") {
-				$stsBlink="id='divtoBlink'";
-				$sts="OUT";
-			} else {
-				$stsBlink="";
-			}
-
-			echo "<tr align=\"right\" valign=\"top\"> <td>".$sale_date."</td><td>".$sale_edit."<br> $sale_yahoo_id (".$sale_dat .")</td><td >".$sale_yahoo_id."&nbsp;</td><td >".$sale_group."&nbsp;</td><td width=\"100\" style=\"word-wrap:break-word;\">".$sale_email."&nbsp;</td><td >".$sale_name."&nbsp;</td><td>".$debt_data."&nbsp;</td><td>".$debt_pay_name."&nbsp;</td><td>$sale_prod_id</td><td >$cost_prod</td><td>$sprod_colour</td><td>$sale_ship_fee</td><td >$cost_total</td><td>".$bal_data."</td><td>".$return_data."</td><td $ship_bg >".$ship_data."</td><td >".$remark."&nbsp;</td><td><font ".$stsBlink.">".$sts."</font>&nbsp;</td></tr>\n";
+			echo "<tr align=\"right\" valign=\"top\"> <td>".$sale_date."</td><td>".$sale_edit."<br> $sale_yahoo_id (".$sale_dat .")</td><td >".$sale_yahoo_id."&nbsp;</td><td >".$sale_group."&nbsp;</td><td width=\"100\" style=\"word-wrap:break-word;\">".$sale_email."&nbsp;</td><td >".$sale_name."&nbsp;</td><td>".$debt_data."&nbsp;</td><td>".$debt_pay_name."&nbsp;</td><td>$sale_prod_id</td><td >$cost_prod</td><td >$sale_ship_fee</td><td >$cost_total</td><td>".$bal_data."</td><td>".$return_data."</td><td $ship_bg >".$ship_data."</td><td >".$remark."&nbsp;</td><td>".$sts."&nbsp;</td></tr>\n";
 		}
 		//end loop
 		

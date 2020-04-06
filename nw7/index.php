@@ -1,1 +1,0 @@
-<img src="nw7.php?barcode=<?=$_GET["barcode"]?>" width="150" height="50">

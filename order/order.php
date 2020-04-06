@@ -10,8 +10,6 @@ include_once('security_check.php');
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML><HEAD><TITLE>Administrative tools <?=$page?> <?=$subpage?></TITLE>
-
-
 <script type="text/javascript" src="calendarDateInput.js"></script>
 <SCRIPT type="text/javascript" src="js/common.js"></script>
 <LINK href="style1.css" type=text/css rel=STYLESHEET>

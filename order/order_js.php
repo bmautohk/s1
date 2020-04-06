@@ -1,4 +1,3 @@
-
 <script language="javascript" type="text/javascript">
 var win=null;
 function NewWindow(mypage,myname,w,h,scroll,pos){
@@ -17,15 +16,6 @@ missinginfo = "";
 
 if ((document.form1.sale_ref_a[0].checked) && (document.form1.sale_ref_aa.value == "" )) {
 missinginfo += "\n     -  Order Number";
-
-}
-if (document.form1.sale_ref_a[0].checked) {
-		if($('#sale_ref_aa').val().length>16){
-				missinginfo+='\n        -   Auction ID length is more than 16';
-				 
-			}else{
-				
-			}
 }
 <? for ($m=1;$m<=$prod_n;$m++) {?>
 
@@ -101,44 +91,6 @@ function openProdWin(idx) {
 	window.open('order_find_product.php?prod_sel=' + idx + '&cust_cd=' + custCd,'popuppage','width=500,height=400,top=100,left=100 scrollbars=1');
 }
 
-function openProdWinByCustCd(idx, custCd) {
-	window.open('order_find_product.php?prod_sel=' + idx + '&cust_cd=' + custCd,'popuppage','width=500,height=400,top=100,left=100 scrollbars=1');
-}
-
-function findPMProduct(url, idx) {
-	var product_id = $('#sprod_id_' + idx).val();
-
-	if (product_id == '') {
-		return;
-	}
-	
-	$.getJSON(url + '/api/product?no_jp=' + product_id, function(data) {
-		if (data != '') {
-			// Exist in PM
-			$('#sprod_name_' + idx).val(data.product_desc_jp);
-			$('#sprod_colour_' + idx).val(data.colour);
-
-			if (data.material == '') {
-				$('#sprod_material_' + idx).val('');
-				$('#sprod_material_option_' + idx).removeAttr('disabled');
-			} else {
-				$('#sprod_material_' + idx).val(data.material);
-				$('#sprod_material_option_' + idx).attr('disabled', true);
-			}
-		} else {
-			// Not exist
-			$('#sprod_name_' + idx).val('');
-			$('#sprod_colour_' + idx).val('');
-			
-			$('#sprod_material_' + idx).val('');
-			$('#sprod_material_option_' + idx).removeAttr('disabled');
-			
-		}
-
-		$('#sprod_colour_option_' + idx + ' option[value=""]').attr('selected','selected');
-	});
-}
-
 function findProduct(idx) {
 	var product_id = $('#sprod_id_' + idx).val();
 
@@ -189,16 +141,6 @@ function getProductStock(idx, product_id) {
 				});
 			}
 	});
-}
-
-function submitToSagawa($location){
-	if($location=='JP'){
-	 document.getElementById("frm_jp").action = "<?=$page ?>/order_ship_report_sagawa_csv.php"; 
-	  document.getElementById("frm_jp").submit();
-	}else if ($location=='HK'){
-	document.getElementById("frm_hk").action = "<?=$page ?>/order_ship_report_sagawa_csv.php"; 
-	  document.getElementById("frm_hk").submit();	
-	}
 }
 //  End -->
 </script>

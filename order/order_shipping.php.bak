@@ -88,7 +88,7 @@ echo $row_debt['debt_remark'];
 						}
 						}*/
 ?>
-						<input name="isupdate" type="submit" value="Shipped">
+						<input name="isupdate" type="submit" value="Update">
 						
 						&nbsp; </td>
                       </tr>
@@ -126,11 +126,7 @@ echo $row_debt['debt_remark'];
                             <option value='parcel'>Air Parcel</option>
                             <option value='jp'>JP</option>
                             <option value='jp2'>JP with cash</option>
-                            <? if ($companyDomain == DOMAIN_KAITONIC) {?>
-								<option value='jp_post_cod'>JP Post COD</option>
-							<? } else {?>
-								<option value='jp_post_cod_topnov'>JP Post COD</option>
-							<? }?>
+							<option value='jp_post_cod'>JP Post COD</option>
 							<option value='jp_post_paid'>JP Post Paid</option>
 							<option value='jp_sagawa_cod'>JP sagawa COD</option>
 							<option value='jp_sagawa'>JP sagawa</option>
@@ -194,11 +190,11 @@ if ($sale_email!='') {
 	$('#btn_form_preview').attr('disabled', 'disabled');
 	$(document).ready(function(){
 		$('.preview').change(function(){
-			var method = $('#opt_method').val();
-			var addr_id = $('#opt_addr').val();
-			if (method != '' && addr_id != '') {
+			$method = $('#opt_method').val();
+			$addr_id = $('#opt_addr').val();
+			if ($method != '' && $addr_id != '') {
 				$('#form_preview').attr('height', '300');
-				$('#form_preview').attr('src', 'print_ship_bottom_' + method + '.php?sale_ref=<?=$sale_ref?>&addr_id=' + addr_id);
+				$('#form_preview').attr('src', 'print_ship_bottom_' + $method + '.php?sale_ref=<?=$sale_ref?>&addr_id=' + $addr_id);
 				$('#btn_form_preview').attr('disabled', '');
 			}
 			else {
@@ -208,9 +204,9 @@ if ($sale_email!='') {
 		});
 		
 		$('#btn_form_preview').click(function() {
-			var method = $('#opt_method').val();
-			var addr_id = $('#opt_addr').val();
-			NewWindow('print_common.php?sale_ref=<?=$sale_ref;?>&addr_id=' + addr_id + '&print_method=' + method,'mywin','780','350','no','center');
+			$method = $('#opt_method').val();
+			$addr_id = $('#opt_addr').val();
+			NewWindow('print_common.php?sale_ref=<?=$sale_ref;?>&addr_id=' + $addr_id + '&print_method=' + $method,'mywin','780','350','no','center');
 		});
 	});
 

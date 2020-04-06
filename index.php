@@ -1,12 +1,5 @@
-<?php 
-	$page = $_GET['page'];
-	//$subpage = $_GET['subpage'];
-	//if ($page == 'order' && $subpage == 'list') {
-	if ($page == 'order') {
-		$groupCheckList = array("Administrators", "Users", "Wholesale");
-	}
-	include_once('security_check.php');
-
+<?php include_once('security_check.php');?>
+<? 
 	if ($page!="" && $subpage!=""){
 		include_once($page.'/'.$page.'_'.$subpage.'_logic.php');
 	}
@@ -15,7 +8,6 @@
 <HTML><HEAD><TITLE>Administrative tools</TITLE>
 <? require ('header_script.php');?>
 <? if ($page!="") { include_once($page.'/'.$page.'_js.php'); } ?>
-<? if ($page!="") { include_once($page.'/'.$page.'_'.$subpage.'_js.php'); } ?>
 <script type="text/javascript" src="calendarDateInput.js"></script>
 <SCRIPT type="text/javascript" src="js/common.js"></script>
 <SCRIPT type="text/javascript" src="js/jquery-1.4.2.min.js"></script>

@@ -1,5 +1,5 @@
 <?php
-$groupCheckList = array("Administrators", "Suppliers", "Partners", "Users", "Wholesale");
+
 include_once('security_check.php');
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
@@ -61,8 +61,7 @@ include_once('security_check.php');
 	$result = mysql_query("SELECT * FROM authorize where group3='JP' order by username", $db) or die (mysql_error()."<br />Couldn't execute query: $query");
 	
 	$num_results=mysql_num_rows($result);
-
-
+	
 	for ($i=0;$i<$num_results;$i++)
 	{
 	$row=mysql_fetch_array($result);
@@ -70,6 +69,7 @@ include_once('security_check.php');
 	$uname=$row["username"];
 	$g2=$row["group2"];
 	echo "<a href='main.php?uname=".$uname."&g2=".$g2."'>".$uname."</a><br>";
+
 	
 	}
 
@@ -89,35 +89,15 @@ include_once('security_check.php');
 	$result = mysql_query("SELECT * FROM authorize where group3='HK' order by username ", $db) or die (mysql_error()."<br />Couldn't execute query: $query");
 	
 	$num_results=mysql_num_rows($result);
-
-
-
-	 for ($i=0;$i<$num_results;$i++)
-        {
-
-        $row=mysql_fetch_array($result);
-	 if ($row["username"]=="ben"){
-        //$group_id=$row["group_id"];
-        $uname=$row["username"];
-        $g2=$row["group2"];
-        echo "<a href='main.php?uname=".$uname."&g2=".$g2."'>".$uname."</a><br>";
-        break;
-        }
-
-        }
-
-        $result = mysql_query("SELECT * FROM authorize where group3='HK' order by username ", $db) or die (mysql_error()."<br />Couldn't execute query: $query");
 	
 	for ($i=0;$i<$num_results;$i++)
 	{
-
 	$row=mysql_fetch_array($result);
-	if ($row["username"]!="ben"){
 	//$group_id=$row["group_id"];
 	$uname=$row["username"];
 	$g2=$row["group2"];
 	echo "<a href='main.php?uname=".$uname."&g2=".$g2."'>".$uname."</a><br>";
-	}
+
 	
 	}
 

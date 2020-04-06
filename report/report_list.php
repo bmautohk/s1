@@ -1,17 +1,3 @@
-<?
-if (isset($_POST['date_start'])) {
-	$date_start = $_POST['date_start'];
-} else {
-	$date_start = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-2,date("Y")));
-}
-
-if (isset($_POST['date_end'])) {
-	$date_end = $_POST['date_end'];
-} else {
-	$date_end = date("Y-m-d");
-}
-
-?>
 
 <TD vAlign=top bgColor=#eefafc>
             ---------------------------------------------------------------------------------------------------------------------------------------------------<br>
@@ -25,9 +11,6 @@ if (isset($_POST['date_end'])) {
 				<br>
 				Product Name: 
 				<input name="prod_name" type="text" id="prod_name" value="<? echo $prod_name;?>">
-				<br>
-				Product ID:
-				<input name="prod_id" type="text" id="prod_id" value="<? echo $prod_id;?>">
 				
 				 <input name="search_sale" type="submit" id="search_sale" value="search">
 				 <br>
@@ -51,15 +34,6 @@ Top
   <option value="30">30</option>
   <option value="40">40</option>
   <option value="50">50</option>
-  <option value="100">100</option>
-  <option value="150">150</option>
-  <option value="200">200</option>
-  <option value="250">250</option>
-  <option value="300">300</option>
-  <option value="350">350</option>
-  <option value="400">400</option>
-  <option value="450">450</option>
-  <option value="500">500</option>
 </select>
 <br>
 <br>
@@ -69,9 +43,9 @@ Group:
 				<table width="406" border="0">
   <tr>
     <td width="30">From</td>
-    <td width="100"><script>DateInput('date_start', true, 'YYYY-MM-DD', '<?=$date_start ?>')</script>&nbsp;</td>
+    <td width="100"><script>DateInput('date_start', true, 'YYYY-MM-DD')</script>&nbsp;</td>
     <td width="16">To </td>
-    <td width="84"><script>DateInput('date_end', true, 'YYYY-MM-DD', '<?=$date_end ?>')</script>&nbsp;</td>
+    <td width="84"><script>DateInput('date_end', true, 'YYYY-MM-DD')</script>&nbsp;</td>
   </tr>
 </table>
 
@@ -86,51 +60,46 @@ Group:
                  <? 
 				 $get_username = $_POST['get_username']; 
 				 $print_link = "&nbsp;";
-				 //$today = date("Y-m-d"); 
-				 //$today_20 = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-2,date("Y")));
+				 $today = date("Y-m-d"); 
+				 $today_20 = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-2,date("Y")));
 				 if (isset($_POST['date_start']) and isset($_POST['date_end']) and isset($_POST['sale_top']))
 				 {
-				 	//echo 'Part 0';
-				 //$date_start = $_POST['date_start'];
-				 //$date_end = $_POST['date_end'];
+				 	echo 'Part 0';
+				 $date_start = $_POST['date_start'];
+				 $date_end = $_POST['date_end'];
 				 $sale_top = $_POST['sale_top'];
 				 $sale_select = $_POST['sale_select'];
 				 getReportTop($date_start,$date_end,$sale_top,$sale_select);
 				  
 				 }
 				 
-				 $reportData = NULL;
 				 if (!isset($_POST['date_start']) and !isset($_POST['date_end']) and !isset($_POST['search_sale']) and !isset($_POST['sale_top']))
 				 {
-				 $reportData = getOrderReport($date_start,$date_end, 'sale_date','desc','date','','','');
-				 $print_link = "<a href=\"print_report.php?date_start=$date_start&date_end=$date_end&mod=date&sale_or=sale_date&sale_as=desc\" onClick=\"NewWindow(this.href,'mywin','800','500','no','center');return false\" onFocus=\"this.blur()\">Preview Report</a>";
+				 getOrderReport($today_20,$today, 'sale_date','desc','date','','');
+				 $print_link = "<a href=\"print_report.php?date_start=$today_20&date_end=$today&mod=date&sale_or=sale_date&sale_as=desc\" onClick=\"NewWindow(this.href,'mywin','800','500','no','center');return false\" onFocus=\"this.blur()\">Preview Report</a>";
+				  
 				 }
 				  
 				 if (isset($_POST['date_start']) and isset($_POST['date_end']) and !isset($_POST['search_sale']) and !isset($_POST['sale_top']))
 				 {
-				 //$date_start = $_POST['date_start'];
-				 //$date_end = $_POST['date_end'];
+				 $date_start = $_POST['date_start'];
+				 $date_end = $_POST['date_end'];
 				 $sale_or = $_POST['sale_or'];
 				 $sale_as = $_POST['sale_as'];
-				 $username = $_POST['get_username'];
 				 $mod = "date";
-				 $reportData = getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod,$get_username,'','');
-				 $print_link = "<a href=\"print_report.php?date_start=$date_start&date_end=$date_end&mod=$mod&sale_or=$sale_or&sale_as=$sale_as&username=$username\" onClick=\"NewWindow(this.href,'mywin','800','500','no','center');return false\" onFocus=\"this.blur()\">Preview Report</a>";
+				 getOrderReport($date_start,$date_end,$sale_or,$sale_as,$mod,$get_username,'');
+				 $print_link = "<a href=\"print_report.php?date_start=$date_start&date_end=$date_end&mod=$mod&sale_or=$sale_or&sale_as=$sale_as\" onClick=\"NewWindow(this.href,'mywin','800','500','no','center');return false\" onFocus=\"this.blur()\">Preview Report</a>";
+				  
 				 }
 				 if (isset($_POST['search_sale']))
 				 {
 				 $mod = $_POST['sale_ref'];
 				 $mod2 = $_POST['prod_name'];
-				 $prod_id = $_POST['prod_id'];
-				 $reportData = getOrderReport('','',$sale_or,$sale_as,$mod,$get_username,$mod2,$prod_id);
-				 $print_link = "<a href=\"print_report.php?date_start=&date_end=&mod=$mod&mod2=$mod2&prod_id=$prod_id&sale_or=$sale_or&sale_as=$sale_as\" onClick=\"NewWindow(this.href,'mywin','800','500','no','center');return false\" onFocus=\"this.blur()\">Preview Report</a>";
+				 getOrderReport('','',$sale_or,$sale_as,$mod,$get_username,$mod2);
+				 $print_link = "<a href=\"print_report.php?date_start=&date_end=&mod=$mod&mod2=$mod2&sale_or=$sale_or&sale_as=$sale_as\" onClick=\"NewWindow(this.href,'mywin','800','500','no','center');return false\" onFocus=\"this.blur()\">Preview Report</a>";
 				 }
 				 
 				 ?>
-				 
-				 <? if ($reportData != NULL) {
-				 	include 'report_list_data.php';
-				 } ?>
 				 
                  <table width="525" border="0">
                         <tr>
@@ -142,4 +111,5 @@ Group:
 					  </td>
               </tr>
           
+            <p>&nbsp;</p>
             </TD>

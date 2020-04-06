@@ -35,7 +35,7 @@
 </table>
 
             
-<form name="form1" method="POST" action="<?= $_SERVER['PHP_SELF']."?page=$page&subpage=$subpage&sale_ref=$sale_ref" ?>" <?php if ($getsale_row['address_restriction']!='Y'){ echo 'onSubmit="return checkFields();"';}?>>
+<form name="form1" method="POST" action="<?= $_SERVER['PHP_SELF']."?page=$page&subpage=$subpage&sale_ref=$sale_ref" ?>">
               <table width="587" height="236" border="0" cellspacing="10">
                 <tr>
                   <td width="600" height="216" valign="top"><table width="600" height="82" border="0" cellpadding="0" cellspacing="0">

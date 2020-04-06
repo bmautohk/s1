@@ -82,7 +82,7 @@ function formCheck(formobj){
 
 	value = $('select[name="product_model_no"]').val();
 	if (value == null || value == '') {
-		//alertMsg += " - Model No.\n";
+		alertMsg += " - Model No.\n";
 	}
 
 	if (alertMsg.length == l_Msg){
