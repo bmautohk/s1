@@ -31,12 +31,13 @@ if ($action == 'Upload') {
 			 
 			$cellVal = $cell->getValue();
 			if ($cellVal != "") {
+			//	$container['container_date'] = $worksheet->getCellByColumnAndRow(0, $rowNo)->getValue();
 				$container['packing_no'] = $worksheet->getCellByColumnAndRow(0, $rowNo)->getValue();
 				$container['product_id'] = $worksheet->getCellByColumnAndRow(1, $rowNo)->getValue();
-				$container['color'] = $worksheet->getCellByColumnAndRow(3, $rowNo)->getValue();
-				$container['piece'] = $worksheet->getCellByColumnAndRow(4, $rowNo)->getValue();
-				$container['qty'] = $worksheet->getCellByColumnAndRow(5, $rowNo)->getValue();
-				$container['custom'] = $worksheet->getCellByColumnAndRow(6, $rowNo)->getValue();
+				//$container['color'] = $worksheet->getCellByColumnAndRow(3, $rowNo)->getValue();
+				//$container['piece'] = $worksheet->getCellByColumnAndRow(4, $rowNo)->getValue();
+				$container['qty'] = $worksheet->getCellByColumnAndRow(2, $rowNo)->getValue();
+				$container['custom'] = $worksheet->getCellByColumnAndRow(3, $rowNo)->getValue();
 				 $container['custom'] = mb_convert_encoding($container['custom'],$lang_type,"UTF-8");
 				 
 				$containers[] = $container;
@@ -46,8 +47,8 @@ if ($action == 'Upload') {
 
 	$userName = $_SESSION['user_name'];
 	foreach ($containers as $container) {
-		$sql = "insert into container (packing_no, product_id, qty, created_by, creation_date, last_upd_by, last_upd_date,color,piece,custom) values ('".
-		$container['packing_no']."', '".$container['product_id']."','".$container['qty']."', '$userName', now(), '$userName', null,'".$container['color']."','".$container['piece']."','".$container['custom']."') ";
+		$sql = "insert into container (container_date,packing_no, product_id, qty, created_by, creation_date, last_upd_by, last_upd_date,color,piece,custom) values ('".
+		$container['container_date']."', '".$container['packing_no']."', '".$container['product_id']."','".$container['qty']."', '$userName', now(), '$userName', null,'".$container['color']."','".$container['piece']."','".$container['custom']."') ";
 		sqlinsert($sql);
 	 
 	}
@@ -60,7 +61,7 @@ $containers = array();
 $db=connectDatabase();
 mysql_select_db(DB_NAME,$db);
 //mysql_query("SET NAMES 'euc-jp'"); 
-$result = mysql_query("SELECT * FROM container " ,$db) or die (mysql_error()."<br />Couldn't execute query: $query");
+$result = mysql_query("SELECT * FROM container order by id desc" ,$db) or die (mysql_error()."<br />Couldn't execute query: $query");
 $num_results=mysql_num_rows($result);
 for ($i=0;$i<$num_results;$i++) {
 	$row = mysql_fetch_array($result);
@@ -72,6 +73,8 @@ for ($i=0;$i<$num_results;$i++) {
 	$containers[$i]['color'] = $row['color'];
 	$containers[$i]['piece'] = $row['piece'];
 	$containers[$i]['custom'] = $row['custom'];
+	$containers[$i]['container_date']=$row['container_date'];
+	$containers[$i]['creation_date']=$row['creation_date'];
 }
 
 ?>

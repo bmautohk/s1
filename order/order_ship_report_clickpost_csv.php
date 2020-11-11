@@ -26,20 +26,18 @@
 
 	// Header
 	$i = 0;
-	$rowNo = 0;
-	/*$sheet->setCellValueByColumnAndRow($i++, 1, 'A')
-		->setCellValueByColumnAndRow($i++, 1, 'Tel.')
-		->setCellValueByColumnAndRow($i++, 1, 'Post code')
+	$rowNo = 1;
+	 $sheet->setCellValueByColumnAndRow($i++, 1, 'お届け先郵便番号')
+		->setCellValueByColumnAndRow($i++, 1, 'お届け先氏名')
+		->setCellValueByColumnAndRow($i++, 1, 'お届け先敬称')
 		 
-			->setCellValueByColumnAndRow($i++, 1, 'Client Address 1')
-			->setCellValueByColumnAndRow($i++, 1, 'Client Address 2')
-			->setCellValueByColumnAndRow($i++, 1, 'Client Address 3')
-			->setCellValueByColumnAndRow($i++, 1, 'CLient Name')
-			->setCellValueByColumnAndRow($i++, 1, 'Auction ID')
-			->setCellValueByColumnAndRow($i++, 1, 'Sale Group')
+			->setCellValueByColumnAndRow($i++, 1, 'お届け先住所1行目')
+			->setCellValueByColumnAndRow($i++, 1, 'お届け先住所2行目')
+			->setCellValueByColumnAndRow($i++, 1, 'お届け先住所3行目')
+			->setCellValueByColumnAndRow($i++, 1, 'お届け先住所4行目')
+			->setCellValueByColumnAndRow($i++, 1, '内容品');
 			
-		 
-*/
+ 
 	$chkDupSaleRef=array();
 	foreach ($result as $row) {
 		
@@ -51,59 +49,24 @@
 			
 		 
 		$type = PHPExcel_Cell_DataType::TYPE_STRING;
-		$sheet->setCellValueByColumnAndRow($i++, $rowNo,  conv(substr($row['sale_group'],0,12)));   //A
-		$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit(conv(appendTelFormat($row['debt_tel'])),$type);  //B
+	 
 		$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($row['debt_post_co']));  //C
+		$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($row['sale_name']));  //G
+		$sheet->setCellValueByColumnAndRow($i++, $rowNo, "様");  
 		$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit(conv($row['debt_cust_address1']),$type);  //D
 		$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit(conv($row['debt_cust_address2']),$type);  //E
 		$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit(conv($row['debt_cust_address3']),$type);  //F
-		$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($row['sale_name']))  //G
-		->setCellValueByColumnAndRow($i++, $rowNo, conv($row['sale_name'])); //H
-		$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit(conv($row['bal_ref']),$type);  //I
-		$sheet->setCellValueByColumnAndRow($i++, $rowNo,"")  //J
-			->setCellValueByColumnAndRow($i++, $rowNo, "")  //K
-			->setCellValueByColumnAndRow($i++, $rowNo, "")  //L
-			->setCellValueByColumnAndRow($i++, $rowNo, "") //M
-			->setCellValueByColumnAndRow($i++, $rowNo, "594-0073")  //N
-			->setCellValueByColumnAndRow($i++, $rowNo, "大阪府和泉市和気町") //O
-			->setCellValueByColumnAndRow($i++, $rowNo, "3-2-12") //P
-			->setCellValueByColumnAndRow($i++, $rowNo, "和気発送センター")  //Q
-			->setCellValueByColumnAndRow($i++, $rowNo, "");  //R
-			$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit('001', $type);//S
-			$sheet->setCellValueByColumnAndRow($i++, $rowNo, checkStr16(conv($row['sprod_id']))) //T
-			->setCellValueByColumnAndRow($i++, $rowNo, $row['sprod_name']);  //U
-			if ($row['bal_dat']!=null){
-				$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($row['sprod_unit']).' '.date("(d/M)", strtotime($row['bal_dat'])));  //V  $data['debt_dat']
+		$sheet->setCellValueByColumnAndRow($i++, $rowNo, "");  
+		if ($row['bal_dat']!=null){
+			$text=conv($row['sprod_unit']).' '.date("(d/M)", strtotime($row['bal_dat']));  //V  $data['debt_dat']
 			}else{
-				$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($row['sprod_unit']).' ');  //V  $data['debt_dat']
+				$text=conv($row['sprod_unit']).' ';  //V  $data['debt_dat']
 			}
-			$sheet->setCellValueByColumnAndRow($i++, $rowNo, conv($row['sprod_material'])."".conv($row['sprod_colour'])) //W
-			->setCellValueByColumnAndRow($i++, $rowNo, str_replace("\r",str_replace("\n",conv($row['debt_remark'])))) //X
-			//->setCellValueByColumnAndRow($i++, $rowNo,conv($row['debt_remark'])) //X
-			->setCellValueByColumnAndRow($i++, $rowNo, "1");  //Y
-			$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit('000', $type);  //Z
-			$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit('001', $type); //AA
-			$sheet->setCellValueByColumnAndRow($i++, $rowNo, str_replace('-','',$row['bal_delivery_date']));
-			$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit(toSugawaTime($row['bal_delivery_time_option_id']),$type); //AC
-			$sheet->setCellValueByColumnAndRow($i++, $rowNo, "") //AD
-			->setCellValueByColumnAndRow($i++, $rowNo, "")  //AE
-			->setCellValueByColumnAndRow($i++, $rowNo, "");  //AF
-			$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit('1', $type);  //AG
-			$sheet->setCellValueByColumnAndRow($i++, $rowNo, "");  //AH
-			$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit('0', $type);  //AI
-			$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit('011', $type);  //AJ
-			$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit(checkSugawaTime("007", toSugawaTime($row['bal_delivery_time_option_id'])), $type);    //AK
-			$sheet->setCellValueByColumnAndRow($i++, $rowNo, checkSugawaTime("", toSugawaTime($row['bal_delivery_time_option_id'])));   //AL
-			$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit('0', $type); //AM
-			$sheet->getCellByColumnAndRow($i++, $rowNo)->setValueExplicit('0', $type); //AN
-			$sheet->setCellValueByColumnAndRow($i++, $rowNo, "") //AO
-			->setCellValueByColumnAndRow($i++, $rowNo, "1") //AP
-			//->setCellValueByColumnAndRow($i++, $rowNo, $row['bal_ship_type'])
-			//->setCellValueByColumnAndRow($i++, $rowNo, $row['bal_dat'])
-			 
+		$sheet->setCellValueByColumnAndRow($i++, $rowNo, checkStr16(conv($row['sprod_id']." [".$row['bal_ref']."] ".$row['sprod_name'])." ".$text)); //T I U V
+			     
 		;
-	
-		
+		$sheet->setCellValueByColumnAndRow($i++, $rowNo, "");
+		$sheet->setCellValueByColumnAndRow($i++, $rowNo, "");
 	
 			if($exportCSVonly!="true"){
 			//update ben_check check_dat to 0000-00-00
@@ -130,10 +93,9 @@
 	
 function checkStr16($a){		
 	
-	if (strlen($a)>16){
-		
-		$a=subStr($a,0,14)."等";
-	}
+ 
+		$a=subStr($a,0,30);
+ 
 
 	return $a;
 }

@@ -26,16 +26,23 @@ missinginfo = "";
 //}
 
 
+
 if ((document.form1.sale_ref_a[0].checked) && (document.form1.sale_ref_aa.value == "" )) {
 missinginfo += "\n     -  Order Number";
 }
+
+ if($('#sale_ref_aa').val().length>16){
+				missinginfo+='\n       -   Auction ID length is more than 16';
+				 
+			} 
+ 
 <? for ($m=1;$m<=$prod_n;$m++) {?>
 
 
 
 if (document.form1.sprod_id_<?=$m?>.value == "") {
 missinginfo += "\n     -  <?=$m?> Product id ";}
-if (document.form1.sprod_name_<?=$m?>.value == "") {
+if (document.form1.sprod_name_<?=$m?>.value == "" || document.form1.sprod_name_<?=$m?>.value.length>16) {
 missinginfo += "\n     -  <?=$m?> Product Name ";}
 if (document.form1.sprod_unit_<?=$m?>.value == "") {
 missinginfo += "\n     -  <?=$m?> Product Unit ";}
@@ -69,7 +76,36 @@ missinginfo + "\n_____________________________" +
 alert(missinginfo);
 return false;
 }
-else return true;
+
+// Validate product no.
+/*var isValid = true;
+var query = '';
+var invalidProductInfo = 'The following product no. does not exist\n';
+
+$('input:text[name^="sprod_id_"]').each(function(index, value) {
+	query = query + 'product_id[]=' + $(value).val() + '&';
+});
+
+$.ajax({
+		url: 'checkProductNotExist.php?' + query, 
+		dataType: 'json',
+		async: false,
+		success: function(data) {
+			if (data != '') {
+				isValid = false;
+				$(data).each(function(index, value) {
+					invalidProductInfo = invalidProductInfo + value + '\n';
+				});
+			}
+		}
+});
+
+if (!isValid) {
+	alert(invalidProductInfo);
+	return false;
+}*/
+
+ return true;
 }
 //  End -->
 </script>

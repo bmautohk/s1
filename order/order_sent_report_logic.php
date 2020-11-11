@@ -37,22 +37,25 @@ function getSentReport($date_start,$date_end,$sale_name,$sale_group,$access,$use
 	$num_results=mysql_num_rows($result);
 	//table echo 
 	echo "<table width=\"700\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">";
-	echo "<tr align=\"right\" valign=\"top\"><td >Order No.</td><td> Prod ID</td><td >Sale Group</td><td>Cost (RMB)</td><td >Shipping Date</td><td >Tracking No.</td><td >Detail</td><td >Tracking email</td><td >Status</td></tr>\n";
+	echo "<tr align=\"right\" valign=\"top\"><td >Order No.</td><td>Customer Name</td><td> Prod ID</td><td >Sale Group</td><td>Cost (RMB)</td><td >Shipping Date</td><td >Tracking No.</td><td >Detail</td><td >Tracking email</td><td >Status</td></tr>\n";
 	
 	//loop
 	for ($i=0;$i<$num_results;$i++)
 	{
 		$row=mysql_fetch_array($result);
 		$prod_id = $row["sprod_id"];
+		$sale_name = $row["sale_name"];
 		$product_cost_rmb = $row["product_cost_rmb"];
 		$check_ref=$row["check_ref"];
 		$check_date=$row["check_date"];
 		$check_shipping=$row["check_shipping"];
+		if ($check_shipping=="")
+		$check_shipping=$row["check_shipping_jp"];	
 		$check_print=$row["check_print"];
 		$sale_group=$row["sale_group"];
 		$shipped_status=getemail_shipped_check($check_ref);
 
-		echo "<tr align=\"right\" valign=\"top\"> <td><a href='index.php?page=order&subpage=edit&sale_ref=$check_ref'>".$check_ref."</a></td><td>".$prod_id."</td><td>".$sale_group."</td><td>".$product_cost_rmb."&nbsp;</td><td>".$check_date."</td><td>".$check_shipping."</td><td ><a target='_blank' href='index.php?page=order&subpage=shipping&sale_ref=$check_ref'>Click</a></td><td><a href='ship_email.php?sale_ref=$check_ref' target='_blank'>Preview</td><td>".$shipped_status."&nbsp;</td></tr>\n";
+		echo "<tr align=\"right\" valign=\"top\"> <td><a href='index.php?page=order&subpage=edit&sale_ref=$check_ref'>".$check_ref."</a></td><td>".$sale_name."</td><td>".$prod_id."</td><td>".$sale_group."</td><td>".$product_cost_rmb."&nbsp;</td><td>".$check_date."</td><td>".$check_shipping."</td><td ><a target='_blank' href='index.php?page=order&subpage=shipping&sale_ref=$check_ref'>Click</a></td><td><a href='ship_email.php?sale_ref=$check_ref' target='_blank'>Preview</td><td>".$shipped_status."&nbsp;</td></tr>\n";
 	}
 	//end loop
 	echo "</table>";

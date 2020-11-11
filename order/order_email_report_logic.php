@@ -5,7 +5,7 @@ function getEmailReport($date_start,$date_end,$access,$user_name)
 	flush();
 	
 	$db=connectDatabase();
-	mysql_select_db(DB_NAME,$db);
+	mysql_select_db("autopart_db",$db);
 	if ($access==Admin_name)
 		$result = mysql_query("SELECT * FROM ben_email,ben_sale where email_ref=sale_ref and DATE(email_datetime) between '$date_start' and '$date_end' order by email_datetime desc"  ,$db) or die (mysql_error()."<br />Couldn't execute query: $query");
 	else

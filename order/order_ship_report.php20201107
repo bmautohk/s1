@@ -69,7 +69,6 @@
             	No tracking no. JP
             	<input name="genCSV" type="submit" value="Generate Post Office CSV" />
 				<input name="genSagawaCSV" type="button" value="Generate SAGAWA CSV" onclick="submitToSagawa('JP');"/>
-				<input name="genClickPostCSV" type="button" value="Generate ClickPost CSV" onclick="submitToClickPost('JP');"/>
             	<input type="hidden" name="gen_type" value="JP" />
             	<br>
 
@@ -128,7 +127,6 @@
             	No tracking no. HK
             	<input name="genCSV" type="submit" value="Generate Post Office CSV" />
 				<input name="genSagawaCSV" type="button" value="Generate SAGAWA CSV" onclick="submitToSagawa('HK');"/>
-				<input name="genClickPostCSV" type="button" value="Generate ClickPost CSV" onclick="submitToClickPost('HK');"/>
             	<input type="hidden" name="gen_type" value="HK" />
             	<br>
 
@@ -179,7 +177,6 @@
 				<form id="frm_jp_trackno" method="POST" action="<?=$page ?>/order_ship_report_sagawa_csv.php">
             	 With tracking no.
             	<input name="genSagawaCSV" type="submit" value="Generate SAGAWA CSV" />
-				<input name="genClickPostCSV" type="button" value="Generate ClickPost CSV" onclick="submitToClickPost('frm_jp_trackno');"/>
             	<input type="hidden" name="gen_type" value="%" />
 				<input type="hidden" name="exportCSVonly" value="true" /><br>
 

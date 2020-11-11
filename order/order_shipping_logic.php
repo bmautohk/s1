@@ -22,7 +22,7 @@ $userAddrId = getUserDefaultAddrId();
 if (isset($_GET['sale_ref']))
 {$sale_ref=$_GET['sale_ref'];}
 
-if (isset($_POST['isupdate']))
+if (isset($_POST['isupdate']) || isset($_POST['isupdate2']))
 {
 	if (!getship_data($sale_ref)) {
 	
@@ -62,10 +62,25 @@ if (isset($_POST['isupdate']))
 		$check = "update";
 	}
 	
+	if ($check_shipping!=''){
+			//update ben_sale sts='A' 20180526
+				$sql = "update ben_sale set sts='A' where sale_ref='$sale_ref'";
+				sqlinsert($sql) ;				
+					
+	}
+	
+	
 	if ($check_shipping_jp != '') {
 		// Disactive the jp tracking no
 		$sql = "update jp_tracking_no set sts = 'I' where tracking_no = '$check_shipping_jp' ";
 		sqlinsert($sql);
+	}
+	
+	// Redirect to order page
+	if (isset($_POST['isupdate2'])) {
+		//header("Location: index.php?page=order&subpage=list");
+		header("Location: index.php?page=order&subpage=list&issearch=Search&date_start=&date_end=&hide_sale_ref=".$sale_ref);
+		exit();
 	}
 }
 

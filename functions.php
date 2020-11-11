@@ -71,6 +71,12 @@ $tool_bar_array["invoice"]="<TABLE width=\"800\" cellPadding=10>
                   tracking_no</a></span></TD>
 				     <TD width=\"273\"><span class=\"cat cat\"><a href=\"index.php?page=order&subpage=upload_container\" class=\"big\">upload  <br>
                   container</a></span></TD>
+				  <TD width=\"273\"><span class=\"cat cat\"><a href=\"index.php?page=order&subpage=upload_sagawa_csv\" class=\"big\">upload  <br>
+                  sagawa</a></span></TD>
+				  <TD width=\"273\"><span class=\"cat cat\"><a href=\"index.php?page=order&subpage=upload_sagawa_special_csv\" class=\"big\">special    <br>
+                  product</a></span></TD>
+				    <TD width=\"273\"><span class=\"cat cat\"><a href=\"index.php?page=order&subpage=upload_clickpost_csv\" class=\"big\">upload    <br>
+                  clickPost</a></span></TD>
               </TR>
             </TBODY>
           </TABLE>";
@@ -90,6 +96,8 @@ $tool_bar_array["product"]="<TABLE width=\"1000\" cellPadding=5>
                   href=\"index.php?page=product&subpage=model_mapping\" class=\"big\">Model Mapping</A></span></TD>
                 <TD width=\"146\"><span class=\"cat cat\"><A  
                   href=\"index.php?page=product&subpage=upload\" class=\"big\">Upload Product</A></span></TD>
+				  <TD width=\"146\"><span class=\"cat cat\"><A  
+                  href=\"index.php?page=product&subpage=upload_old_product\" class=\"big\">Upload Old Product</A></span></TD>
               </TR>
             </TBODY>
           </TABLE>";
@@ -119,6 +127,8 @@ $tool_bar_array["report"]="<TABLE width=\"\" cellPadding=10>
               	<TD><span class=\"cat cat\"><a href=\"index.php?page=report&subpage=list\" class=\"big\">Order Report</a> </span></TD>
               	<TD><span class=\"cat cat\"><a href=\"index.php?page=report&subpage=group\" class=\"big\">Group Order Report</a> </span></TD>
               	<TD><span class=\"cat cat\"><a href=\"index.php?page=report&subpage=prod\" class=\"big\">Items Sold</a> </span></TD>
+				<TD><span class=\"cat cat\"><a href=\"index.php?page=report&subpage=prod_overview\" class=\"big\">Stock Overview</a> </span></TD>
+				
               </TR>
             </TBODY>
           </TABLE>";
@@ -257,7 +267,7 @@ function sqlinsert($sql)
 				username = '$username',
 				page = '$page',
 				sql_stmt = '$sql2'";
-	$result = mysql_query($log_sql,$db) or die (mysql_error()."<br />Fail to insert sql log: $log_sql");
+	//$result = mysql_query($log_sql,$db) or die (mysql_error()."<br />Fail to insert sql log: $log_sql");
 	
 	//$result = mysql_query($sql,$db);
 	$result = mysql_query($sql,$db) or die (mysql_error()."<br />Couldn't execute query: $sql");
@@ -372,7 +382,7 @@ function getsale_prod($sale_ref)
 	$total = number_format($sub_total-$sale_discount,2,'.','');
 	$total_tax =$total * $sale_tax / 100; 
 	$total_tax = number_format(round($total_tax, 0),2,'.','');
-	$total = number_format($total + $sale_ship_fee + total_tax,2,'.','');
+	$total = number_format($total + $sale_ship_fee + $total_tax,2,'.','');
 	
 	echo "<tr align=\"right\"> <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td  align=\"right\">Sub Total :</td><td width='120'>&yen;".$sub_total."</td></tr>\n";
 	echo "<tr align=\"right\"> <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td  align=\"right\">Discount :</td><td width='120'>&yen;".$sale_discount."</td></tr>\n";
@@ -554,6 +564,21 @@ function getsprod_data($sale_ref)
 	$row=mysql_fetch_array($result);
 	return $row;
 	}
+	
+function getsprod_data_all($sale_ref)
+	{
+	$db=connectDatabase();
+	mysql_select_db(DB_NAME,$db);
+	$result = mysql_query("SELECT * FROM ben_sale_prod where sprod_ref = '".$sale_ref."'", $db) or die (mysql_error()."<br />Couldn't execute query: $query");
+	$num_results=mysql_num_rows($result);
+	
+	$output = array();
+	for ($i=0;$i<$num_results;$i++) {
+		$output[] = mysql_fetch_array($result);
+	}
+	
+	return $output;
+}
 	
 
 //--------------------------------------------------------------------------------------
@@ -1249,7 +1274,7 @@ function getedit_list($sale_ref)
           <td width=\"180\">$sprod_name</td>
           <td width=\"80\">$sprod_unit</td>
           <td width=\"120\"> &yen;$sprod_price</td>
-		  <td ><a href=\"order_delete.php?sprod_no=$sprod_no&sale_ref=$sale_ref\">Delete</a></td>
+		  <td >33<a href=\"order_delete.php?sprod_no=$sprod_no&sale_ref=$sale_ref\">Delete</a></td>
  			</tr>";
       }
 	echo "</table>"; 
@@ -3835,6 +3860,53 @@ function getsale_prod_data2($sale_ref)
 	$result['total'] = $total;
 
 	return $result;
+}
+
+function getdelivery_time($sel_delivery_time_id)
+{
+	$db=connectDatabase();
+	mysql_select_db(DB_NAME,$db);
+	
+	$query = "SELECT * FROM delivery_time_option ORDER BY id";
+	$result = mysql_query($query, $db) or die (mysql_error()."<br />Couldn't execute query: $query");
+
+	$num_results=mysql_num_rows($result);
+	for ($i=0;$i<$num_results;$i++) {
+		$row = mysql_fetch_array($result);
+		$id = $row["id"];
+		$option = $row["delivery_time"];
+		if ($sel_delivery_time_id == $id) {
+			echo "<option selected value=\"$id\">$option</option>\n";
+		} else {
+			echo "<option value=\"$id\">$option</option>\n";
+		}
+	}
+	
+	// Free resultset
+	mysql_free_result($result);
+	
+	// Closing connection
+	mysql_close($db);	
+}
+
+function getbalance_data($sale_ref) {
+	$db=connectDatabase();
+	mysql_select_db(DB_NAME,$db);
+	
+	$query = "SELECT * FROM ben_bal where bal_ref = '".$sale_ref."'";
+	$result = mysql_query($query, $db) or die (mysql_error()."<br />Couldn't execute query: $query");
+	$row=mysql_fetch_array($result);
+	return $row;
+}
+
+function getDeliveryTimeOption($option_id) {
+	$db=connectDatabase();
+	mysql_select_db(DB_NAME,$db);
+	
+	$query = "SELECT * FROM delivery_time_option where id = '".$option_id."'";
+	$result = mysql_query($query, $db) or die (mysql_error()."<br />Couldn't execute query: $query");
+	$row=mysql_fetch_array($result);
+	return $row;
 }
 
 ?>

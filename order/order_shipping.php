@@ -89,7 +89,7 @@ echo $row_debt['debt_remark'];
 						}*/
 ?>
 						<input name="isupdate" type="submit" value="Shipped">
-						
+						<input name="isupdate2" type="submit" value="Shipped & Go to Order">
 						&nbsp; </td>
                       </tr>
                     </table>
@@ -126,14 +126,11 @@ echo $row_debt['debt_remark'];
                             <option value='parcel'>Air Parcel</option>
                             <option value='jp'>JP</option>
                             <option value='jp2'>JP with cash</option>
-                            <? if ($companyDomain == DOMAIN_KAITONIC) {?>
-								<option value='jp_post_cod'>JP Post COD</option>
-							<? } else {?>
-								<option value='jp_post_cod_topnov'>JP Post COD</option>
-							<? }?>
-							<option value='jp_post_paid'>JP Post Paid</option>
-							<option value='jp_sagawa_cod'>JP sagawa COD</option>
-							<option value='jp_sagawa'>JP sagawa</option>
+				<option value='jp_post_cod'>JP Post COD</option>
+				<option value='jp_post_cod2016'>JP Post COD 2016</option>
+				<option value='jp_post_paid'>JP Post Paid</option>
+				<option value='jp_sagawa_cod'>JP sagawa COD</option>
+				<option value='jp_sagawa'>JP sagawa</option>
                             <option value='1'>1</option>
                         </select>
                         
@@ -191,7 +188,7 @@ if ($sale_email!='') {
 <script type="text/javascript" src="calendarDateInput.js">
 </script>
 <SCRIPT>
-	$('#btn_form_preview').attr('disabled', 'disabled');
+	//$('#btn_form_preview').attr('disabled', 'disabled');
 	$(document).ready(function(){
 		$('.preview').change(function(){
 			var method = $('#opt_method').val();
@@ -199,11 +196,11 @@ if ($sale_email!='') {
 			if (method != '' && addr_id != '') {
 				$('#form_preview').attr('height', '300');
 				$('#form_preview').attr('src', 'print_ship_bottom_' + method + '.php?sale_ref=<?=$sale_ref?>&addr_id=' + addr_id);
-				$('#btn_form_preview').attr('disabled', '');
+				//$('#btn_form_preview').attr('disabled', 'disabled');
 			}
 			else {
 				$('#form_preview').empty();
-				$('#btn_form_preview').attr('disabled', 'disabled');
+				//$('#btn_form_preview').attr('disabled', 'disabled');
 			}
 		});
 		

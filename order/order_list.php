@@ -1,3 +1,48 @@
+<?
+
+$start_date = date("Y-m-d");
+$end_date = date("Y-m-d");
+
+$isGetOrderByDate = true;
+if (!isset($_GET['date_start']) and !isset($_GET['date_end']) ) {
+
+    if (!isset($_SESSION['date_start'])) {
+        $start_date = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-1,date("Y")));
+        $end_date = date("Y-m-d");
+    }
+    else{
+        $start_date = $_SESSION['date_start'];
+        $end_date = $_SESSION['date_end'];
+    }
+}
+
+if (isset($_GET['date_start']) and isset($_GET['date_end']) and !isset($_GET['issearch'])) {
+    $_SESSION['date_start'] = $_GET['date_start'];
+    $_SESSION['date_end'] = $_GET['date_end'];
+    
+    $start_date = $_SESSION['date_start'];
+    $end_date = $_SESSION['date_end'];
+}
+
+if (isset($_GET['issearch'])) {
+    $isGetOrderByDate = false;
+    $start_date = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-150,date("Y")));
+    $end_date = date("Y-m-d"); 
+}
+
+?>
+
+<style type='text/css'>   
+ .backgroundRed { color: red; 
+ font-weight: bold;}
+ </style>
+<script>
+  setInterval(function(){
+       //$("#divtoBlink").toggleClass("backgroundRed");
+		 $("[id=divtoBlink]").toggleClass("backgroundRed");
+     },1000)
+</script>
+
  <TD vAlign=top bgColor=#eefafc>
 
      
@@ -128,26 +173,36 @@
 
                   </tr>
 
-				                    <tr>
+		<tr>
 
-                    <td>Order status:</td>
-
-                    <td> <select name="sts" id="sts">
+        <td>Order status:</td>
+		<td>
+			 <select name="sts" id="sts">
+			<option value=""> </option>
+			 <option value="A" >Active</option>
+			<option value="C" >Cancel</option>
+			<option value="B" >Back</option>
+			<option value="O" >Out of Stock</option>
+			</select>
+		</td>
+		<td></td>
+        <td>Payment:</td>
+		<td><select name="nopayment" id="nopayment">
 		<option value=""> </option>
-		 <option value="A" >Active</option>
-		<option value="C" >Cancel</option>
-		<option value="B" >Back</option>
+		<option value="nopayment" >No Payment</option>
+	 
 		</select>
-</td>
+		</td>
+		</tr>
+		
+		<tr>
 
-                    <td>&nbsp;</td>
-
-                    <td></td>
-
-                    <td></td>
-
-                  </tr>
-
+        <td></td>
+		<td></td>
+		<td></td>
+        <td>Shipping No.:</td>
+		<td><input type="text" name="check_shipping_jp" value=""></td>
+		</tr>
                 </table>
 
                 <br>
@@ -166,11 +221,11 @@
 
     <td width="30">From</td>
 
-    <td width="100"><script>DateInput('date_start', true, 'YYYY-MM-DD')</script>&nbsp;</td>
+    <td width="100"><script>DateInput('date_start', true, 'YYYY-MM-DD', '<?=$start_date ?>')</script>&nbsp;</td>
 
     <td width="16">To </td>
 
-    <td width="84"><script>DateInput('date_end', true, 'YYYY-MM-DD')</script>&nbsp;</td>
+    <td width="84"><script>DateInput('date_end', true, 'YYYY-MM-DD', '<?=$end_date ?>')</script>&nbsp;</td>
 
   </tr>
 
@@ -184,42 +239,25 @@
 
   <input name="Submit" type="submit" value="Check / Edit Record">
   <input name="genCSV" type="button" id="genCSV" value="Generate CSV" onclick="createCSV()">
-  <input name="genBackOrderCSV" type="button" id="genBackOrderCSV" value="Generate CSV (Status = B)" onclick="createBackOrderCSV()">			
+  <input name="genBackOrderCSV" type="button" id="genBackOrderCSV" value="Generate CSV (Status = B)" onclick="createBackOrderCSV()">
+			
 
              </FORM>   </p>
 
                  <? 
 
-				 $isGetOrderByDate = true;
-				 if (!isset($_GET['date_start']) and !isset($_GET['date_end']) ) {
-						$today = date("Y-m-d");
-						$today_10 = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-1,date("Y")));
-
-						if (!isset($_SESSION['date_start'])) {
-							$orders = getOrderListByDate($today_10,$today,$group2, $user_name);
-						}
-						else{
-							$orders = getOrderListByDate($_SESSION['date_start'],$_SESSION['date_end'],$group2, $user_name);
-						}
-				}
-				
-				if (isset($_GET['date_start']) and isset($_GET['date_end']) and !isset($_GET['issearch'])) {
-					$_SESSION['date_start'] = $_GET['date_start'];
-					$_SESSION['date_end'] = $_GET['date_end'];
-					$orders = getOrderListByDate($_SESSION['date_start'],$_SESSION['date_end'],$group2, $user_name);
-				 }
-				 
-				 if (isset($_GET['issearch'])) {
-				 	$isGetOrderByDate = false;
-				 	$today = date("Y-m-d"); 
-					$today_60 = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-150,date("Y")));
+				 if (!$isGetOrderByDate) {
+					$input_sale_ref = $sale_ref;
+					if (isset($hide_sale_ref)) {
+						$input_sale_ref = $hide_sale_ref;
+					}
 					
-					getOrderListByFilter($sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$today_60,$today,$min_m,$max_m,$debt_cust_address1,$debt_cust_address2,$debt_post_co,$total_m, $total_price,$group2, $user_name,$prod_cd,$client_tel,$sts);
-				 }
+					getOrderListByFilter($input_sale_ref, $sale_name,$sale_email,$sale_yahoo_id,$start_date,$end_date,$min_m,$max_m,$debt_cust_address1,$debt_cust_address2,$debt_post_co,$total_m, $total_price,$group2, $user_name,$prod_cd,$client_tel,$sts,$nopayment,$check_shipping_jp);
 
-				 ?>
-
-                 <? if ($isGetOrderByDate) {?>
+				}
+                else if ($isGetOrderByDate) {
+                    $orders = getOrderListByDate($start_date,$end_date,$group2, $user_name);
+                ?>
                  	<table width="1400" border="1" cellspacing="0" cellpadding="0">
                  		<tr align="right" valign="top">
                  			<td>Order date</td>
@@ -232,6 +270,8 @@
                  			<td width='120'> Client's Payment Name</td>
                  			<td>Product No.</td>
                  			<td width='60'>Price</td>
+                            <td width='60'>&#x20;&#x984F;&#x8272;</td>
+							<td width='60'>Qty</td>
                  			<td width='60'>Shipping </td>
                  			<td width='60'>Total</td>
                  			<td >Payment</td>
@@ -258,11 +298,32 @@
                  				<td><?=$order['debt_pay_name'] ?>&nbsp;</td>
                  				<td><?=$order['sale_prod_id'] ?></td>
                  				<td><?=$order['product_price'] ?></td>
+                                <td><?=$order['sprod_colour'] ?></td>
+								<td><?=$order['sprod_unit']?></td>
                  				<td><?=$order['sale_ship_fee'] ?></td>
                  				<td><?=$order['cost_total'] ?></td>
                  				<td>
-	                 				<? if ($order['bal_data'] != NULL) {?>
-	                 					<a href="index.php?page=order&subpage=balance&sale_ref=<?=$order['sale_ref'] ?>">&yen;<?=$order['bal_data']['bal_pay'] ?></a><br><?=$order['bal_data']['bal_pay_type'] ?> (<?=$order['bal_data']['bal_dat'] ?>)
+	                 				<?
+ 
+									if (is_null($order['bal_data']['bal_pay'])==false) {?>
+	                 					<a href="index.php?page=order&subpage=balance&sale_ref=<?=$order['sale_ref'] ?>">&yen;<?=$order['bal_data']['bal_pay'] ?></a><br>
+	                 					<? 	switch($order['bal_data']['bal_pay_type']) {
+	                 							case "Store":
+	                 								echo mb_convert_encoding('コンビニ決済', "EUC-JP","UTF-8");
+	                 								break;
+                 								case "Credit Card":
+                 									echo mb_convert_encoding('クレカ決済', "EUC-JP","UTF-8");
+                 									break;
+                 								case "Card":
+                 									echo mb_convert_encoding('カード決済', "EUC-JP","UTF-8");
+                 									break;
+                 								case "Rakuten":
+                 									echo mb_convert_encoding('楽天Edy決済', "EUC-JP","UTF-8");
+                 									break;
+                 								default:
+                 									echo $order['bal_data']['bal_pay_type'];
+	                 						} 
+	                 					?> (<?=$order['bal_data']['bal_dat'] ?>)
 	                 				<? } else {?>
 	                 					<a href="index.php?page=order&subpage=balance&sale_ref=<?=$order['sale_ref'] ?>">Fill in</a>
 	                 				<? }?>
@@ -291,7 +352,7 @@
                  						<a href="index.php?page=order&subpage=remark&sale_ref=<?=$order['sale_ref'] ?>">Fill in</a>
                  					<? }?>
                  				</td>
-                 				<td><?=$order['sale_sts'] ?></td>
+                 				<td ><font <?php if ($order['sale_sts']=="O") {echo "id='divtoBlink'";$order['sale_sts']="OUT";}?>><?=$order['sale_sts'] ?></font> </td>
                  			</tr>
                  		<? }?>
                  	</table>
